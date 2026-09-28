@@ -1,11 +1,570 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Villa Peñas, Santa Cruz. Rancho para eventos, paquetes, servicios adicionales y solicitudes de información.">
+  <meta name="theme-color" content="#321D0E">
+  <title>Villa Peñas | Santa Cruz</title>
+
+  <!-- Tailwind CSS: tecnología solicitada para la primera entrega -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            vp: {
+              white: "#FBF9F5",
+              brown: "#321D0E",
+              gold: "#B6781E",
+              beige: "#DFCEB7",
+              cream: "#F3EEE5",
+              text: "#493428",
+              green: "#157F3C",
+              terracotta: "#A4563E"
+            }
+          },
+          fontFamily: {
+            display: ["Georgia", "serif"]
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-    
+
+<body class="overflow-x-hidden bg-vp-white text-vp-text">
+
+  <!-- =========================================================
+       TRANSICIÓN DE ENTRADA
+       Vetas orgánicas café sobre fondo blanco, sin logotipo.
+       ========================================================= -->
+  <div id="pageLoader" class="fixed inset-0 z-[9999] overflow-hidden bg-vp-white opacity-100 transition-opacity duration-1000" aria-hidden="true">
+    <img src="assets/loader-marble.svg" alt="" class="h-full w-full object-cover">
+  </div>
+
+  <div id="siteContent" class="blur-xl scale-[1.02] opacity-90 transition-[filter,transform,opacity] duration-[1150ms] ease-out">
+
+  <!-- =========================================================
+       HEADER / NAVEGACIÓN
+       ========================================================= -->
+  <header id="header" class="fixed inset-x-0 top-0 z-50 bg-vp-brown/95 shadow-lg backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3" aria-label="Navegación principal">
+
+      <a href="#inicio" class="flex items-center gap-2 text-white" aria-label="Villa Peñas inicio">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 text-xs font-bold tracking-wider">VP</span>
+        <span class="font-display text-xl">Villa Peñas</span>
+      </a>
+
+      <button
+        id="menuButton"
+        type="button"
+        class="rounded-lg border border-white/30 p-2 text-white lg:hidden"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="menu">
+        <span class="block h-0.5 w-6 bg-white"></span>
+        <span class="my-1.5 block h-0.5 w-6 bg-white"></span>
+        <span class="block h-0.5 w-6 bg-white"></span>
+      </button>
+
+      <div id="menu" class="absolute left-3 right-3 top-[68px] hidden rounded-xl bg-vp-brown p-4 shadow-2xl lg:static lg:flex lg:items-center lg:gap-6 lg:p-0 lg:shadow-none">
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#inicio">Inicio</a>
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#nosotros">Villa Peñas</a>
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#paquetes">Paquetes</a>
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#adicionales">Adicionales</a>
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#testimonios">Experiencias</a>
+        <a class="block rounded-md px-2 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white" href="#contacto">Contacto</a>
+
+        <div class="ml-1 flex items-center gap-4 border-t border-white/10 pt-3 lg:ml-1 lg:border-t-0 lg:pt-0" aria-label="Redes sociales">
+          <a
+            href="https://www.instagram.com/eventos_villapena/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex h-8 w-8 items-center justify-center text-white/80 transition hover:-translate-y-0.5 hover:text-white"
+            aria-label="Instagram de Villa Peñas"
+            title="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.4" cy="6.6" r="1"></circle>
+            </svg>
+          </a>
+
+          <a
+            id="headerWhatsapp"
+            href="#contacto"
+            class="inline-flex h-8 w-8 items-center justify-center text-white/80 transition hover:-translate-y-0.5 hover:text-white"
+            aria-label="WhatsApp de Villa Peñas"
+            title="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.5 11.6a8.4 8.4 0 0 1-12.5 7.3L3.5 20.5l1.7-4.4A8.4 8.4 0 1 1 20.5 11.6Z"></path>
+              <path d="M8.8 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .5-.2.7l-.5.5c.6 1.1 1.5 2 2.6 2.6l.5-.5c.2-.2.5-.3.7-.2l1.7.7c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.2.4-1.8.2-1.1-.3-2.5-1.2-3.8-2.5s-2.2-2.7-2.5-3.8c-.2-.6-.1-1.3.2-1.8Z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- =========================================================
+         HERO
+         ========================================================= -->
+    <section id="inicio" class="relative flex min-h-[88vh] items-end overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2000&q=85"
+        alt="Espacio para celebrar eventos"
+        class="absolute inset-0 h-full w-full object-cover">
+
+      <div class="absolute inset-0 bg-vp-brown/45"></div>
+      <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-vp-brown/90 to-transparent"></div>
+
+      <div class="relative mx-auto w-full max-w-6xl px-5 pb-14 pt-32 sm:pb-20">
+        <div class="max-w-2xl">
+          <p class="opacity-0 translate-y-4 transition-all duration-700 text-sm font-bold uppercase tracking-[0.25em] text-vp-beige">
+            Villa Peñas · Santa Cruz
+          </p>
+
+          <h1 class="opacity-0 translate-y-4 transition-all duration-700 mt-3 font-display text-6xl leading-none text-white sm:text-7xl">
+            Celebra,<br>
+            comparte y disfruta.
+          </h1>
+
+          <p class="opacity-0 translate-y-4 transition-all duration-700 mt-5 max-w-xl text-base leading-7 text-white/85 sm:text-lg">
+            Un espacio creado para disfrutar tus momentos especiales con familia,
+            amigos y personas importantes.
+          </p>
+
+          <div class="opacity-0 translate-y-4 transition-all duration-700 mt-7 flex flex-col gap-3 sm:flex-row">
+            <a href="#paquetes" class="rounded-full bg-vp-gold px-7 py-3 text-center font-bold text-white hover:-translate-y-0.5">
+              Ver paquetes
+            </a>
+            <a href="#contacto" class="rounded-full border border-white/70 bg-white/10 px-7 py-3 text-center font-bold text-white backdrop-blur hover:bg-white hover:text-vp-brown">
+              Solicitar información
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SOBRE VILLA PEÑAS
+         ========================================================= -->
+    <section id="nosotros" class="py-16 sm:py-24">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
+
+          <div class="opacity-0 translate-y-4 transition-all duration-700">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Villa Peñas</p>
+            <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown sm:text-5xl">Un espacio para disfrutar tus momentos especiales.</h2>
+
+            <p class="mt-5 leading-7">
+              Un espacio creado para disfrutar de tus momentos especiales. En Villa Peñas
+              podrás celebrar cumpleaños, reuniones familiares, baby showers y mucho más,
+              con diferentes opciones de alquiler y servicios pensados para que disfrutes
+              de cada ocasión junto a tus seres queridos.
+            </p>
+
+            <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div class="flex flex-col items-center justify-center gap-2 rounded-xl border border-vp-beige bg-vp-cream p-4 text-center">
+                <span>🏊</span>
+                <strong>Piscina</strong>
+              </div>
+              <div class="flex flex-col items-center justify-center gap-2 rounded-xl border border-vp-beige bg-vp-cream p-4 text-center">
+                <span>🍳</span>
+                <strong>Cocina</strong>
+              </div>
+              <div class="flex flex-col items-center justify-center gap-2 rounded-xl border border-vp-beige bg-vp-cream p-4 text-center">
+                <span>🛝</span>
+                <strong>Playground</strong>
+              </div>
+              <div class="flex flex-col items-center justify-center gap-2 rounded-xl border border-vp-beige bg-vp-cream p-4 text-center">
+                <span>📶</span>
+                <strong>Wi-Fi</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="opacity-0 translate-y-4 transition-all duration-700 grid grid-cols-2 gap-3">
+            <img class="h-64 w-full rounded-2xl object-cover sm:h-72"
+              src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=900&q=85"
+              alt="Piscina de Villa Peñas">
+            <img class="mt-8 h-64 w-full rounded-2xl object-cover sm:h-72"
+              src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85"
+              alt="Área exterior">
+            <img class="h-48 w-full rounded-2xl object-cover sm:h-56"
+              src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=85"
+              alt="Cocina equipada">
+            <img class="mt-8 h-48 w-full rounded-2xl object-cover sm:h-56"
+              src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=85"
+              alt="Celebración">
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         UBICACIÓN / MAPA
+         ========================================================= -->
+    <section id="ubicacion" class="bg-vp-cream py-14">
+      <div class="mx-auto max-w-6xl px-5">
+        <div class="grid gap-7 lg:grid-cols-[.75fr_1.25fr] lg:items-center">
+
+          <div class="opacity-0 translate-y-4 transition-all duration-700">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Dónde encontrarnos</p>
+            <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown">Villa Peñas, Santa Cruz</h2>
+            <p class="mt-4 text-sm leading-6">
+              Ubicación de referencia para el proyecto. La ubicación exacta del mapa
+              deberá ser reemplazada por la dirección confirmada por la persona dueña.
+            </p>
+            <a href="#contacto" class="mt-6 inline-flex rounded-full bg-vp-brown px-6 py-3 font-bold text-white">
+              Consultar ubicación
+            </a>
+          </div>
+
+          <div class="overflow-hidden rounded-2xl border-4 border-white shadow-xl opacity-0 translate-y-4 transition-all duration-700">
+            <iframe
+              title="Mapa de Villa Peñas"
+              src="https://www.google.com/maps?q=Santa+Cruz,+Guanacaste,+Costa+Rica&output=embed"
+              class="h-[340px] w-full border-0"
+              loading="lazy">
+            </iframe>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         INFORMACIÓN / SERVICIOS
+         ========================================================= -->
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="max-w-3xl opacity-0 translate-y-4 transition-all duration-700">
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Todo en un solo lugar</p>
+          <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown sm:text-5xl">Todo lo que necesitás en un solo lugar.</h2>
+          <p class="mt-4 leading-7">
+            Villa Peñas cuenta con diferentes servicios para que puedas organizar
+            tu evento de una forma cómoda y personalizada.
+          </p>
+        </div>
+
+        <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <span class="text-3xl">🏊</span>
+            <h3>Piscina</h3>
+            <p>Un espacio para refrescarte y disfrutar tu visita.</p>
+          </article>
+
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <span class="text-3xl">🍳</span>
+            <h3>Cocina equipada</h3>
+            <p>Disfrutá de un espacio equipado para preparar y compartir alimentos.</p>
+          </article>
+
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <span class="text-3xl">🎵</span>
+            <h3>Sonido y micrófonos</h3>
+            <p>Opciones de sonido para complementar tus celebraciones.</p>
+          </article>
+
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <span class="text-3xl">🌳</span>
+            <h3>Espacio exclusivo</h3>
+            <p>Un lugar para disfrutar del rancho y sus áreas durante el evento.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PAQUETES - DATOS DESDE JS
+         ========================================================= -->
+    <section id="paquetes" class="bg-vp-terracotta py-16 text-white sm:py-20">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="opacity-0 translate-y-4 transition-all duration-700">
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-beige">Elegí tu opción</p>
+          <h2 class="mt-2 font-display text-4xl sm:text-5xl">Paquetes y servicios adicionales</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-6 text-white/80">
+            Elegí el paquete que mejor se adapte a tu celebración y agregá opciones
+            adicionales para complementar tu evento.
+          </p>
+        </div>
+
+        <div id="paquetesContainer" class="mt-9 grid gap-4 md:grid-cols-3"></div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         ADICIONALES - 9 ARTICLES
+         ========================================================= -->
+    <section id="adicionales" class="py-16">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="opacity-0 translate-y-4 transition-all duration-700">
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Diversión y sabor</p>
+          <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown sm:text-5xl">Servicios adicionales para tu evento</h2>
+          <p class="mt-3 max-w-3xl leading-6">
+            Queremos que en tus celebraciones no falte la diversión ni los antojos.
+            Estas opciones pueden complementar tu evento.
+          </p>
+        </div>
+
+        <div id="adicionalesContainer" class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         GALERÍA
+         ========================================================= -->
+    <section id="galeria" class="bg-vp-cream py-16">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div class="opacity-0 translate-y-4 transition-all duration-700">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Conocé el espacio</p>
+            <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown sm:text-5xl">Galería</h2>
+          </div>
+          <p class="max-w-md text-sm text-vp-text/70">
+            Las fotografías utilizadas actualmente son de referencia y deberán ser sustituidas
+            por las fotografías reales entregadas por Villa Peñas.
+          </p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <button class="col-span-2 row-span-2 overflow-hidden rounded-2xl opacity-0 translate-y-4 transition-all duration-700 focus:outline-none focus:ring-2 focus:ring-vp-gold"
+                  data-src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1800&q=90"
+                  aria-label="Abrir imagen">
+            <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=85" alt="Espacio de eventos" class="h-full min-h-[390px] w-full object-cover">
+          </button>
+          <button class="overflow-hidden rounded-2xl opacity-0 translate-y-4 transition-all duration-700 focus:outline-none focus:ring-2 focus:ring-vp-gold"
+                  data-src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=1200&q=90"
+                  aria-label="Abrir imagen">
+            <img src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=800&q=85" alt="Piscina" class="h-48 w-full object-cover">
+          </button>
+          <button class="overflow-hidden rounded-2xl opacity-0 translate-y-4 transition-all duration-700 focus:outline-none focus:ring-2 focus:ring-vp-gold"
+                  data-src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=1200&q=90"
+                  aria-label="Abrir imagen">
+            <img src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=800&q=85" alt="Área exterior" class="h-48 w-full object-cover">
+          </button>
+          <button class="overflow-hidden rounded-2xl opacity-0 translate-y-4 transition-all duration-700 focus:outline-none focus:ring-2 focus:ring-vp-gold"
+                  data-src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=90"
+                  aria-label="Abrir imagen">
+            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=85" alt="Cocina" class="h-48 w-full object-cover">
+          </button>
+          <button class="overflow-hidden rounded-2xl opacity-0 translate-y-4 transition-all duration-700 focus:outline-none focus:ring-2 focus:ring-vp-gold"
+                  data-src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=90"
+                  aria-label="Abrir imagen">
+            <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=85" alt="Celebración" class="h-48 w-full object-cover">
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TESTIMONIOS
+         ========================================================= -->
+    <section id="testimonios" class="py-16">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="opacity-0 translate-y-4 transition-all duration-700">
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Familias que ya celebraron en Villa Peñas</p>
+          <h2 class="mt-2 font-display text-4xl leading-tight text-vp-brown sm:text-5xl">Experiencias que generan confianza.</h2>
+        </div>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <div class="text-vp-gold">★★★★★</div>
+            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <div class="mt-5 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vp-brown font-bold text-white">M</span>
+              <div>
+                <strong>Marcela V.</strong>
+                <small>Reunión familiar</small>
+              </div>
+            </div>
+          </article>
+
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <div class="text-vp-gold">★★★★★</div>
+            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <div class="mt-5 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vp-brown font-bold text-white">J</span>
+              <div>
+                <strong>Jonathan R.</strong>
+                <small>Reunión familiar</small>
+              </div>
+            </div>
+          </article>
+
+          <article class="opacity-0 translate-y-4 rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm transition-all duration-700">
+            <div class="text-vp-gold">★★★★★</div>
+            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <div class="mt-5 flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vp-brown font-bold text-white">T</span>
+              <div>
+                <strong>Tatiana R.</strong>
+                <small>Baby shower</small>
+              </div>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CONTACTO / SOLICITUD
+         ========================================================= -->
+    <section id="contacto" class="bg-vp-terracotta py-16 text-white sm:py-20">
+      <div class="mx-auto max-w-6xl px-5">
+
+        <div class="grid gap-10 lg:grid-cols-[.75fr_1.25fr]">
+
+          <div class="opacity-0 translate-y-4 transition-all duration-700">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-beige">Contanos sobre tu evento</p>
+            <h2 class="mt-3 font-display text-5xl">Hablemos de tu celebración.</h2>
+            <p class="mt-5 text-sm leading-6 text-white/80">
+              Completá el formulario con los datos de tu evento. Al enviar, se preparará
+              una solicitud y se abrirá WhatsApp para que Villa Peñas pueda revisarla
+              y comunicarse contigo.
+            </p>
+
+            <div class="mt-7 rounded-2xl bg-vp-gold/40 p-5">
+              <p class="font-bold">Importante</p>
+              <p class="mt-1 text-sm leading-6 text-white/80">
+                En esta etapa no existe una reserva automática ni calendario público.
+                La solicitud queda sujeta a confirmación por parte de Villa Peñas.
+              </p>
+            </div>
+          </div>
+
+          <form id="solicitudForm" class="opacity-0 translate-y-4 transition-all duration-700 rounded-2xl bg-vp-cream p-5 text-vp-text shadow-xl sm:p-7" novalidate>
+
+            <div id="formMessage" class="mb-4 hidden rounded-xl p-3 text-sm" role="alert"></div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+
+              <div>
+                <label for="nombre" class="mb-1 block text-sm font-bold text-vp-text">Nombre *</label>
+                <input id="nombre" type="text" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+              </div>
+
+              <div>
+                <label for="telefono" class="mb-1 block text-sm font-bold text-vp-text">Teléfono *</label>
+                <input id="telefono" type="tel" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+              </div>
+
+              <div>
+                <label for="correo" class="mb-1 block text-sm font-bold text-vp-text">Correo *</label>
+                <input id="correo" type="email" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+              </div>
+
+              <div>
+                <label for="fecha" class="mb-1 block text-sm font-bold text-vp-text">Fecha del evento *</label>
+                <input id="fecha" type="date" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+              </div>
+
+              <div>
+                <label for="personas" class="mb-1 block text-sm font-bold text-vp-text">Cantidad de personas *</label>
+                <input id="personas" type="number" min="1" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+              </div>
+
+              <div>
+                <label for="paquete" class="mb-1 block text-sm font-bold text-vp-text">Paquete *</label>
+                <select id="paquete" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" required>
+                  <option value="">Seleccionar...</option>
+                </select>
+              </div>
+
+            </div>
+
+            <fieldset class="mt-5">
+              <legend class="mb-1 block text-sm font-bold text-vp-text">Adicionales que te interesan</legend>
+              <div id="checksAdicionales" class="grid gap-2 sm:grid-cols-2"></div>
+            </fieldset>
+
+            <div class="mt-5">
+              <label for="mensaje" class="mb-1 block text-sm font-bold text-vp-text">Contanos sobre tu evento</label>
+              <textarea id="mensaje" rows="4" class="w-full rounded-xl border border-vp-beige bg-vp-white px-4 py-3 text-sm outline-none transition focus:border-vp-gold focus:ring-2 focus:ring-vp-gold/20" placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
+            </div>
+
+            <button type="submit" class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold">
+              Enviar solicitud por WhatsApp
+            </button>
+
+            <p class="mt-3 text-center text-xs text-vp-text/60">
+              * Campos obligatorios. El envío no confirma una reserva.
+            </p>
+          </form>
+
+        </div>
+
+        <div class="mt-12 border-t border-white/20 pt-8">
+          <h3 class="font-display text-3xl">Contactanos</h3>
+
+          <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a href="tel:+50685373750" class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white hover:text-vp-brown">☎ 8537-3750</a>
+            <a href="tel:+50688507712" class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white hover:text-vp-brown">☎ 8850-7712</a>
+            <a href="mailto:info@villapenas.com" class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white hover:text-vp-brown">✉ Correo</a>
+            <a href="#contacto" class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white hover:text-vp-brown">◎ Instagram</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="bg-vp-brown text-white">
+    <div class="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-9 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p class="font-display text-2xl">Villa Peñas</p>
+        <p class="mt-1 text-xs text-white/60">Santa Cruz, Guanacaste</p>
+      </div>
+
+      <div class="text-left text-xs text-white/60 sm:text-right">
+        <p>© 2026 Villa Peñas</p>
+        <p class="mt-1">Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <!-- MODAL DE DETALLES -->
+  <div id="modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-vp-white p-6 shadow-2xl">
+      <button type="button" id="closeModal" class="absolute right-4 top-3 text-2xl" aria-label="Cerrar">×</button>
+      <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-gold">Detalle del paquete</p>
+      <h2 id="modalTitle" class="mt-1 font-display text-4xl text-vp-brown"></h2>
+      <p id="modalPrice" class="mt-3 text-xl font-bold text-vp-gold"></p>
+      <p id="modalDescription" class="mt-4 text-sm leading-6"></p>
+      <ul id="modalServices" class="mt-5 grid gap-2 sm:grid-cols-2"></ul>
+      <button id="choosePackage" class="mt-6 w-full rounded-xl bg-vp-brown px-5 py-3 font-bold text-white">
+        Solicitar este paquete
+      </button>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/90 p-4">
+    <button type="button" id="closeLightbox" class="absolute right-5 top-4 text-3xl text-white" aria-label="Cerrar">×</button>
+    <img id="lightboxImg" src="" alt="" class="max-h-[90vh] max-w-[95vw] rounded-xl object-contain">
+  </div>
+
+  <script src="js/datos.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
