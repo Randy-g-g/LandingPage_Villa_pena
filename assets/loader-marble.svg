@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <rect width="100" height="100" fill="#FBF9F5"/>
+
+  <!-- Vetas café suaves, inspiradas en mármol fluido -->
+  <g fill="none" stroke="#321D0E" stroke-linecap="round" stroke-linejoin="round">
+    <g opacity=".16">
+      <path stroke-width="3.8" d="M-14 9 C8 -7 19 25 39 18 S69 2 114 18"/>
+      <path stroke-width="1.8" d="M-13 14 C9 0 19 30 40 22 S70 8 114 23"/>
+      <path stroke-width=".9" d="M-11 19 C12 6 22 35 43 27 S73 14 112 29"/>
+    </g>
+
+    <g opacity=".13">
+      <path stroke-width="4.4" d="M-16 51 C7 34 18 67 35 56 S65 37 115 51"/>
+      <path stroke-width="2" d="M-16 58 C7 42 18 74 37 63 S66 44 116 58"/>
+      <path stroke-width=".9" d="M-14 64 C9 48 22 80 40 69 S70 51 114 65"/>
+      <path stroke-width=".55" d="M-10 68 C11 54 24 84 42 73 S72 56 112 70"/>
+    </g>
+
+    <g opacity=".15">
+      <path stroke-width="3.7" d="M-15 92 C9 76 20 107 43 94 S71 77 115 91"/>
+      <path stroke-width="1.7" d="M-14 97 C10 82 22 112 45 100 S74 84 115 97"/>
+      <path stroke-width=".8" d="M-9 101 C14 87 25 116 48 104 S77 89 114 101"/>
+    </g>
+
+    <!-- líneas finas para dar sensación de movimiento sin saturar -->
+    <g opacity=".10">
+      <path stroke-width=".55" d="M-5 33 C15 20 27 49 45 37 S76 22 108 36"/>
+      <path stroke-width=".45" d="M-7 36 C16 23 28 52 47 40 S77 25 109 39"/>
+      <path stroke-width=".5" d="M-6 78 C15 64 28 94 49 82 S79 66 110 79"/>
+      <path stroke-width=".4" d="M-7 81 C16 67 30 97 51 85 S80 69 111 82"/>
+    </g>
+  </g>
+</svg>

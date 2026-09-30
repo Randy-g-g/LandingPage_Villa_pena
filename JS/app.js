@@ -1,379 +1,488 @@
+// Mismo estilo del ejercicio DOM_Poo_js visto en clase.
+// Los arreglos paquetes y adicionales están en datos.js.
+// La transición inicial se controla únicamente desde styles.css.
 
-  // =========================================================
-  // 1. MENÚ RESPONSIVE
-  // =========================================================
-  const menuButton = document.querySelector("#menuButton");
-  const menu = document.querySelector("#menu");
-  const enlacesMenu = document.querySelectorAll("#menu a");
+// Buscamos los elementos del HTML.
+const formulario = document.querySelector("#solicitudForm");
+const listaPaquetes = document.querySelector("#paquetesContainer");
+const listaAdicionales = document.querySelector("#adicionalesContainer");
+const opcionesAdicionales = document.querySelector("#checksAdicionales");
+const seleccionarPaquete = document.querySelector("#paquete");
+const mostrarAviso = document.querySelector("#formMessage");
+const campos = formulario.querySelectorAll(".form-input");
+const campoNombre = document.querySelector("#nombre");
+const campoTelefono = document.querySelector("#telefono");
+const campoCorreo = document.querySelector("#correo");
+const campoFecha = document.querySelector("#fecha");
+const campoPersonas = document.querySelector("#personas");
+const campoMensaje = document.querySelector("#mensaje");
+const botonMenu = document.querySelector("#menuButton");
+const menu = document.querySelector("#menu");
+const modal = document.querySelector("#modal");
+const tituloModal = document.querySelector("#modalTitle");
+const precioModal = document.querySelector("#modalPrice");
+const descripcionModal = document.querySelector("#modalDescription");
+const serviciosModal = document.querySelector("#modalServices");
+const botonCerrarModal = document.querySelector("#closeModal");
+const botonElegirPaquete = document.querySelector("#choosePackage");
+const galeria = document.querySelector("#lightbox");
+const imagenGaleria = document.querySelector("#lightboxImg");
+const botonCerrarGaleria = document.querySelector("#closeLightbox");
 
-  menuButton.addEventListener("click", function () {
-    menu.classList.toggle("hidden");
+let paqueteSeleccionado = null;
 
-    const abierto = !menu.classList.contains("hidden");
-    menuButton.setAttribute("aria-expanded", abierto);
-  });
+// Se conserva pendiente hasta confirmar el WhatsApp oficial.
+// Los teléfonos existentes son 8537-3750 y 8850-7712.
+const WHATSAPP_NUMBER = "506XXXXXXXX";
 
-  enlacesMenu.forEach(function (enlace) {
-    enlace.addEventListener("click", function () {
-      if (window.innerWidth < 1024) {
-        menu.classList.add("hidden");
-        menuButton.setAttribute("aria-expanded", "false");
-      }
-    });
-  });
+// Escuchamos el formulario, igual que en el ejercicio de productos.
+formulario.addEventListener("submit", function(event) {
+    // Evitar que el formulario recargue la página.
+    event.preventDefault();
+    campoFecha.min = fechaLocalHoy();
+    campoNombre.value = campoNombre.value.trim();
+    campoTelefono.value = campoTelefono.value.trim();
+    campoCorreo.value = campoCorreo.value.trim();
 
-  // =========================================================
-  // 2. PAQUETES: ARREGLO DE OBJETOS + DOM
-  // =========================================================
-  const listaPaquetes = document.querySelector("#paquetesContainer");
-  const selectPaquete = document.querySelector("#paquete");
-
-  paquetes.forEach(function (paquete) {
-    const tarjeta = document.createElement("article");
-    tarjeta.className = "rounded-2xl bg-vp-white p-6 text-vp-text shadow-xl";
-
-    const etiqueta = document.createElement("p");
-    etiqueta.className = "text-xs font-bold uppercase tracking-widest text-vp-gold";
-    etiqueta.textContent = "Villa Peñas";
-
-    const titulo = document.createElement("h3");
-    titulo.className = "mt-2 font-display text-3xl text-vp-brown";
-    titulo.textContent = paquete.nombre;
-
-    const descripcion = document.createElement("p");
-    descripcion.className = "mt-3 text-sm leading-6 text-vp-text/80";
-    descripcion.textContent = paquete.descripcion;
-
-    const subtitulo = document.createElement("p");
-    subtitulo.className = "mt-5 text-xs font-bold uppercase tracking-wider text-vp-brown";
-    subtitulo.textContent = "Servicios incluidos:";
-
-    const listaServicios = document.createElement("ul");
-    listaServicios.className = "mt-3 space-y-2 text-sm";
-
-    paquete.servicios.forEach(function (servicio) {
-      const item = document.createElement("li");
-      item.className = "flex gap-2";
-
-      const check = document.createElement("span");
-      check.className = "font-bold text-vp-gold";
-      check.textContent = "✓";
-
-      const texto = document.createElement("span");
-      texto.textContent = servicio;
-
-      item.appendChild(check);
-      item.appendChild(texto);
-      listaServicios.appendChild(item);
-    });
-
-    const boton = document.createElement("button");
-    boton.type = "button";
-    boton.className = "mt-6 w-full rounded-xl bg-vp-brown px-5 py-3 font-bold text-white transition hover:bg-vp-gold";
-    boton.textContent = "Ver detalles";
-
-    boton.addEventListener("click", function () {
-      abrirModal(paquete);
-    });
-
-    tarjeta.appendChild(etiqueta);
-    tarjeta.appendChild(titulo);
-    tarjeta.appendChild(descripcion);
-    tarjeta.appendChild(subtitulo);
-    tarjeta.appendChild(listaServicios);
-    tarjeta.appendChild(boton);
-
-    listaPaquetes.appendChild(tarjeta);
-
-    const opcion = document.createElement("option");
-    opcion.value = paquete.nombre;
-    opcion.textContent = paquete.nombre;
-    selectPaquete.appendChild(opcion);
-  });
-
-  // Mostrar el arreglo como JSON en consola, como se practica en clase.
-  const datosJSON = JSON.stringify(paquetes, null, 2);
-  console.log("Paquetes en JSON:");
-  console.log(datosJSON);
-
-  // =========================================================
-  // 3. ADICIONALES: ARREGLO + DOM
-  // =========================================================
-  const listaAdicionales = document.querySelector("#adicionalesContainer");
-  const listaChecks = document.querySelector("#checksAdicionales");
-
-  adicionales.forEach(function (adicional) {
-    const tarjeta = document.createElement("article");
-    tarjeta.className = "rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm";
-
-    const categoria = document.createElement("p");
-    categoria.className = "text-xs font-bold uppercase tracking-wider text-vp-gold";
-    categoria.textContent = adicional.categoria;
-
-    const nombre = document.createElement("h3");
-    nombre.className = "mt-1 font-display text-2xl text-vp-brown";
-    nombre.textContent = adicional.paquete;
-
-    const cantidad = document.createElement("p");
-    cantidad.className = "mt-4 text-sm font-bold";
-    cantidad.textContent = adicional.cantidad;
-
-    const detalle = document.createElement("p");
-    detalle.className = "mt-1 text-sm text-vp-text/70";
-    detalle.textContent = adicional.detalle;
-
-    const precio = document.createElement("p");
-    precio.className = "mt-5 text-xl font-bold text-vp-brown";
-    precio.textContent = "₡" + adicional.precio.toLocaleString("es-CR");
-
-    tarjeta.appendChild(categoria);
-    tarjeta.appendChild(nombre);
-    tarjeta.appendChild(cantidad);
-    tarjeta.appendChild(detalle);
-    tarjeta.appendChild(precio);
-
-    listaAdicionales.appendChild(tarjeta);
-  });
-
-  // Crear una opción por cada categoría sin usar métodos nuevos para ustedes.
-  const categorias = [];
-
-  adicionales.forEach(function (adicional) {
-    let existe = false;
-
-    categorias.forEach(function (categoria) {
-      if (categoria === adicional.categoria) {
-        existe = true;
-      }
-    });
-
-    if (!existe) {
-      categorias.push(adicional.categoria);
+    if (validarFormulario() === false) {
+        return;
     }
-  });
 
-  categorias.forEach(function (categoria) {
-    const label = document.createElement("label");
-    label.className = "flex cursor-pointer items-center gap-2 rounded-lg border border-vp-beige bg-vp-white p-3 text-sm";
+    // Tomamos los valores y hacemos la conversión numérica.
+    const nombre = campoNombre.value;
+    const telefono = campoTelefono.value;
+    const correo = campoCorreo.value;
+    const fecha = campoFecha.value;
+    const personas = Number(campoPersonas.value);
+    const paquete = seleccionarPaquete.value;
+    const mensaje = campoMensaje.value.trim();
+    const seleccionados = obtenerAdicionalesSeleccionados();
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = "adicional";
-    checkbox.value = categoria;
-    checkbox.className = "h-4 w-4 accent-[#321D0E]";
+    // Creamos un objeto, como el objeto producto del ejemplo de clase.
+    const solicitud = {
+        nombre: nombre,
+        telefono: telefono,
+        correo: correo,
+        fecha: fecha,
+        personas: personas,
+        paquete: paquete,
+        adicionales: seleccionados,
+        mensaje: mensaje
+    };
 
-    const texto = document.createElement("span");
-    texto.textContent = categoria;
+    abrirWhatsApp(solicitud);
+});
 
-    label.appendChild(checkbox);
-    label.appendChild(texto);
-    listaChecks.appendChild(label);
-  });
+// Mostramos los paquetes que están en el arreglo de datos.js.
+function mostrarPaquetes() {
+    listaPaquetes.innerHTML = "";
 
-  // =========================================================
-  // 4. MODAL DE PAQUETES
-  // =========================================================
-  const modal = document.querySelector("#modal");
-  const cerrarModal = document.querySelector("#closeModal");
-  const tituloModal = document.querySelector("#modalTitle");
-  const precioModal = document.querySelector("#modalPrice");
-  const descripcionModal = document.querySelector("#modalDescription");
-  const serviciosModal = document.querySelector("#modalServices");
-  const elegirPaquete = document.querySelector("#choosePackage");
+    paquetes.forEach(function(paquete) {
+        // Crear tarjeta.
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "package-card reveal";
+        const encabezado = document.createElement("div");
+        encabezado.className = "package-head";
+        const marca = document.createElement("p");
+        marca.className = "text-[10px] font-bold uppercase tracking-widest text-vp-gold";
+        marca.textContent = "Villa Peñas";
+        const titulo = document.createElement("h3");
+        titulo.textContent = paquete.nombre;
+        const descripcion = document.createElement("p");
+        descripcion.className = "mt-3 text-xs leading-5";
+        descripcion.textContent = paquete.descripcion;
+        const etiqueta = document.createElement("p");
+        etiqueta.className = "mt-4 text-xs font-bold uppercase tracking-wider text-vp-brown";
+        etiqueta.textContent = "Servicios incluidos:";
+        const servicios = document.createElement("ul");
 
-  let paqueteSeleccionado = null;
+        paquete.servicios.forEach(function(servicio) {
+            const elemento = document.createElement("li");
+            elemento.textContent = servicio;
+            servicios.appendChild(elemento);
+        });
 
-  function abrirModal(paquete) {
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "package-button";
+        boton.textContent = "Ver detalles";
+        boton.setAttribute("data-package-id", paquete.id);
+        boton.addEventListener("click", function() {
+            abrirModalPaquete(paquete);
+        });
+
+        // Agregar los elementos a la tarjeta y la tarjeta al HTML.
+        encabezado.appendChild(marca);
+        encabezado.appendChild(titulo);
+        tarjeta.appendChild(encabezado);
+        tarjeta.appendChild(descripcion);
+        tarjeta.appendChild(etiqueta);
+        tarjeta.appendChild(servicios);
+        tarjeta.appendChild(boton);
+        listaPaquetes.appendChild(tarjeta);
+    });
+}
+
+function mostrarOpcionesPaquetes() {
+    seleccionarPaquete.innerHTML = "";
+    const opcionInicial = document.createElement("option");
+    opcionInicial.value = "";
+    opcionInicial.textContent = "Seleccionar...";
+    seleccionarPaquete.appendChild(opcionInicial);
+
+    paquetes.forEach(function(paquete) {
+        const opcion = document.createElement("option");
+        opcion.value = paquete.nombre;
+        opcion.textContent = paquete.nombre;
+        seleccionarPaquete.appendChild(opcion);
+    });
+}
+
+function mostrarAdicionales() {
+    listaAdicionales.innerHTML = "";
+
+    adicionales.forEach(function(adicional) {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "additional-card reveal";
+        const encabezado = document.createElement("div");
+        encabezado.className = "additional-head";
+        const categoria = document.createElement("p");
+        categoria.className = "text-[9px] font-bold uppercase tracking-wider text-vp-gold";
+        categoria.textContent = adicional.categoria;
+        const titulo = document.createElement("h3");
+        titulo.textContent = adicional.paquete;
+        const detalles = document.createElement("ul");
+        const cantidad = document.createElement("li");
+        const textoCantidad = document.createElement("strong");
+        textoCantidad.textContent = "• " + adicional.cantidad;
+        cantidad.appendChild(textoCantidad);
+        const detalle = document.createElement("li");
+        detalle.textContent = "• " + adicional.detalle;
+        const precio = document.createElement("p");
+        precio.className = "price";
+        precio.textContent = "₡" + adicional.precio.toLocaleString("es-CR");
+
+        encabezado.appendChild(categoria);
+        encabezado.appendChild(titulo);
+        detalles.appendChild(cantidad);
+        detalles.appendChild(detalle);
+        tarjeta.appendChild(encabezado);
+        tarjeta.appendChild(detalles);
+        tarjeta.appendChild(precio);
+        listaAdicionales.appendChild(tarjeta);
+    });
+}
+
+function mostrarOpcionesAdicionales() {
+    opcionesAdicionales.innerHTML = "";
+    const categorias = [];
+
+    // Guardamos cada categoría una sola vez en el arreglo.
+    adicionales.forEach(function(adicional) {
+        if (categorias.indexOf(adicional.categoria) === -1) {
+            categorias.push(adicional.categoria);
+        }
+    });
+
+    categorias.forEach(function(categoria) {
+        const etiqueta = document.createElement("label");
+        etiqueta.className = "flex cursor-pointer items-center gap-2 rounded-lg border border-vp-beige bg-vp-white p-2 text-xs";
+        const casilla = document.createElement("input");
+        casilla.type = "checkbox";
+        casilla.name = "adicional";
+        casilla.value = categoria;
+        casilla.className = "h-4 w-4 accent-[#321D0E]";
+        const texto = document.createElement("span");
+        texto.textContent = categoria;
+
+        etiqueta.appendChild(casilla);
+        etiqueta.appendChild(texto);
+        opcionesAdicionales.appendChild(etiqueta);
+    });
+}
+
+// Menú de celulares.
+botonMenu.addEventListener("click", function() {
+    const abierto = menu.classList.toggle("mobile-open");
+    botonMenu.setAttribute("aria-expanded", String(abierto));
+});
+
+document.querySelectorAll(".menu-link").forEach(function(enlace) {
+    enlace.addEventListener("click", function() {
+        menu.classList.remove("mobile-open");
+        botonMenu.setAttribute("aria-expanded", "false");
+    });
+});
+
+// Ventana con los detalles del paquete.
+function abrirModalPaquete(paquete) {
     paqueteSeleccionado = paquete;
-
     tituloModal.textContent = paquete.nombre;
     precioModal.textContent = "Precio: consultar";
     descripcionModal.textContent = paquete.descripcion;
     serviciosModal.innerHTML = "";
 
-    paquete.servicios.forEach(function (servicio) {
-      const item = document.createElement("li");
-      item.className = "rounded-lg bg-vp-cream p-3 text-sm";
-      item.textContent = "✓ " + servicio;
-      serviciosModal.appendChild(item);
+    paquete.servicios.forEach(function(servicio) {
+        const elemento = document.createElement("li");
+        elemento.className = "rounded-lg bg-vp-cream p-3 text-sm";
+        const marca = document.createElement("span");
+        marca.className = "font-bold text-vp-gold";
+        marca.textContent = "✓";
+        const texto = document.createTextNode(" " + servicio);
+
+        elemento.appendChild(marca);
+        elemento.appendChild(texto);
+        serviciosModal.appendChild(elemento);
     });
 
     modal.classList.remove("hidden");
     modal.classList.add("flex");
     document.body.classList.add("overflow-hidden");
-  }
+}
 
-  cerrarModal.addEventListener("click", function () {
+function cerrarModalPaquete() {
     modal.classList.add("hidden");
     modal.classList.remove("flex");
     document.body.classList.remove("overflow-hidden");
-  });
+}
 
-  modal.addEventListener("click", function (event) {
+botonCerrarModal.addEventListener("click", cerrarModalPaquete);
+modal.addEventListener("click", function(event) {
     if (event.target === modal) {
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-      document.body.classList.remove("overflow-hidden");
+        cerrarModalPaquete();
     }
-  });
+});
 
-  elegirPaquete.addEventListener("click", function () {
-    if (paqueteSeleccionado) {
-      selectPaquete.value = paqueteSeleccionado.nombre;
+botonElegirPaquete.addEventListener("click", function() {
+    if (paqueteSeleccionado === null) {
+        return;
     }
-
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-    document.body.classList.remove("overflow-hidden");
-
+    seleccionarPaquete.value = paqueteSeleccionado.nombre;
+    limpiarErrorCampo(seleccionarPaquete);
+    cerrarModalPaquete();
     document.querySelector("#contacto").scrollIntoView({ behavior: "smooth" });
-  });
+});
 
-  // =========================================================
-  // 5. GALERÍA / LIGHTBOX
-  // =========================================================
-  const lightbox = document.querySelector("#lightbox");
-  const lightboxImg = document.querySelector("#lightboxImg");
-  const cerrarLightbox = document.querySelector("#closeLightbox");
-  const imagenesGaleria = document.querySelectorAll("#galeria button");
-
-  imagenesGaleria.forEach(function (boton) {
-    boton.addEventListener("click", function () {
-      const imagen = boton.querySelector("img");
-      lightboxImg.src = imagen.src;
-      lightboxImg.alt = imagen.alt;
-      lightbox.classList.remove("hidden");
-      lightbox.classList.add("flex");
-      document.body.classList.add("overflow-hidden");
+// Ampliar las imágenes de la galería.
+document.querySelectorAll(".gallery-item").forEach(function(boton) {
+    boton.addEventListener("click", function() {
+        imagenGaleria.src = boton.getAttribute("data-src");
+        imagenGaleria.alt = boton.querySelector("img").alt;
+        galeria.classList.remove("hidden");
+        galeria.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
     });
-  });
+});
 
-  cerrarLightbox.addEventListener("click", function () {
-    lightbox.classList.add("hidden");
-    lightbox.classList.remove("flex");
+function cerrarGaleria() {
+    galeria.classList.add("hidden");
+    galeria.classList.remove("flex");
     document.body.classList.remove("overflow-hidden");
-  });
+}
 
-  lightbox.addEventListener("click", function (event) {
-    if (event.target === lightbox) {
-      lightbox.classList.add("hidden");
-      lightbox.classList.remove("flex");
-      document.body.classList.remove("overflow-hidden");
+botonCerrarGaleria.addEventListener("click", cerrarGaleria);
+galeria.addEventListener("click", function(event) {
+    if (event.target === galeria) {
+        cerrarGaleria();
     }
-  });
+});
 
-  // =========================================================
-  // 6. FORMULARIO: CAPTURA DE DATOS + VALIDACIÓN + WHATSAPP
-  // =========================================================
-  const formulario = document.querySelector("#solicitudForm");
-  const mensajeFormulario = document.querySelector("#formMessage");
-  const WHATSAPP_NUMBER = "506XXXXXXXX";
-
-  formulario.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const nombre = document.querySelector("#nombre").value.trim();
-    const telefono = document.querySelector("#telefono").value.trim();
-    const correo = document.querySelector("#correo").value.trim();
-    const fecha = document.querySelector("#fecha").value;
-    const personas = document.querySelector("#personas").value;
-    const paquete = document.querySelector("#paquete").value;
-    const mensaje = document.querySelector("#mensaje").value.trim();
-
-    const adicionalesSeleccionados = [];
-    const checks = document.querySelectorAll('input[name="adicional"]:checked');
-
-    checks.forEach(function (check) {
-      adicionalesSeleccionados.push(check.value);
-    });
-
-    if (!nombre || !telefono || !correo || !fecha || !personas || !paquete) {
-      mostrarMensaje("Por favor completá todos los campos obligatorios (*).", "error");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
-      mostrarMensaje("Ingresá un correo electrónico válido.", "error");
-      return;
-    }
-
-    const solicitud = {
-      nombre: nombre,
-      telefono: telefono,
-      correo: correo,
-      fecha: fecha,
-      personas: personas,
-      paquete: paquete,
-      adicionales: adicionalesSeleccionados,
-      mensaje: mensaje
-    };
-
-    console.log("Solicitud creada:");
-    console.log(solicitud);
-    console.log("Solicitud en JSON:");
-    console.log(JSON.stringify(solicitud, null, 2));
-
-    let texto = "Hola, Villa Peñas.\n\n";
-    texto += "Me gustaría solicitar información sobre un evento.\n\n";
-    texto += "Datos del cliente\n";
-    texto += "Nombre: " + solicitud.nombre + "\n";
-    texto += "Teléfono: " + solicitud.telefono + "\n";
-    texto += "Correo: " + solicitud.correo + "\n\n";
-    texto += "Datos del evento\n";
-    texto += "Fecha: " + solicitud.fecha + "\n";
-    texto += "Cantidad de personas: " + solicitud.personas + "\n";
-    texto += "Paquete: " + solicitud.paquete + "\n\n";
-    texto += "Adicionales\n";
-    texto += adicionalesSeleccionados.length > 0 ? adicionalesSeleccionados.join(", ") + "\n\n" : "Ninguno seleccionado\n\n";
-    texto += "Mensaje\n" + (solicitud.mensaje || "Sin mensaje adicional.");
-
-    if (WHATSAPP_NUMBER.indexOf("X") !== -1) {
-      mostrarMensaje("La solicitud fue capturada. Falta configurar el número oficial de WhatsApp en js/app.js.", "aviso");
-      formulario.reset();
-      return;
-    }
-
-    const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(texto);
-    mostrarMensaje("Solicitud preparada. Abriendo WhatsApp...", "exito");
-    window.open(url, "_blank");
-    formulario.reset();
-  });
-
-  function mostrarMensaje(texto, tipo) {
-    mensajeFormulario.classList.remove("hidden", "bg-red-50", "text-red-700", "bg-amber-50", "text-amber-800", "bg-green-50", "text-vp-green");
-
-    if (tipo === "error") {
-      mensajeFormulario.classList.add("bg-red-50", "text-red-700");
-    } else if (tipo === "aviso") {
-      mensajeFormulario.classList.add("bg-amber-50", "text-amber-800");
-    } else {
-      mensajeFormulario.classList.add("bg-green-50", "text-vp-green");
-    }
-
-    mensajeFormulario.textContent = texto;
-  }
-
-  // Fecha mínima usando la fecha local, no UTC.
-  function obtenerFechaLocal() {
+// Fecha mínima usando el día local del navegador.
+function fechaLocalHoy() {
     const hoy = new Date();
     const anio = hoy.getFullYear();
     const mes = String(hoy.getMonth() + 1).padStart(2, "0");
     const dia = String(hoy.getDate()).padStart(2, "0");
     return anio + "-" + mes + "-" + dia;
-  }
+}
 
-  document.querySelector("#fecha").min = obtenerFechaLocal();
+function mostrarMensaje(texto, tipo) {
+    mostrarAviso.className = "form-message form-message-" + tipo;
+    mostrarAviso.textContent = texto;
+}
 
-  // =========================================================
-  // 7. ENTRADA SUAVE DE ELEMENTOS AL CARGAR
-  // =========================================================
-  const elementosAnimados = document.querySelectorAll(".opacity-0.translate-y-4");
+function limpiarErrorCampo(campo) {
+    campo.setCustomValidity("");
+    campo.removeAttribute("aria-invalid");
+    campo.removeAttribute("aria-describedby");
+    mostrarAviso.classList.add("hidden");
+}
 
-  elementosAnimados.forEach(function (elemento, indice) {
-    setTimeout(function () {
-      elemento.classList.remove("opacity-0", "translate-y-4");
-      elemento.classList.add("opacity-100", "translate-y-0");
-    }, 1000 + (indice * 70));
-  });
-
+campos.forEach(function(campo) {
+    campo.addEventListener("input", function() {
+        limpiarErrorCampo(campo);
+    });
+    campo.addEventListener("change", function() {
+        limpiarErrorCampo(campo);
+    });
 });
+
+function existePaquete(nombre) {
+    let encontrado = false;
+    paquetes.forEach(function(paquete) {
+        if (paquete.nombre === nombre) {
+            encontrado = true;
+        }
+    });
+    return encontrado;
+}
+
+function validarCampo(campo) {
+    campo.setCustomValidity("");
+    const valor = campo.value.trim();
+
+    if (campo.required && valor === "") {
+        campo.setCustomValidity("Completá este campo obligatorio.");
+    } else if (campo.id === "telefono" && valor !== "") {
+        // Contar dígitos sin espacios, paréntesis ni guiones.
+        const digitos = valor.replace(/\D/g, "");
+        const formatoValido = /^\+?[\d\s()-]+$/.test(valor);
+        if (formatoValido === false || digitos.length < 8 || digitos.length > 15) {
+            campo.setCustomValidity("Ingresá un teléfono válido de 8 a 15 dígitos.");
+        }
+    } else if (campo.id === "correo" && valor !== "") {
+        const formatoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+        if (formatoValido === false) {
+            campo.setCustomValidity("Ingresá un correo electrónico válido.");
+        }
+    } else if (campo.id === "fecha" && valor !== "") {
+        const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(valor);
+        if (formatoValido === false || valor < fechaLocalHoy()) {
+            campo.setCustomValidity("Elegí la fecha de hoy o una fecha futura.");
+        }
+    } else if (campo.id === "personas" && valor !== "") {
+        const cantidad = Number(valor);
+        if (Number.isSafeInteger(cantidad) === false || cantidad < 1) {
+            campo.setCustomValidity("Ingresá una cantidad entera de personas mayor que cero.");
+        }
+    } else if (campo.id === "paquete" && valor !== "") {
+        if (existePaquete(valor) === false) {
+            campo.setCustomValidity("Seleccioná un paquete disponible.");
+        }
+    }
+
+    const valido = campo.validity.valid;
+    campo.setAttribute("aria-invalid", String(!valido));
+    if (valido === false) {
+        campo.setAttribute("aria-describedby", "formMessage");
+    } else {
+        campo.removeAttribute("aria-describedby");
+    }
+    return valido;
+}
+
+function validarFormulario() {
+    let primerError = null;
+    campos.forEach(function(campo) {
+        if (validarCampo(campo) === false && primerError === null) {
+            primerError = campo;
+        }
+    });
+
+    if (primerError !== null) {
+        const etiqueta = formulario.querySelector('label[for="' + primerError.id + '"]');
+        const nombreCampo = etiqueta.textContent.replace("*", "").trim();
+        mostrarMensaje(nombreCampo + ": " + primerError.validationMessage, "error");
+        primerError.focus({ preventScroll: true });
+        primerError.scrollIntoView({ block: "center", behavior: "auto" });
+        return false;
+    }
+    return true;
+}
+
+function obtenerAdicionalesSeleccionados() {
+    const seleccionados = [];
+    const casillas = formulario.querySelectorAll('input[name="adicional"]:checked');
+    casillas.forEach(function(casilla) {
+        seleccionados.push(casilla.value);
+    });
+    return seleccionados;
+}
+
+function crearMensajeSolicitud(solicitud) {
+    const fechaBonita = new Date(solicitud.fecha + "T12:00:00").toLocaleDateString("es-CR");
+    let texto = "Hola, Villa Peñas. 👋\n\n";
+    texto += "Me gustaría solicitar información sobre un evento.\n\n";
+    texto += "*Datos del cliente*\n";
+    texto += "Nombre: " + solicitud.nombre + "\n";
+    texto += "Teléfono: " + solicitud.telefono + "\n";
+    texto += "Correo: " + solicitud.correo + "\n\n";
+    texto += "*Datos del evento*\n";
+    texto += "Fecha: " + fechaBonita + "\n";
+    texto += "Cantidad de personas: " + solicitud.personas + "\n";
+    texto += "Paquete: " + solicitud.paquete + "\n\n";
+    texto += "*Adicionales*\n";
+
+    if (solicitud.adicionales.length === 0) {
+        texto += "Ninguno seleccionado\n";
+    } else {
+        solicitud.adicionales.forEach(function(adicional) {
+            texto += "• " + adicional + "\n";
+        });
+    }
+
+    texto += "\n*Mensaje*\n";
+    if (solicitud.mensaje === "") {
+        texto += "Sin mensaje adicional.\n\n";
+    } else {
+        texto += solicitud.mensaje + "\n\n";
+    }
+    texto += "Quedo atento/a a la información y disponibilidad.";
+    return texto;
+}
+
+function abrirWhatsApp(solicitud) {
+    const texto = crearMensajeSolicitud(solicitud);
+    if (/^[1-9]\d{7,14}$/.test(WHATSAPP_NUMBER) === false) {
+        mostrarMensaje(
+            "La solicitud está preparada, pero el envío por WhatsApp aún no está disponible. Podés comunicarte mediante los teléfonos de la sección Contactanos.",
+            "warning"
+        );
+        return;
+    }
+
+    const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(texto);
+    mostrarMensaje("Solicitud preparada. Confirmá el envío en WhatsApp.", "success");
+
+    // Mostrar un enlace por si el navegador bloquea la nueva pestaña.
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.target = "_blank";
+    enlace.rel = "noopener noreferrer";
+    enlace.className = "whatsapp-fallback";
+    enlace.textContent = "Abrir WhatsApp";
+    mostrarAviso.appendChild(document.createTextNode(" "));
+    mostrarAviso.appendChild(enlace);
+    window.open(url, "_blank", "noopener,noreferrer");
+}
+
+// Mantener la animación al desplazarse, con contenido visible como respaldo.
+function prepararAnimaciones() {
+    const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducirMovimiento || !("IntersectionObserver" in window)) {
+        return;
+    }
+
+    const observador = new IntersectionObserver(function(elementos) {
+        elementos.forEach(function(elemento) {
+            if (elemento.isIntersecting) {
+                elemento.target.classList.add("visible");
+                elemento.target.classList.remove("reveal-pending");
+                observador.unobserve(elemento.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(function(elemento) {
+        elemento.classList.add("reveal-pending");
+        observador.observe(elemento);
+    });
+}
+
+// Cargar los datos en el HTML al abrir la página.
+mostrarPaquetes();
+mostrarOpcionesPaquetes();
+mostrarAdicionales();
+mostrarOpcionesAdicionales();
+campoFecha.min = fechaLocalHoy();
+prepararAnimaciones();
