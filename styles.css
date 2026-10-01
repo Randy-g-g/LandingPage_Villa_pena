@@ -287,7 +287,7 @@ section[id] { scroll-margin-top: 96px; }
   text-decoration: none;
   transition: background .2s, color .2s;
 }
-.menu-link:hover { color: white; background: rgba(255,255,255,.1); }
+.menu-link:hover { background: transparent; }
 #menu { top: 84px; }
 
 .form-label {
@@ -375,3 +375,38 @@ textarea.form-input { resize: vertical; }
   #menu { display: flex; }
 }
 .form-input { scroll-margin-top: 120px; }
+/* Indicador animado del menú */
+.menu-indicator {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 36px;
+    border: 1px solid rgba(223, 206, 183, 0.7);
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-50%);
+    transition:
+        left 0.3s ease,
+        width 0.3s ease,
+        opacity 0.2s ease;
+    z-index: 0;
+}
+
+.menu-link {
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s ease;
+}
+
+.menu-link:hover {
+    color: #DFCEB7;
+}
+
+/* En celular no mostramos el indicador */
+@media (max-width: 1023px) {
+    .menu-indicator {
+        display: none;
+    }
+}
