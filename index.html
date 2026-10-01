@@ -39,9 +39,6 @@
 
   <!-- =========================================================
        TRANSICIÓN DE ENTRADA
-       Inspirada en la entrada de Nimbu: el logotipo aparece
-       centrado sobre un fondo limpio y la página se revela
-       progresivamente, pasando de desenfoque a nitidez.
        ========================================================= -->
   <div id="pageLoader" class="page-loader" aria-hidden="true">
     <div class="page-loader-inner">
@@ -60,7 +57,8 @@
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3" aria-label="Navegación principal">
 
       <a href="#inicio" class="flex items-center gap-2 text-white" aria-label="Villa Peñas inicio">
-        <img src="assets/villa-penas-logo_pages-to-jpg-0002.jpg" alt="" class="nav-logo" width="160" height="60">
+        <img src="assets/logo-villa-penas-principal.png.jpeg" alt="Logo Villa Peñas"
+         class="nav-logo h-14 w-14 rounded-full object-cover">
         <span class="font-display text-xl">Villa Peñas</span>
       </a>
 
@@ -76,8 +74,10 @@
         <span class="block h-0.5 w-6 bg-white"></span>
       </button>
 
-      <div id="menu" class="absolute left-3 right-3 top-[68px] hidden rounded-xl bg-vp-brown p-4 shadow-2xl lg:static lg:flex lg:items-center lg:gap-6 lg:p-0 lg:shadow-none">
-        <a class="menu-link" href="#inicio">Inicio</a>
+      <div id="menu" class="absolute left-3 right-3 top-[68px] hidden rounded-xl bg-vp-brown p-4 shadow-2xl lg:bg-transparent
+       lg:static lg:flex lg:items-center lg:gap-6 lg:p-0 lg:shadow-none">
+       <span id="menuIndicator" class="menu-indicator" aria-hidden="true"></span>
+        <a class="menu-link hover:text-vp-beige" href="#inicio">Inicio</a>
         <a class="menu-link" href="#nosotros">Villa Peñas</a>
         <a class="menu-link" href="#paquetes">Paquetes</a>
         <a class="menu-link" href="#adicionales">Adicionales</a>
@@ -101,7 +101,7 @@
 
           <a
             id="headerWhatsapp"
-            href="#contacto"
+            href="https://wa.me/50685048785"
             class="header-social-link"
             aria-label="WhatsApp de Villa Peñas"
             title="WhatsApp">
@@ -122,7 +122,7 @@
          ========================================================= -->
     <section id="inicio" class="relative flex min-h-[88vh] items-end overflow-hidden">
       <img
-        src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2000&q=85"
+        src="assets/hero-villa-penas.jpg.jpeg"
         alt="Espacio para celebrar eventos"
         class="absolute inset-0 h-full w-full object-cover">
 
@@ -136,8 +136,8 @@
           </p>
 
           <h1 class="reveal mt-3 font-display text-6xl leading-none text-white sm:text-7xl">
-            Celebra,<br>
-            comparte y disfruta.
+            BIENVENIDOS<br>
+            A VILLA PEÑAS.
           </h1>
 
           <p class="reveal mt-5 max-w-xl text-base leading-7 text-white/85 sm:text-lg">
@@ -170,7 +170,7 @@
             <h2 class="section-title">Un espacio para disfrutar tus momentos especiales.</h2>
 
             <p class="mt-5 leading-7">
-              Un espacio creado para disfrutar de tus momentos especiales. En Villa Peñas
+              Un lugar ideal para disfrutar de tus momentos especiales. En Villa Peñas
               podrás celebrar cumpleaños, reuniones familiares, baby showers y mucho más,
               con diferentes opciones de alquiler y servicios pensados para que disfrutes
               de cada ocasión junto a tus seres queridos.
@@ -178,36 +178,36 @@
 
             <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div class="feature-box">
-                <span>🏊</span>
+               
                 <strong>Piscina</strong>
               </div>
               <div class="feature-box">
-                <span>🍳</span>
+               
                 <strong>Cocina</strong>
               </div>
               <div class="feature-box">
-                <span>🛝</span>
+                
                 <strong>Playground</strong>
               </div>
               <div class="feature-box">
-                <span>📶</span>
-                <strong>Wi-Fi</strong>
+                
+                <strong>Salón</strong>
               </div>
             </div>
           </div>
 
           <div class="reveal grid grid-cols-2 gap-3">
             <img class="h-64 w-full rounded-2xl object-cover sm:h-72"
-              src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=900&q=85"
+              src="assets/Picina.jpeg"
               alt="Piscina de Villa Peñas">
             <img class="mt-8 h-64 w-full rounded-2xl object-cover sm:h-72"
-              src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=85"
-              alt="Área exterior">
-            <img class="h-48 w-full rounded-2xl object-cover sm:h-56"
-              src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=85"
+              src="assets/Parrila.jpeg "
               alt="Cocina equipada">
+            <img class="h-48 w-full rounded-2xl object-cover sm:h-56"
+              src="assets/Playground.jpeg "
+                   alt="Área exterior">
             <img class="mt-8 h-48 w-full rounded-2xl object-cover sm:h-56"
-              src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=900&q=85"
+              src="assets/Salon.jpeg"
               alt="Celebración">
           </div>
 
@@ -226,8 +226,7 @@
             <p class="eyebrow">Dónde encontrarnos</p>
             <h2 class="section-title text-4xl">Villa Peñas, Santa Cruz</h2>
             <p class="mt-4 text-sm leading-6">
-              Ubicación de referencia para el proyecto. La ubicación exacta del mapa
-              deberá ser reemplazada por la dirección confirmada por la persona dueña.
+              1 Km Sur de la entrada a Moya en • Chirco, 57-07, Santa Cruz, Costa Rica.
             </p>
             <a href="#contacto" class="mt-6 inline-flex rounded-full bg-vp-brown px-6 py-3 font-bold text-white">
               Consultar ubicación
@@ -237,7 +236,7 @@
           <div class="overflow-hidden rounded-2xl border-4 border-white shadow-xl reveal">
             <iframe
               title="Mapa de Villa Peñas"
-              src="https://www.google.com/maps?q=Santa+Cruz,+Guanacaste,+Costa+Rica&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.980537504071!2d-85.6370782244265!3d10.26315148985612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f9e35005aa3dd83%3A0x3820817c0ea3a659!2sVilla%20Pe%C3%B1as!5e0!3m2!1ses-419!2sus!4v1790813754946!5m2!1ses-419!2sus"
               class="h-[340px] w-full border-0"
               loading="lazy">
             </iframe>
@@ -264,27 +263,23 @@
 
         <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <article class="info-card reveal">
-            <span class="info-icon">🏊</span>
             <h3>Piscina</h3>
             <p>Un espacio para refrescarte y disfrutar tu visita.</p>
           </article>
 
           <article class="info-card reveal">
-            <span class="info-icon">🍳</span>
             <h3>Cocina equipada</h3>
-            <p>Disfrutá de un espacio equipado para preparar y compartir alimentos.</p>
+            <p>Cuenta con cocina y parrilla, para preparar y compartir alimentos.</p>
           </article>
 
           <article class="info-card reveal">
-            <span class="info-icon">🎵</span>
             <h3>Sonido y micrófonos</h3>
-            <p>Opciones de sonido para complementar tus celebraciones.</p>
+            <p>Equipos de sonido y micrófono para acompañar tus celebraciones.</p>
           </article>
 
           <article class="info-card reveal">
-            <span class="info-icon">🌳</span>
             <h3>Espacio exclusivo</h3>
-            <p>Un lugar para disfrutar del rancho y sus áreas durante el evento.</p>
+            <p>Un espacion para que los niños puedan disfrutar.</p>
           </article>
         </div>
       </div>

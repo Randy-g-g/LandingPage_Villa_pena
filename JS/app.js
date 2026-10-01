@@ -33,7 +33,7 @@ let paqueteSeleccionado = null;
 
 // Se conserva pendiente hasta confirmar el WhatsApp oficial.
 // Los teléfonos existentes son 8537-3750 y 8850-7712.
-const WHATSAPP_NUMBER = "506XXXXXXXX";
+const WHATSAPP_NUMBER = "50685048785";
 
 // Escuchamos el formulario, igual que en el ejercicio de productos.
 formulario.addEventListener("submit", function(event) {
@@ -212,6 +212,21 @@ document.querySelectorAll(".menu-link").forEach(function(enlace) {
         menu.classList.remove("mobile-open");
         botonMenu.setAttribute("aria-expanded", "false");
     });
+});
+// Indicador animado del menú
+const indicadorMenu = document.querySelector("#menuIndicator");
+const enlacesMenu = document.querySelectorAll(".menu-link");
+
+enlacesMenu.forEach(function(enlace) {
+    enlace.addEventListener("mouseenter", function() {
+        indicadorMenu.style.left = enlace.offsetLeft + "px";
+        indicadorMenu.style.width = enlace.offsetWidth + "px";
+        indicadorMenu.style.opacity = "1";
+    });
+});
+
+menu.addEventListener("mouseleave", function() {
+    indicadorMenu.style.opacity = "0";
 });
 
 // Ventana con los detalles del paquete.
