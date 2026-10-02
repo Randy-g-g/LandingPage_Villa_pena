@@ -1,44 +1,23 @@
 
-/*
- * DATOS DE VILLA PEÑAS
- * Se utilizan arreglos de objetos para cumplir con el requisito
- * de mostrar información dinámicamente mediante JavaScript.
- *
- * Los nombres y servicios de los tres paquetes "Básico", "Full"
- * y "Premium" se basan en la referencia visual proporcionada
- * por el cliente.
- *
- * Los documentos proporcionados también contienen información
- * de paquetes "Essentials" y "Premium"; esos datos podrán
- * integrarse cuando el cliente confirme la nomenclatura definitiva.
- */
+/*Datos de paquetes Villa peñas*/
 
 const paquetes = [
   {
     id: 1,
-    nombre: "Paquete Básico",
+    nombre: "Paquete Essentials",
     descripcion: "Una opción sencilla para disfrutar del rancho y compartir con tus invitados.",
     servicios: [
       "Uso de rancho",
       "Piscina",
-      "Palomitas",
-      "Algodón de azúcar"
+      "Cocina equipada",
+      "Playground",
+      "Trampolín",
+      "Wi-Fi"
     ]
   },
+
   {
     id: 2,
-    nombre: "Paquete Full",
-    descripcion: "Una alternativa con servicios adicionales para complementar tu celebración.",
-    servicios: [
-      "Uso de rancho",
-      "Piscina",
-      "Parrilla BBQ",
-      "Palomitas",
-      "Algodón de azúcar"
-    ]
-  },
-  {
-    id: 3,
     nombre: "Paquete Premium",
     descripcion: "Una opción más completa con entretenimiento y productos adicionales.",
     servicios: [
