@@ -15,14 +15,12 @@
         extend: {
           colors: {
             vp: {
-              white: "#FBF9F5",
-              brown: "#321D0E",
-              gold: "#B6781E",
-              beige: "#DFCEB7",
-              cream: "#F3EEE5",
-              text: "#493428",
-              green: "#157F3C",
-              terracotta: "#A4563E"
+              white: "#FFFFFF",
+              brown: "#2B190D",
+              gold: "#B77A20",
+              beige: "#EADBC6",
+              cream: "#F7F0E5",
+              text: "#2F1709"
             }
           },
           fontFamily: {
@@ -228,9 +226,7 @@
             <p class="mt-4 text-sm leading-6">
               1 Km Sur de la entrada a Moya en • Chirco, 57-07, Santa Cruz, Costa Rica.
             </p>
-            <a href="https://www.google.com/maps/place/Villa+Peñas/@10.2631515,-85.6345033,17z/data=!3m1!4b1!4m6!3m5!1s0x8f9e35005aa3dd83:0x3820817c0ea3a659!8m2!3d10.2631515!4d-85.6345033!16s%2Fg%2F11zcry24l7!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDkyOS4wIKXMDSoASAFQAw%3D%3D" class="mt-6 inline-flex rounded-full bg-vp-brown px-6 py-3 font-bold text-white">
-              Consultar ubicación
-            </a>
+           
           </div>
 
           <div class="overflow-hidden rounded-2xl border-4 border-white shadow-xl reveal">
@@ -473,6 +469,16 @@
               <div>
                 <label for="fecha" class="form-label">Fecha del evento *</label>
                 <input id="fecha" name="fecha" type="date" class="form-input" required>
+              </div>
+
+              <div>
+                <label for="horaInicio" class="form-label">Hora de Entrada <span class="text-rose-500">*</span></label>
+                <input id="horaInicio" name="horaInicio" type="time" max="18:00" class="form-input" required>
+              </div>
+
+              <div>
+                <label for="horaFinal" class="form-label">Hora de Salida<span class="text-rose-500">*</span></label>
+                <input id="horaFinal" name="horaFinal" type="time" class="form-input" readonly>
               </div>
 
               <div>
