@@ -120,76 +120,110 @@ const paquetes = [
 ];
 
 const adicionales = [
-  {
-    id: 1,
-    categoria: "Palomitas",
-    paquete: "Paquete #1",
-    cantidad: "15 porciones",
-    detalle: "15 bolsitas individuales",
-    precio: 10000
-  },
-  {
-    id: 2,
-    categoria: "Palomitas",
-    paquete: "Paquete #2",
-    cantidad: "30 porciones",
-    detalle: "30 bolsitas individuales",
-    precio: 15000
-  },
-  {
-    id: 3,
-    categoria: "Palomitas",
-    paquete: "Paquete #3",
-    cantidad: "50 porciones",
-    detalle: "50 bolsitas individuales",
-    precio: 20000
-  },
-  {
-    id: 4,
-    categoria: "Algodón de azúcar",
-    paquete: "Paquete #1",
-    cantidad: "15 porciones",
-    detalle: "15 envases de 24 oz.",
-    precio: 10000
-  },
-  {
-    id: 5,
-    categoria: "Algodón de azúcar",
-    paquete: "Paquete #2",
-    cantidad: "30 porciones",
-    detalle: "30 envases de 24 oz.",
-    precio: 15000
-  },
-  {
-    id: 6,
-    categoria: "Algodón de azúcar",
-    paquete: "Paquete #3",
-    cantidad: "50 porciones",
-    detalle: "50 envases de 24 oz.",
-    precio: 22000
-  },
-  {
-    id: 7,
-    categoria: "Fuente de chocolate",
-    paquete: "Paquete #1",
-    cantidad: "15 personas",
-    detalle: "Fuente + 18 pinchos",
-    precio: 30000
-  },
-  {
-    id: 8,
-    categoria: "Fuente de chocolate",
-    paquete: "Paquete #2",
-    cantidad: "30 personas",
-    detalle: "Fuente + 36 pinchos",
-    precio: 35000
-  },
-  {
-    id: 9,
-    categoria: "Fuente de chocolate",
-    paquete: "Paquete #3",
-    cantidad: "50 personas",
-    detalle: "Fuente + 55 pinchos",
-    precio: 40000
-  }
+
+    {
+        id: 1,
+        categoria: "Palomitas de maíz",
+        descripcion: "Preparación y servicio de palomitas recién hechas durante el evento.",
+        paquetes: [
+            {
+                id: 1,
+                nombre: "Paquete #1",
+                cantidad: "15 porciones para 15 personas",
+                detalle: "15 bolsitas individuales, ya sea en papel o en bolsa transparente",
+                precio: 10000
+            },
+            {
+                id: 2,
+                nombre: "Paquete #2",
+                cantidad: "30 porciones para 30 personas",
+                detalle: "30 bolsitas individuales, ya sea en papel o en bolsa transparente",
+                precio: 15000
+            },
+            {
+                id: 3,
+                nombre: "Paquete #3",
+                cantidad: "50 porciones para 50 personas",
+                detalle: "50 bolsitas individuales, ya sea en papel o en bolsa transparente",
+                precio: 20000
+            }
+        ]
+    },
+
+
+    {
+        id: 2,
+        categoria: "Algodón de azúcar",
+        descripcion: "Preparación de algodón de azúcar servido individualmente durante el evento.",
+        paquetes: [
+            {
+                id: 1,
+                nombre: "Paquete #1",
+                cantidad: "15 porciones para 15 personas",
+                detalle: "15 envases plásticos transparentes de 24 oz.",
+                precio: 10000
+            },
+            {
+                id: 2,
+                nombre: "Paquete #2",
+                cantidad: "30 porciones para 30 personas",
+                detalle: "30 envases plásticos transparentes de 24 oz.",
+                precio: 15000
+            },
+            {
+                id: 3,
+                nombre: "Paquete #3",
+                cantidad: "50 porciones para 50 personas",
+                detalle: "50 envases plásticos transparentes de 24 oz.",
+                precio: 22000
+            }
+        ]
+    },
+
+
+    {
+        id: 3,
+        categoria: "Fuente de chocolate",
+        descripcion: "Servicio de fuente de chocolate con acompañamientos de pinchos de marshmallow para los asistentes.",
+        paquetes: [
+            {
+                id: 1,
+                nombre: "Paquete #1",
+                cantidad: "Para 15 personas",
+                detalle: "18 porciones",
+                precio: 30000
+            },
+            {
+                id: 2,
+                nombre: "Paquete #2",
+                cantidad: "Para 30 personas",
+                detalle: "36 porciones",
+                precio: 35000
+            },
+            {
+                id: 3,
+                nombre: "Paquete #3",
+                cantidad: "Para 50 personas",
+                detalle: "55 porciones",
+                precio: 40000
+            }
+        ]
+    },
+
+
+    {
+        id: 4,
+        categoria: "Adicional por personas",
+        descripcion: "Cargo adicional cuando la cantidad de personas supera las porciones establecidas en el paquete seleccionado.",
+        paquetes: [
+            {
+                id: 1,
+                nombre: "Paquete #1",
+                cantidad: "20 porciones adicionales",
+                detalle: "Se aplica cuando la cantidad de asistentes supera las porciones incluidas en el paquete contratado.",
+                precio: 20000
+            }
+        ]
+    }
+
 ];

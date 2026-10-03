@@ -5,7 +5,7 @@
 // Buscamos los elementos del HTML.
 const formulario = document.querySelector("#solicitudForm");
 const listaPaquetes = document.querySelector("#paquetesContainer");
-const listaAdicionales = document.querySelector("#adicionalesContainer");
+const contenedorAdicionales = document.querySelector("#adicionalesContainer");
 const opcionesAdicionales = document.querySelector("#checksAdicionales");
 const seleccionarPaquete = document.querySelector("#paquete");
 const mostrarAviso = document.querySelector("#formMessage");
@@ -32,7 +32,7 @@ const galeriaExtra = document.querySelector("#galeriaExtra");
 const botonVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
-
+let adicionalesSeleccionados = [];
 // Se conserva pendiente hasta confirmar el WhatsApp oficial.
 // Los teléfonos existentes son 8537-3750 y 8850-7712.
 const WHATSAPP_NUMBER = "50685048785";
@@ -142,69 +142,287 @@ function mostrarOpcionesPaquetes() {
     });
 }
 
-function mostrarAdicionales() {
-    listaAdicionales.innerHTML = "";
+function mostrarAdicionales(){
+      contenedorAdicionales.innerHTML = "";
 
     adicionales.forEach(function(adicional) {
-        const tarjeta = document.createElement("article");
-        tarjeta.className = "additional-card reveal";
-        const encabezado = document.createElement("div");
-        encabezado.className = "additional-head";
-        const categoria = document.createElement("p");
-        categoria.className = "text-[9px] font-bold uppercase tracking-wider text-vp-gold";
-        categoria.textContent = adicional.categoria;
+        const seccion = document.createElement("div");
+        seccion.className = "mb-10";
         const titulo = document.createElement("h3");
-        titulo.textContent = adicional.paquete;
-        const detalles = document.createElement("ul");
-        const cantidad = document.createElement("li");
-        const textoCantidad = document.createElement("strong");
-        textoCantidad.textContent = "• " + adicional.cantidad;
-        cantidad.appendChild(textoCantidad);
-        const detalle = document.createElement("li");
-        detalle.textContent = "• " + adicional.detalle;
-        const precio = document.createElement("p");
-        precio.className = "price";
-        precio.textContent = "₡" + adicional.precio.toLocaleString("es-CR");
 
-        encabezado.appendChild(categoria);
-        encabezado.appendChild(titulo);
-        detalles.appendChild(cantidad);
-        detalles.appendChild(detalle);
-        tarjeta.appendChild(encabezado);
-        tarjeta.appendChild(detalles);
-        tarjeta.appendChild(precio);
-        listaAdicionales.appendChild(tarjeta);
+        titulo.className =
+            "text-2xl font-bold text-vp-text";
+        titulo.textContent = adicional.categoria;
+        const descripcion = document.createElement("p");
+
+        descripcion.className =
+            "mt-2 max-w-2xl text-sm text-vp-text/70";
+        descripcion.textContent = adicional.descripcion;
+
+        const contenedorPaquetesAdicional = document.createElement("div");
+
+        contenedorPaquetesAdicional.className =
+            "mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3";
+
+        adicional.paquetes.forEach(function(paquete) {
+            const tarjeta = document.createElement("article");
+
+            tarjeta.className =
+                "rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm";
+            const nombre = document.createElement("h4");
+
+            nombre.className =
+                "text-lg font-bold text-vp-text";
+
+            nombre.textContent = paquete.nombre;
+            const cantidad = document.createElement("p");
+
+            cantidad.className =
+                "mt-2 text-sm text-vp-text/70";
+
+            cantidad.textContent = paquete.cantidad;
+            const detalle = document.createElement("p");
+
+            detalle.className =
+                "mt-1 text-sm text-vp-text/70";
+
+            detalle.textContent = paquete.detalle;
+            const precio = document.createElement("p");
+
+            precio.className =
+                "mt-4 text-lg font-bold text-vp-brown";
+
+            precio.textContent =
+                "₡" + paquete.precio.toLocaleString("es-CR");
+            const boton = document.createElement("button");
+
+            boton.type = "button";
+
+            boton.className =
+                "package-button mt-4 w-full";
+
+            boton.textContent =
+                "Agregar al formulario";
+
+            boton.setAttribute(
+                "data-adicional-id",
+                adicional.id
+            );
+
+            boton.setAttribute(
+                "data-paquete-id",
+                paquete.id
+            );
+        
+            boton.addEventListener("click", function() {
+
+                seleccionarAdicional(adicional, paquete);
+
+            });
+            tarjeta.appendChild(nombre);
+            tarjeta.appendChild(cantidad);
+            tarjeta.appendChild(detalle);
+            tarjeta.appendChild(precio);
+            tarjeta.appendChild(boton);
+            contenedorPaquetesAdicional.appendChild(tarjeta);
+
+        });
+
+
+        // Agregar todo el servicio
+        seccion.appendChild(titulo);
+        seccion.appendChild(descripcion);
+        seccion.appendChild(contenedorPaquetesAdicional);
+
+        contenedorAdicionales.appendChild(seccion);
     });
 }
 
 function mostrarOpcionesAdicionales() {
-    opcionesAdicionales.innerHTML = "";
-    const categorias = [];
 
-    // Guardamos cada categoría una sola vez en el arreglo.
-    adicionales.forEach(function(adicional) {
-        if (categorias.indexOf(adicional.categoria) === -1) {
-            categorias.push(adicional.categoria);
-        }
+    mostrarAdicionalesSeleccionados();
+
+}
+
+function seleccionarAdicional(adicional, paquete) {
+
+    const seleccionado = {
+        adicionalId: adicional.id,
+        paqueteId: paquete.id
+    };
+
+
+    const indice = adicionalesSeleccionados.findIndex(function(elemento) {
+
+        return elemento.adicionalId === adicional.id &&
+               elemento.paqueteId === paquete.id;
+
     });
 
-    categorias.forEach(function(categoria) {
-        const etiqueta = document.createElement("label");
-        etiqueta.className = "flex cursor-pointer items-center gap-2 rounded-lg border border-vp-beige bg-vp-white p-2 text-xs";
-        const casilla = document.createElement("input");
-        casilla.type = "checkbox";
-        casilla.name = "adicional";
-        casilla.value = categoria;
-        casilla.className = "h-4 w-4 accent-[#321D0E]";
-        const texto = document.createElement("span");
-        texto.textContent = categoria;
 
-        etiqueta.appendChild(casilla);
-        etiqueta.appendChild(texto);
-        opcionesAdicionales.appendChild(etiqueta);
+    if (indice === -1) {
+
+        adicionalesSeleccionados.push(seleccionado);
+
+    } else {
+
+        adicionalesSeleccionados.splice(indice, 1);
+    }
+
+
+    mostrarAdicionalesSeleccionados();
+
+    actualizarBotonAdicional(
+        adicional.id,
+        paquete.id
+    );
+}
+
+function mostrarAdicionalesSeleccionados() {
+
+    opcionesAdicionales.innerHTML = "";
+
+
+    if (adicionalesSeleccionados.length === 0) {
+
+        const texto = document.createElement("p");
+
+        texto.className =
+            "text-sm text-vp-text/60";
+
+        texto.textContent =
+            "No has seleccionado adicionales.";
+
+        opcionesAdicionales.appendChild(texto);
+
+        return;
+    }
+
+
+    adicionalesSeleccionados.forEach(function(seleccionado) {
+
+        const adicional = adicionales.find(function(elemento) {
+
+            return elemento.id === seleccionado.adicionalId;
+
+        });
+
+
+        if (!adicional) {
+            return;
+        }
+
+
+        const paquete = adicional.paquetes.find(function(elemento) {
+
+            return elemento.id === seleccionado.paqueteId;
+
+        });
+
+
+        if (!paquete) {
+            return;
+        }
+
+
+        const elemento = document.createElement("div");
+
+        elemento.className =
+            "flex items-center justify-between rounded-lg border border-vp-beige bg-vp-white p-3 text-sm";
+
+
+        const texto = document.createElement("span");
+
+        texto.textContent =
+            "✓ " +
+            adicional.categoria +
+            " · " +
+            paquete.nombre;
+
+
+        const boton = document.createElement("button");
+
+        boton.type = "button";
+
+        boton.textContent = "×";
+
+        boton.className =
+            "ml-3 font-bold text-vp-brown";
+
+
+        boton.addEventListener("click", function() {
+
+            quitarAdicional(
+                adicional.id,
+                paquete.id
+            );
+
+        });
+
+
+        elemento.appendChild(texto);
+        elemento.appendChild(boton);
+
+        opcionesAdicionales.appendChild(elemento);
     });
 }
 
+function quitarAdicional(adicionalId, paqueteId) {
+
+    const indice = adicionalesSeleccionados.findIndex(function(elemento) {
+
+        return elemento.adicionalId === adicionalId &&
+               elemento.paqueteId === paqueteId;
+
+    });
+
+
+    if (indice !== -1) {
+
+        adicionalesSeleccionados.splice(indice, 1);
+    }
+
+
+    mostrarAdicionalesSeleccionados();
+
+    actualizarBotonAdicional(
+        adicionalId,
+        paqueteId
+    );
+}
+
+function actualizarBotonAdicional(adicionalId, paqueteId) {
+
+    const boton = document.querySelector(
+        '[data-adicional-id="' +
+        adicionalId +
+        '"][data-paquete-id="' +
+        paqueteId +
+        '"]'
+    );
+
+
+    if (boton) {
+
+        const seleccionado =
+            adicionalesSeleccionados.some(function(elemento) {
+
+                return elemento.adicionalId === adicionalId &&
+                       elemento.paqueteId === paqueteId;
+
+            });
+
+
+        if (seleccionado) {
+
+            boton.textContent = "Agregado ✓";
+
+        } else {
+
+            boton.textContent = "Agregar al formulario";
+        }
+    }
+}
 // Menú de celulares.
 botonMenu.addEventListener("click", function() {
     const abierto = menu.classList.toggle("mobile-open");
@@ -514,11 +732,53 @@ function validarFormulario() {
 }
 
 function obtenerAdicionalesSeleccionados() {
+
     const seleccionados = [];
-    const casillas = formulario.querySelectorAll('input[name="adicional"]:checked');
-    casillas.forEach(function(casilla) {
-        seleccionados.push(casilla.value);
+
+
+    adicionalesSeleccionados.forEach(function(seleccionado) {
+
+        const adicional = adicionales.find(function(elemento) {
+
+            return elemento.id === seleccionado.adicionalId;
+
+        });
+
+
+        if (!adicional) {
+            return;
+        }
+
+
+        const paquete = adicional.paquetes.find(function(elemento) {
+
+            return elemento.id === seleccionado.paqueteId;
+
+        });
+
+
+        if (!paquete) {
+            return;
+        }
+
+
+        seleccionados.push({
+
+            categoria: adicional.categoria,
+
+            paquete: paquete.nombre,
+
+            cantidad: paquete.cantidad,
+
+            detalle: paquete.detalle,
+
+            precio: paquete.precio
+
+        });
+
     });
+
+
     return seleccionados;
 }
 
@@ -538,14 +798,25 @@ function crearMensajeSolicitud(solicitud) {
     texto += "Paquete: " + solicitud.paquete + "\n\n";
     texto += "*Adicionales*\n";
 
-    if (solicitud.adicionales.length === 0) {
-        texto += "Ninguno seleccionado\n";
-    } else {
-        solicitud.adicionales.forEach(function(adicional) {
-            texto += "• " + adicional + "\n";
-        });
-    }
+   if (solicitud.adicionales.length === 0) {
 
+    texto += "Ninguno seleccionado\n";
+
+} else {
+
+    solicitud.adicionales.forEach(function(adicional) {
+
+        texto +=
+            "• " +
+            adicional.categoria +
+            " - " +
+            adicional.paquete +
+            " - ₡" +
+            adicional.precio.toLocaleString("es-CR") +
+            "\n";
+
+    });
+}
     texto += "\n*Mensaje*\n";
     if (solicitud.mensaje === "") {
         texto += "Sin mensaje adicional.\n\n";
