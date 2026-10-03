@@ -343,8 +343,6 @@ textarea.form-input { resize: vertical; }
 .package-button:hover { background: var(--gold); }
 .price { margin-top: 16px; color: var(--gold); font-size: 1.25rem; font-weight: bold; }
 .eyebrow { color: var(--gold); font-size: .75rem; font-weight: bold; text-transform: uppercase; letter-spacing: .25em; }
-.contact-pill { display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 8px 16px; color: white; background: rgba(255,255,255,.1); font-size: .875rem; font-weight: bold; text-decoration: none; }
-.contact-pill:hover { color: var(--brown); background: white; }
 .avatar { display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 50%; background: var(--brown); color: white; font-weight: bold; }
 
 @media (max-width: 639px) {
