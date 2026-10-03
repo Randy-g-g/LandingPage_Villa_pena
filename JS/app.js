@@ -1,17 +1,20 @@
 // buscamos los elementos del HTML.
 const formulario = document.querySelector("#solicitudForm");
+//paquetes y adicionales
 const listaPaquetes = document.querySelector("#paquetesContainer");
 const contenedorAdicionales = document.querySelector("#adicionalesContainer");
 const opcionesAdicionales = document.querySelector("#checksAdicionales");
 const seleccionarPaquete = document.querySelector("#paquete");
 const mostrarAviso = document.querySelector("#formMessage");
 const campos = formulario.querySelectorAll(".form-input");
+//formulario
 const campoNombre = document.querySelector("#nombre");
 const campoTelefono = document.querySelector("#telefono");
 const campoCorreo = document.querySelector("#correo");
 const campoFecha = document.querySelector("#fecha");
 const campoPersonas = document.querySelector("#personas");
 const campoMensaje = document.querySelector("#mensaje");
+const acepta = document.querySelector("#acepta");
 const botonMenu = document.querySelector("#menuButton");
 const menu = document.querySelector("#menu");
 const modal = document.querySelector("#modal");
@@ -34,9 +37,8 @@ const botonVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
 let adicionalesSeleccionados = [];
-// se conserva pendiente hasta confirmar el WhatsApp oficial.
-// los teléfonos existentes son 8537-3750 y 8850-7712.
-const WHATSAPP_NUMBER = "50685048785";
+// se conserva pendiente hasta confirmar el WhatsApp oficial, este numero de momento es de prueba.
+const WHATSAPP_NUMBER = "50660121469";
 
 // escuchamos el formulario.
 formulario.addEventListener("submit", function(event) {
@@ -72,7 +74,8 @@ formulario.addEventListener("submit", function(event) {
         personas: personas,
         paquete: paquete,
         adicionales: seleccionados,
-        mensaje: mensaje
+        mensaje: mensaje,
+        acepta: acepta.checked
     };
 
     abrirWhatsApp(solicitud);
@@ -824,6 +827,7 @@ function crearMensajeSolicitud(solicitud) {
     } else {
         texto += solicitud.mensaje + "\n\n";
     }
+    texto += "Indicaciones sobre la reserva: El cliente confirma haberlas leído.\n";
     texto += "Quedo atento/a a la información y disponibilidad.";
     return texto;
 }
