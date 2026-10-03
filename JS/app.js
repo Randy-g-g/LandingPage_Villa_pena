@@ -202,7 +202,7 @@ function mostrarAdicionales(){
                 "package-button mt-4 w-full";
 
             boton.textContent =
-                "Agregar al formulario";
+                "Solicitar este adicional";
 
             boton.setAttribute(
                 "data-adicional-id",
@@ -560,7 +560,7 @@ const fotosGaleria = [
     {src:"assets/Corazon.JPG", descripcion: "Mesas interiores, Villa Peña"},
     {src:"assets/SillasAltas.JPG", descripcion: "Sillas altas, Villa Peña"},
     {src:"assets/Entretenimiento.JPG", descripcion: "Entretenimiento, Villa Peña"},
-    {src:"assets/Entretenimiento(1).JPGG", descripcion: "Entretenmiento, Villa Peña"},
+    {src:"assets/Entretenimiento(1).JPG", descripcion: "Entretenimiento, Villa Peña"},
     {src:"assets/Piscina(1).JPG", descripcion: "Area piscina, Villa Peña"},
     {src:"assets/Piscina(2).JPG", descripcion: "Area piscina, Villa Peña"},
     {src:"assets/Piscina(3).JPG", descripcion: "Area piscina, Villa Peña"},
