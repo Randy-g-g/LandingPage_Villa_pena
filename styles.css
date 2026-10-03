@@ -6,9 +6,6 @@
     --beige: #EADBC6;
     --cream: #F7F0E5;
     --text: #2F1709;
-    
-  --green: #157F3C;
-  --terracotta: #A4563E;
 }
 
 body {
@@ -20,11 +17,9 @@ html {
 }
 
 
-/* =========================================================
-   TRANSICIÓN DE ENTRADA — VETAS CAFÉ SUAVES
+/* TRANSICIÓN DE ENTRADA — VETAS CAFÉ SUAVES
    Inspiración: mármol fluido en blanco y café, con un
-   movimiento muy sutil para no competir con el logotipo.
-   ========================================================= */
+   movimiento muy sutil para no competir con el logotipo. */
 .page-loader {
   position: fixed;
   inset: 0;
@@ -187,9 +182,7 @@ body > footer {
   }
 }
 
-/* =========================================================
-   ICONOS SOCIALES DEL HEADER — estilo inspirado en Nimbu
-   ========================================================= */
+/* ICONOS SOCIALES DEL HEADER */
 .header-socials {
   display: flex;
   align-items: center;
@@ -298,19 +291,7 @@ section[id] { scroll-margin-top: 96px; }
   font-size: .875rem;
   font-weight: 700;
 }
-.form-input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  border: 1px solid var(--beige);
-  border-radius: 12px;
-  background: var(--white);
-  padding: 12px 16px;
-  color: var(--text);
-  font: inherit;
-  font-size: .875rem;
-  transition: border-color .2s, box-shadow .2s;
-}
+
 textarea.form-input { resize: vertical; }
 .form-input:focus {
   outline: 2px solid var(--gold);
@@ -342,7 +323,6 @@ textarea.form-input { resize: vertical; }
 .package-button { width: 100%; margin-top: 20px; border: 0; border-radius: 12px; padding: 12px; background: var(--brown); color: white; font-weight: bold; cursor: pointer; }
 .package-button:hover { background: var(--gold); }
 .price { margin-top: 16px; color: var(--gold); font-size: 1.25rem; font-weight: bold; }
-.eyebrow { color: var(--gold); font-size: .75rem; font-weight: bold; text-transform: uppercase; letter-spacing: .25em; }
 .avatar { display: flex; width: 40px; height: 40px; align-items: center; justify-content: center; border-radius: 50%; background: var(--brown); color: white; font-weight: bold; }
 
 @media (max-width: 639px) {
@@ -358,7 +338,6 @@ textarea.form-input { resize: vertical; }
   .reveal, .reveal-pending { opacity: 1; transform: none; transition: none; }
 }
 
-.section-title { margin-top: 8px; color: var(--brown); font-family: Georgia, serif; font-size: 2.5rem; line-height: 1.15; }
 .feature-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--beige); border-radius: 12px; background: var(--cream); padding: 16px; text-align: center; }
 .info-card, .testimonial-card { border: 1px solid var(--beige); border-radius: 16px; background: var(--white); padding: 20px; box-shadow: 0 2px 8px rgba(50,29,14,.06); }
 .info-icon { font-size: 1.875rem; }
