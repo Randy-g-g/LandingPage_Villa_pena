@@ -409,3 +409,12 @@ textarea.form-input { resize: vertical; }
         display: none;
     }
 }
+#adicionalesContainer h3 {
+    color: var(--gold);
+}
+#adicionalesContainer article {
+    background: var(--cream);
+}
+#adicionalesContainer article p:last-of-type {
+    color: var(--gold);
+}

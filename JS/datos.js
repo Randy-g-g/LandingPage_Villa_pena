@@ -1,16 +1,6 @@
 
 /*
- * DATOS DE VILLA PEÑAS
- * Se utilizan arreglos de objetos para cumplir con el requisito
- * de mostrar información dinámicamente mediante JavaScript.
- *
- * Los nombres y servicios de los tres paquetes "Básico", "Full"
- * y "Premium" se basan en la referencia visual proporcionada
- * por el cliente.
- *
- * Los documentos proporcionados también contienen información
- * de paquetes "Essentials" y "Premium"; esos datos podrán
- * integrarse cuando el cliente confirme la nomenclatura definitiva.
+ * Paquetes dE Villa Peñas
  */
 
 const paquetes = [
@@ -189,21 +179,21 @@ const adicionales = [
             {
                 id: 1,
                 nombre: "Paquete #1",
-                cantidad: "Para 15 personas",
+                cantidad: "15 porciones para 15 personas",
                 detalle: "18 porciones",
                 precio: 30000
             },
             {
                 id: 2,
                 nombre: "Paquete #2",
-                cantidad: "Para 30 personas",
+                cantidad: "30 porciones para 30 personas",
                 detalle: "36 porciones",
                 precio: 35000
             },
             {
                 id: 3,
                 nombre: "Paquete #3",
-                cantidad: "Para 50 personas",
+                cantidad: "50 porciones para 50 personas",
                 detalle: "55 porciones",
                 precio: 40000
             }
