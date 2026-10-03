@@ -512,13 +512,54 @@
               <textarea id="mensaje" name="mensaje" rows="4" class="form-input" placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
             </div>
 
-            <button type="submit" class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold">
-              Enviar solicitud por WhatsApp
-            </button>
+            <div class="mt-5 rounded-2xl border border-vp-gold bg-white p-5">
+  <p class="font-bold text-vp-brown">Importante</p>
 
-            <p class="mt-3 text-center text-xs text-vp-text/60">
-              * Campos obligatorios. El envío no confirma una reserva.
-            </p>
+  <p class="mt-1 text-sm leading-6 text-vp-text/80">
+    Una vez recibidos y revisados los datos proporcionados, se contactará
+    para confirmar la disponibilidad y los detalles de la reserva.
+    Una vez confirmada, se solicitará un adelanto para formalizar la reserva.
+  </p>
+</div>
+
+<div class="mt-5">
+  <label
+    for="acepta"
+    class="flex cursor-pointer items-start gap-3 rounded-2xl border border-vp-beige bg-white p-5 transition hover:border-vp-gold"
+  >
+    <input
+      id="acepta"
+      name="acepta"
+      type="checkbox"
+      required
+      class="mt-1 h-5 w-5 accent-vp-gold"
+    >
+
+    <span class="block font-bold text-vp-brown">
+      He leído las indicaciones sobre la reserva.
+    </span>
+  </label>
+</div>
+
+<button
+  type="submit"
+  class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold"
+>
+  Enviar solicitud por WhatsApp
+</button>
+
+<div class="mt-3">
+  <button
+    type="reset"
+    class="w-full rounded-xl border border-vp-gold bg-white px-4 py-3 font-bold text-vp-brown hover:bg-vp-gold hover:text-white"
+  >
+    Limpiar formulario
+  </button>
+</div>
+
+<p class="mt-3 text-center text-xs text-vp-text/60">
+  * Campos obligatorios. El envío no confirma una reserva.
+</p>
           </form>
 
         </div>
