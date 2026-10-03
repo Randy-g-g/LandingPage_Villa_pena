@@ -16,39 +16,105 @@
 const paquetes = [
   {
     id: 1,
-    nombre: "Paquete Básico",
+    nombre: "Paquete Essentials",
     descripcion: "Una opción sencilla para disfrutar del rancho y compartir con tus invitados.",
     servicios: [
-      "Uso de rancho",
+      "Uso del rancho",
+      "Cocina equipada",
+      " Playground",
+      "Trampolín",
       "Piscina",
-      "Palomitas",
-      "Algodón de azúcar"
+      "Wi-Fi"
+    ],
+     precio:60000,
+    detalles: [
+       {
+        nombre:"Rancho",
+        descripcion:"Uso del rancho y sus áreas principales durante el evento."
+      },
+      {
+        nombre:"Cocina equipada",
+        descripcion:"Uso de cocina completamente equipada para preparar y almacenar alimentos."
+      },
+
+      {
+        nombre:"Playground",
+        descripcion:"Acceso al área de juegos infantiles durante el evento."
+      },
+      {
+        nombre:"Trampolín",
+        descripcion:"Uso del trampolín durante el evento."
+      },
+      {
+        nombre:"Piscina",
+        descripcion:"Uso de piscina de 1,40 metros de profundidad, equipada con cascada e iluminación de colores."
+      },
+      {
+         nombre:"Wi-Fi",
+        descripcion:"Acceso a conexión inalámbrica a Internet para los asistentes."
+      }
     ]
   },
+
   {
     id: 2,
-    nombre: "Paquete Full",
-    descripcion: "Una alternativa con servicios adicionales para complementar tu celebración.",
-    servicios: [
-      "Uso de rancho",
-      "Piscina",
-      "Parrilla BBQ",
-      "Palomitas",
-      "Algodón de azúcar"
-    ]
-  },
-  {
-    id: 3,
     nombre: "Paquete Premium",
     descripcion: "Una opción más completa con entretenimiento y productos adicionales.",
     servicios: [
-      "Uso de rancho",
-      "Piscina",
+      "Uso del rancho",
+      "Cocina equipada",
+      "Parrilla de gas Premium",
       "Playground",
-      "Sonido",
-      "Palomitas",
-      "Algodón de azúcar",
-      "Fuente de chocolate"
+      "Sistema de sonido",
+      "Trampolín",
+      "Micrófonos inalámbricos",
+      "Piscina",
+      "Smart TV",
+      "Wi-Fi"
+    ],
+     precio:80000,
+    detalles: [
+       {
+        nombre:"Rancho",
+        descripcion:"Uso del rancho y sus áreas principales durante el evento."
+      },
+      {
+        nombre:"Cocina equipada",
+        descripcion:"Uso de cocina completamente equipada para preparar y almacenar alimentos."
+      },
+      
+      {
+        nombre:"Parrilla de gas Premium",
+        descripcion:"Uso de parrilla de gas Premium para preparar alimentos durante el evento."
+      },
+      {
+        nombre:"Playground",
+        descripcion:"Acceso al área de juegos infantiles durante el evento."
+      },
+      {
+        nombre:"Sistema de sonido JBL PartyBox 720",
+        descripcion:"Uso del sistema de sonido JBL PartyBox 720 para música y entretenimiento."
+      },
+      {
+        nombre:"Trampolín",
+        descripcion:"Uso del trampolín durante el evento."
+      },
+      {
+        nombre:"Micrófonos inalámbricos",
+        descripcion:"Uso de micrófonos inalámbricos conectados al sistema de sonido."
+      },
+      {
+        nombre:"Piscina",
+        descripcion:"Uso de piscina de 1,40 metros de profundidad, equipada con cascada e iluminación de colores."
+      },
+       {
+        nombre:"Smart TV de 75 pulgadas",
+        descripcion:"Uso de Smart TV de 75 pulgadas para proyección de contenido y entretenimiento."
+      },
+      {
+         nombre:"Wi-Fi",
+        descripcion:"Acceso a conexión inalámbrica a Internet para los asistentes."
+      }
     ]
   }
 ];

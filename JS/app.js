@@ -233,22 +233,36 @@ menu.addEventListener("mouseleave", function() {
 
 // Ventana con los detalles del paquete.
 function abrirModalPaquete(paquete) {
-    paqueteSeleccionado = paquete;
+     paqueteSeleccionado = paquete;
+
     tituloModal.textContent = paquete.nombre;
-    precioModal.textContent = "Precio: consultar";
+
+    precioModal.textContent = "Precio: ₡" + paquete.precio.toLocaleString("es-CR");
+
     descripcionModal.textContent = paquete.descripcion;
+
     serviciosModal.innerHTML = "";
 
-    paquete.servicios.forEach(function(servicio) {
-        const elemento = document.createElement("li");
-        elemento.className = "rounded-lg bg-vp-cream p-3 text-sm";
-        const marca = document.createElement("span");
-        marca.className = "font-bold text-vp-gold";
-        marca.textContent = "✓";
-        const texto = document.createTextNode(" " + servicio);
+    paquete.detalles.forEach(function(detalle) {
 
-        elemento.appendChild(marca);
-        elemento.appendChild(texto);
+        const elemento = document.createElement("li");
+
+        elemento.className = "rounded-lg bg-vp-cream p-3 text-sm";
+
+        const nombre = document.createElement("strong");
+
+        nombre.textContent = detalle.nombre;
+
+        const descripcion = document.createElement("p");
+
+        descripcion.className = "mt-1 text-sm leading-5";
+
+        descripcion.textContent = detalle.descripcion;
+
+        elemento.appendChild(nombre);
+
+        elemento.appendChild(descripcion);
+
         serviciosModal.appendChild(elemento);
     });
 
