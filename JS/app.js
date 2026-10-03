@@ -29,7 +29,7 @@ const galeria = document.querySelector("#lightbox");
 const imagenGaleria = document.querySelector("#lightboxImg");
 const botonCerrarGaleria = document.querySelector("#closeLightbox");
 const galeriaExtra = document.querySelector("#galeriaExtra");
-const botosVerMas = document.querySelector("#verMasGaleria");
+const botonVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
 
@@ -387,17 +387,29 @@ function mostrarFotosGaleria(){
 }
 
 botonVerMas.hidden = false;
-botonVerMas.addEventListener("click", function0(){
-//evita duplicar
+botonVerMas.addEventListener("click", function() {
+    // evita duplicar
     if (galeriaExtra.childElementCount === 0) {
         mostrarFotosGaleria();
     }
 
     galeriaExtra.hidden = !galeriaExtra.hidden;
     botonVerMas.textContent = galeriaExtra.hidden ? "Ver más" : "Ver menos";
-    botonVerMas
+    botonVerMas.setAttribute("aria-expanded", String(!galeriaExtra.hidden));
 });
 
+function cerrarGaleria() {
+    galeria.classList.add("hidden");
+    galeria.classList.remove("flex");
+    document.body.classList.remove("overflow-hidden");
+}
+
+botonCerrarGaleria.addEventListener("click", cerrarGaleria);
+galeria.addEventListener("click", function(event) {
+    if (event.target === galeria) {
+        cerrarGaleria();
+    }
+});
 // Fecha mínima usando el día local del navegador.
 function fechaLocalHoy() {
     const hoy = new Date();
