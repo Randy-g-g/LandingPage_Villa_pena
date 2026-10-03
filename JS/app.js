@@ -1,8 +1,4 @@
-// Mismo estilo del ejercicio DOM_Poo_js visto en clase.
-// Los arreglos paquetes y adicionales están en datos.js.
-// La transición inicial se controla únicamente desde styles.css.
-
-// Buscamos los elementos del HTML.
+// buscamos los elementos del HTML.
 const formulario = document.querySelector("#solicitudForm");
 const listaPaquetes = document.querySelector("#paquetesContainer");
 const contenedorAdicionales = document.querySelector("#adicionalesContainer");
@@ -25,21 +21,26 @@ const descripcionModal = document.querySelector("#modalDescription");
 const serviciosModal = document.querySelector("#modalServices");
 const botonCerrarModal = document.querySelector("#closeModal");
 const botonElegirPaquete = document.querySelector("#choosePackage");
+//galeria section
 const galeria = document.querySelector("#lightbox");
 const imagenGaleria = document.querySelector("#lightboxImg");
 const botonCerrarGaleria = document.querySelector("#closeLightbox");
+//hora de formulario
+const horaInicio = document.querySelector("#horaInicio");
+const horaFinal = document.querySelector("#horaFinal");
+//galeria ver mas 
 const galeriaExtra = document.querySelector("#galeriaExtra");
 const botonVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
 let adicionalesSeleccionados = [];
-// Se conserva pendiente hasta confirmar el WhatsApp oficial.
-// Los teléfonos existentes son 8537-3750 y 8850-7712.
+// se conserva pendiente hasta confirmar el WhatsApp oficial.
+// los teléfonos existentes son 8537-3750 y 8850-7712.
 const WHATSAPP_NUMBER = "50685048785";
 
-// Escuchamos el formulario, igual que en el ejercicio de productos.
+// escuchamos el formulario.
 formulario.addEventListener("submit", function(event) {
-    // Evitar que el formulario recargue la página.
+    // evitar recarga de página.
     event.preventDefault();
     campoFecha.min = fechaLocalHoy();
     campoNombre.value = campoNombre.value.trim();
@@ -50,7 +51,7 @@ formulario.addEventListener("submit", function(event) {
         return;
     }
 
-    // Tomamos los valores y hacemos la conversión numérica.
+    // toma los valores y hacemos la conversión numérica.
     const nombre = campoNombre.value;
     const telefono = campoTelefono.value;
     const correo = campoCorreo.value;
@@ -60,7 +61,7 @@ formulario.addEventListener("submit", function(event) {
     const mensaje = campoMensaje.value.trim();
     const seleccionados = obtenerAdicionalesSeleccionados();
 
-    // Creamos un objeto, como el objeto producto del ejemplo de clase.
+    // crea un objeto, como el objeto producto del ejemplo de clase.
     const solicitud = {
         nombre: nombre,
         telefono: telefono,
@@ -77,12 +78,12 @@ formulario.addEventListener("submit", function(event) {
     abrirWhatsApp(solicitud);
 });
 
-// Mostramos los paquetes que están en el arreglo de datos.js.
+// muestra los paquetes que están en el arreglo de datos.js.
 function mostrarPaquetes() {
     listaPaquetes.innerHTML = "";
 
     paquetes.forEach(function(paquete) {
-        // Crear tarjeta.
+        // crea la tarjeta.
         const tarjeta = document.createElement("article");
         tarjeta.className = "package-card reveal";
         const encabezado = document.createElement("div");
@@ -115,7 +116,7 @@ function mostrarPaquetes() {
             abrirModalPaquete(paquete);
         });
 
-        // Agregar los elementos a la tarjeta y la tarjeta al HTML.
+        // agrega los elementos a la tarjeta y la tarjeta al HTML.
         encabezado.appendChild(marca);
         encabezado.appendChild(titulo);
         tarjeta.appendChild(encabezado);
@@ -229,7 +230,7 @@ function mostrarAdicionales(){
         });
 
 
-        // Agregar todo el servicio
+        // agregar todo el servicio
         seccion.appendChild(titulo);
         seccion.appendChild(descripcion);
         seccion.appendChild(contenedorPaquetesAdicional);
@@ -423,7 +424,7 @@ function actualizarBotonAdicional(adicionalId, paqueteId) {
         }
     }
 }
-// Menú de celulares.
+// ver menú de celulares.
 botonMenu.addEventListener("click", function() {
     const abierto = menu.classList.toggle("mobile-open");
     botonMenu.setAttribute("aria-expanded", String(abierto));
@@ -435,7 +436,7 @@ document.querySelectorAll(".menu-link").forEach(function(enlace) {
         botonMenu.setAttribute("aria-expanded", "false");
     });
 });
-// Indicador animado del menú
+// indicador animado del menú
 const indicadorMenu = document.querySelector("#menuIndicator");
 const enlacesMenu = document.querySelectorAll(".menu-link");
 
@@ -451,7 +452,7 @@ menu.addEventListener("mouseleave", function() {
     indicadorMenu.style.opacity = "0";
 });
 
-// Ventana con los detalles del paquete.
+// ventana con los detalles del paquete.
 function abrirModalPaquete(paquete) {
      paqueteSeleccionado = paquete;
 
@@ -538,7 +539,7 @@ galeria.addEventListener("click", function(event) {
     }
 });
 
-//Ver mas de la galaeria
+//ver mas de la galaeria
 
 const fotosGaleria = [
     {src:"assets/Reglas.JPG", descripcion: "Relas, Villa Peña"},
@@ -628,7 +629,7 @@ galeria.addEventListener("click", function(event) {
         cerrarGaleria();
     }
 });
-// Fecha mínima usando el día local del navegador.
+// fecha mínima usando el día local del navegador.
 function fechaLocalHoy() {
     const hoy = new Date();
     const anio = hoy.getFullYear();
@@ -675,7 +676,7 @@ function validarCampo(campo) {
     if (campo.required && valor === "") {
         campo.setCustomValidity("Completá este campo obligatorio.");
     } else if (campo.id === "telefono" && valor !== "") {
-        // Contar dígitos sin espacios, paréntesis ni guiones.
+        // contar dígitos sin espacios, paréntesis ni guiones.
         const digitos = valor.replace(/\D/g, "");
         const formatoValido = /^\+?[\d\s()-]+$/.test(valor);
         if (formatoValido === false || digitos.length < 8 || digitos.length > 15) {
@@ -840,7 +841,7 @@ function abrirWhatsApp(solicitud) {
     const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(texto);
     mostrarMensaje("Solicitud preparada. Confirmá el envío en WhatsApp.", "success");
 
-    // Mostrar un enlace por si el navegador bloquea la nueva pestaña.
+    // mostrar un enlace por si el navegador bloquea la nueva pestaña.
     const enlace = document.createElement("a");
     enlace.href = url;
     enlace.target = "_blank";
@@ -852,7 +853,7 @@ function abrirWhatsApp(solicitud) {
     window.open(url, "_blank", "noopener,noreferrer");
 }
 
-// Mantener la animación al desplazarse, con contenido visible como respaldo.
+// mantener la animación al desplazarse, con contenido visible como respaldo.
 function prepararAnimaciones() {
     const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducirMovimiento || !("IntersectionObserver" in window)) {
@@ -875,7 +876,7 @@ function prepararAnimaciones() {
     });
 }
 
-// Cargar los datos en el HTML al abrir la página.
+// cargar los datos en el HTML al abrir la página.
 mostrarPaquetes();
 mostrarOpcionesPaquetes();
 mostrarAdicionales();
@@ -883,10 +884,8 @@ mostrarOpcionesAdicionales();
 campoFecha.min = fechaLocalHoy();
 prepararAnimaciones();
 
-//hora de formulario
-const horaInicio = document.querySelector("#horaInicio");
-const horaFinal = document.querySelector("#horaFinal");
 
+//hora inicio hora fin
 horaInicio.addEventListener("change", function(){
     const [horas, minutos] = horaInicio.value
         .split(":")
