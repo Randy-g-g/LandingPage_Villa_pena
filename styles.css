@@ -1,11 +1,12 @@
 
 :root {
-  --white: #FBF9F5;
-  --brown: #321D0E;
-  --gold: #B6781E;
-  --beige: #DFCEB7;
-  --cream: #F3EEE5;
-  --text: #493428;
+   --white: #FFFFFF;
+    --brown: #2B190D;
+    --gold: #B77A20;
+    --beige: #EADBC6;
+    --cream: #F7F0E5;
+    --text: #2F1709;
+    
   --green: #157F3C;
   --terracotta: #A4563E;
 }
@@ -207,7 +208,7 @@ body > footer {
 }
 
 .header-social-link:hover {
-  color: #fff;
+  color: #FFFFFF;
   transform: translateY(-1px);
 }
 
@@ -316,11 +317,11 @@ textarea.form-input { resize: vertical; }
   outline-offset: 2px;
   border-color: var(--gold);
 }
-.form-input[aria-invalid="true"] { border-color: #b91c1c; }
+.form-input[aria-invalid="true"] { border-color: #C94B4B; }
 .form-message { margin-bottom: 16px; border-radius: 12px; padding: 12px; font-size: .875rem; }
-.form-message-error { background: #fef2f2; color: #b91c1c; }
-.form-message-warning { background: #fffbeb; color: #92400e; }
-.form-message-success { background: #f0fdf4; color: var(--green); }
+.form-message-error { background: #FBE6E4; color: #C94B4B; }
+.form-message-warning { background: #FFF3D6; color: #B97808; }
+.form-message-success { background: #E2F4E7; color: #39915A; }
 .whatsapp-fallback { display: inline-block; text-decoration: underline; font-weight: bold; }
 .hidden { display: none; }
 .flex { display: flex; }
@@ -401,7 +402,7 @@ textarea.form-input { resize: vertical; }
 }
 
 .menu-link:hover {
-    color: #DFCEB7;
+    color: #EADBC6;
 }
 
 /* En celular no mostramos el indicador */

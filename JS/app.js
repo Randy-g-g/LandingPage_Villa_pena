@@ -64,6 +64,8 @@ formulario.addEventListener("submit", function(event) {
         telefono: telefono,
         correo: correo,
         fecha: fecha,
+        horaInicio: horaInicio.value,
+        horaFinal: horaFinal.value,
         personas: personas,
         paquete: paquete,
         adicionales: seleccionados,
@@ -416,7 +418,7 @@ function obtenerAdicionalesSeleccionados() {
 
 function crearMensajeSolicitud(solicitud) {
     const fechaBonita = new Date(solicitud.fecha + "T12:00:00").toLocaleDateString("es-CR");
-    let texto = "Hola, Villa Peñas. 👋\n\n";
+    let texto = "Hola, Villa Peñas.\n\n";
     texto += "Me gustaría solicitar información sobre un evento.\n\n";
     texto += "*Datos del cliente*\n";
     texto += "Nombre: " + solicitud.nombre + "\n";
@@ -424,6 +426,8 @@ function crearMensajeSolicitud(solicitud) {
     texto += "Correo: " + solicitud.correo + "\n\n";
     texto += "*Datos del evento*\n";
     texto += "Fecha: " + fechaBonita + "\n";
+    texto += "Hora de Inicio: " + solicitud.horaInicio + "\n";
+    texto += "Hora Final: " + solicitud.horaFinal + "\n";
     texto += "Cantidad de personas: " + solicitud.personas + "\n";
     texto += "Paquete: " + solicitud.paquete + "\n\n";
     texto += "*Adicionales*\n";
@@ -501,3 +505,19 @@ mostrarAdicionales();
 mostrarOpcionesAdicionales();
 campoFecha.min = fechaLocalHoy();
 prepararAnimaciones();
+
+//hora de formulario
+const horaInicio = document.querySelector("#horaInicio");
+const horaFinal = document.querySelector("#horaFinal");
+
+horaInicio.addEventListener("change", function(){
+    const [horas, minutos] = horaInicio.value
+        .split(":")
+        .map(Number);
+    let final = horas + 8;
+    if(final>=24){
+        final = final-24;
+    }
+    horaFinal.value =
+    String(final).padStart(2,"0") + ":" + String(minutos).padStart(2,"0");
+});
