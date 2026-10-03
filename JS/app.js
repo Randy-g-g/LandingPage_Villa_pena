@@ -28,8 +28,6 @@ const botonElegirPaquete = document.querySelector("#choosePackage");
 const galeria = document.querySelector("#lightbox");
 const imagenGaleria = document.querySelector("#lightboxImg");
 const botonCerrarGaleria = document.querySelector("#closeLightbox");
-const galeriaExtra = document.querySelector("#galeriaExtra");
-const botosVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
 
@@ -318,84 +316,6 @@ galeria.addEventListener("click", function(event) {
     if (event.target === galeria) {
         cerrarGaleria();
     }
-});
-
-//Ver mas de la galaeria
-
-const fotosGaleria = [
-    {src:"assets/Reglas.JPG", descripcion: "Relas, Villa Peña"},
-    {src:"assets/Senal.JPG", descripcion: "Cartel exterior, Villa Peña"},
-    {src:"assets/CartelArriba.JPG", descripcion: "Cartel en la puerta, Villa Peña"},
-    {src:"assets/DesdeArriba.JPG", descripcion: "Vista desde arriba, Villa Peña"},
-    {src:"assets/SillasExteriores.JPG", descripcion: "Sillas exteriores, Villa Peña"},
-    {src:"assets/BrincaBrinca.JPG", descripcion: "Brinca brincas, Villa Peña"},
-    {src:"assets/PlayGround(1).JPG", descripcion: "Area de juegos, Villa Peña"},
-    {src:"assets/Tobogan.JPG", descripcion: "Tobogan, Villa Peña"},
-    {src:"assets/Tobogan(1).JPG", descripcion: "Tobogan, Villa Peña"},
-    {src:"assets/Llantas.JPG", descripcion: "Parte del Playground, Villa Peña"},
-    {src:"assets/CartelArriba.JPG", descripcion: "Cartel y parrila, Villa Peña"},
-    {src:"assets/Parrilla(1).JPG", descripcion: "Parrilla, Villa Peña"},
-    {src:"assets/Rancho(3).JPG", descripcion: "Rancho intro mesas, Villa Peña"},
-    {src:"assets/MesasInteriores.JPG", descripcion: "Mesas interiores, Villa Peña"},
-    {src:"assets/MesasInteriores(1).JPG", descripcion: "Mesas interiores, Villa Peña"},
-    {src:"assets/MesasInteriores(2).JPG", descripcion: "Mesas interiores, Villa Peña"},
-    {src:"assets/Corazon.JPG", descripcion: "Mesas interiores, Villa Peña"},
-    {src:"assets/SillasAltas.JPG", descripcion: "Sillas altas, Villa Peña"},
-    {src:"assets/Entretenimiento.JPG", descripcion: "Entretenimiento, Villa Peña"},
-    {src:"assets/Entretenimiento(1).JPGG", descripcion: "Entretenmiento, Villa Peña"},
-    {src:"assets/Piscina(1).JPG", descripcion: "Area piscina, Villa Peña"},
-    {src:"assets/Piscina(2).JPG", descripcion: "Area piscina, Villa Peña"},
-    {src:"assets/Piscina(3).JPG", descripcion: "Area piscina, Villa Peña"},
-    {src:"assets/Fuente.JPG", descripcion: "Fuente, Villa Peña"},
-    {src:"assets/PiscinayRancho.JPG", descripcion: "Area exterior, Villa Peña"},
-    {src:"assets/Piscina(4).JPG", descripcion: "Area piscina, Villa Peña"},
-    {src:"assets/Amaca.JPG", descripcion: "Amaca, Villa Peña"},
-    {src:"assets/Panoramica.JPG", descripcion: "Vista panoramica, Villa Peña"},
-];
-
-function prepararImagenGaleria(boton){
-    boton.addEventListener("click", function(){
-        imagenGaleria.src = getAttribute("data-src");
-        imagenGaleria.alt = boton.querySelector("img").alt;
-        galeria.classList.remove("hidden");
-        galeria.classList.add("flex");
-        document.body.classList.add("overflow-hidden");
-    });
-}
-
-document.querySelectorAll(".gallery-item").forEach(function(boton){
-    prepararImagenGaleria(boton);
-});
-
-function mostrarFotosGaleria(){
-    fotosGaleria.forEach(function(foto){
-        const boton = document.createElement("button");
-        boton.type = "button";
-        boton.className = "gallery-item";
-        boton.setAttribute("data-src", foto.src);
-        boton.setAttribute("arial-label", "Abrir imagen:" + foto.descripcion);
-
-        const imagen = document.createElement("img");
-        imagen.src = foto.src;
-        imagen.alt = foto.descripcion;
-        imagen.leading = "lazy";
-
-        boton.appendChild(imagen);
-        prepararImagenGaleria(boton);
-        galeriaExtra.appendChild(boton);
-    });
-}
-
-botonVerMas.hidden = false;
-botonVerMas.addEventListener("click", function0(){
-//evita duplicar
-    if (galeriaExtra.childElementCount === 0) {
-        mostrarFotosGaleria();
-    }
-
-    galeriaExtra.hidden = !galeriaExtra.hidden;
-    botonVerMas.textContent = galeriaExtra.hidden ? "Ver más" : "Ver menos";
-    botonVerMas
 });
 
 // Fecha mínima usando el día local del navegador.
