@@ -17,9 +17,7 @@ html {
 }
 
 
-/* TRANSICIÓN DE ENTRADA — VETAS CAFÉ SUAVES
-   Inspiración: mármol fluido en blanco y café, con un
-   movimiento muy sutil para no competir con el logotipo. */
+/* Transicion de entrada. */
 .page-loader {
   position: fixed;
   inset: 0;
@@ -36,7 +34,6 @@ html {
   animation: loaderFadeOut 1.05s cubic-bezier(.22,1,.36,1) 2.2s forwards;
 }
 
-/* Una sola capa principal: blanco + café, con contraste bajo. */
 .page-loader::before {
   content: "";
   position: absolute;
@@ -48,7 +45,6 @@ html {
   transform-origin: center;
 }
 
-/* Segunda capa apenas perceptible para que las vetas respiren. */
 .page-loader::after {
   content: "";
   position: absolute;
@@ -77,7 +73,6 @@ html {
     villaLogoExit .7s cubic-bezier(.22,1,.36,1) 2.2s forwards;
 }
 
-/* Halo blanco muy suave: evita cualquier rectángulo alrededor del logo. */
 .page-loader-inner::before {
   content: "";
   position: absolute;
@@ -110,7 +105,6 @@ html {
   animation: loaderLineIn .8s cubic-bezier(.22,1,.36,1) .65s forwards;
 }
 
-/* El plazo de entrada es fijo: las imágenes externas no bloquean la página. */
 body > header,
 body > main,
 body > footer {
@@ -182,7 +176,7 @@ body > footer {
   }
 }
 
-/* ICONOS SOCIALES DEL HEADER */
+/* iconos de aplicaciones de header*/
 .header-socials {
   display: flex;
   align-items: center;
@@ -249,9 +243,7 @@ body > footer {
   }
 }
 
-/* =========================================================
-   ESTILOS COMPLEMENTARIOS DEL FORMULARIO Y DEL CATÁLOGO
-   ========================================================= */
+/*Estilo del formulario*/
 body { margin: 0; background: var(--white); color: var(--text); }
 *, *::before, *::after { box-sizing: border-box; }
 section[id] { scroll-margin-top: 96px; }
@@ -382,7 +374,7 @@ textarea.form-input { resize: vertical; }
     color: #EADBC6;
 }
 
-/* En celular no mostramos el indicador */
+/* indicador del celular no mostrado*/
 @media (max-width: 1023px) {
     .menu-indicator {
         display: none;
