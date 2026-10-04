@@ -36,9 +36,7 @@
 
 <body class="bg-vp-white text-vp-text">
 
-  <!-- =========================================================
-       TRANSICIÓN DE ENTRADA
-       ========================================================= -->
+  <!--TRANSICIÓN DE ENTRADA-->
   <div id="pageLoader" class="page-loader" aria-hidden="true">
     <div class="page-loader-inner">
       <img
@@ -49,9 +47,7 @@
     </div>
   </div>
 
-  <!-- =========================================================
-       HEADER / NAVEGACIÓN
-       ========================================================= -->
+  <!--HEADER / NAVEGACIÓN-->
   <header id="header" class="fixed inset-x-0 top-0 z-50 bg-vp-brown/95 shadow-lg backdrop-blur">
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3" aria-label="Navegación principal">
 
@@ -80,6 +76,7 @@
         <a class="menu-link" href="#nosotros">Villa Peñas</a>
         <a class="menu-link" href="#paquetes">Paquetes</a>
         <a class="menu-link" href="#adicionales">Adicionales</a>
+        <a class="menu-link" href="#galeria">Galería</a>
         <a class="menu-link" href="#testimonios">Experiencias</a>
         <a class="menu-link" href="#contacto">Contacto</a>
 
@@ -116,9 +113,7 @@
 
   <main>
 
-    <!-- =========================================================
-         HERO
-         ========================================================= -->
+    <!--HERO-->
     <section id="inicio" class="relative flex min-h-[88vh] items-end overflow-hidden">
       <img
         src="assets/villa.penas.JPG"
@@ -134,7 +129,7 @@
             Villa Peñas · Santa Cruz
           </p>
 
-          <h1 class="reveal mt-3 font-display text-6xl leading-none text-white sm:text-7xl">
+          <h1 class="reveal mt-3 font-display text-5xl leading-none text-white sm:text-7xl w-full">
             BIENVENIDOS<br>
             A VILLA PEÑAS.
           </h1>
@@ -156,17 +151,15 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         SOBRE VILLA PEÑAS
-         ========================================================= -->
+    <!--SOBRE VILLA PEÑAS-->
     <section id="nosotros" class="py-16 sm:py-24">
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
 
           <div class="reveal">
-            <p class="eyebrow">Villa Peñas</p>
-            <h2 class="section-title">Celebra, comparte y disfurta.</h2>
+            <p class="text-vp-gold font-bold text-2xl">Villa Peñas</p>
+            <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Celebra, comparte y disfurta.</h2>
 
             <p class="mt-5 leading-7">
               Villa peñas es un lugar ideal para disfrutar de tus momentos especiales.
@@ -214,16 +207,14 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         UBICACIÓN / MAPA
-         ========================================================= -->
+    <!--UBICACIÓN / MAPA-->
     <section id="ubicacion" class="bg-vp-cream py-14">
       <div class="mx-auto max-w-6xl px-5">
         <div class="grid gap-7 lg:grid-cols-[.75fr_1.25fr] lg:items-center">
 
           <div class="reveal">
-            <p class="eyebrow">Dónde encontrarnos</p>
-            <h2 class="section-title text-4xl">Villa Peñas, Santa Cruz</h2>
+            <p class="text-vp-gold font-bold text-2xl">Dónde encontrarnos</p>
+            <h2 class="mt-2 text-vp-brown font-display leading-[1.15] text-4xl">Villa Peñas, Santa Cruz</h2>
             <p class="mt-4 text-sm leading-6">
               1 Km Sur de la entrada a Moya en • Chirco, 57-07, Santa Cruz, Costa Rica.
             </p>
@@ -243,15 +234,13 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         INFORMACIÓN / SERVICIOS
-         ========================================================= -->
+    <!--INFORMACIÓN / SERVICIOS-->
     <section class="py-16">
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="reveal max-w-3xl">
-          <p class="eyebrow">Todo en un solo lugar</p>
-          <h2 class="section-title">Todo lo que necesitás en un solo lugar.</h2>
+          <p class="text-vp-gold font-bold text-2xl">Todo en un solo lugar</p>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Todo lo que necesitás en un solo lugar.</h2>
           <p class="mt-4 leading-7">
             Villa Peñas cuenta con diferentes servicios para que puedas organizar
             tu evento de una forma cómoda y personalizada.
@@ -282,42 +271,38 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         PAQUETES - DATOS DESDE JS
-         ========================================================= -->
+    <!--PAQUETES - DATOS DESDE JS-->
     <section id="paquetes" class="bg-vp-cream py-16 text-white sm:py-20">
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="reveal">
-          <p class="eyebrow">Elegí tu opción</p>
-          <h2 class="section-title">Paquetes y servicios adicionales</h2>
+          <p class="text-vp-gold font-bold text-2xl">Elegí tu opción</p>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Paquetes y servicios adicionales</h2>
           <p class="max-w-md text-sm text-vp-text/70">
             Elegí el paquete que mejor se adapte a tu celebración y agregá opciones
             adicionales para complementar tu evento.
           </p>
         </div>
 
-        <div id="paquetesContainer" class="mt-9 grid gap-4 md:grid-cols-3"></div>
+        <div id="paquetesContainer" class="mt-9 grid gap-4 md:grid-cols-2"></div>
 
       </div>
     </section>
 
-    <!-- =========================================================
-         ADICIONALES - 9 ARTICLES
-         ========================================================= -->
+    <!--ADICIONALES - 9 ARTICLES-->
     <section id="adicionales" class="py-16">
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="reveal">
-          <p class="eyebrow">Diversión y sabor</p>
-          <h2 class="section-title">Servicios adicionales para tu evento</h2>
+          <p class="text-vp-gold font-bold text-2xl">Diversión y sabor</p>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Servicios adicionales para tu evento</h2>
           <p class="mt-3 max-w-3xl leading-6">
             Queremos que en tus celebraciones no falte la diversión ni los antojos.
             Estas opciones pueden complementar tu evento.
           </p>
         </div>
 
-        <div id="adicionalesContainer" class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+        <div id="adicionalesContainer" class="mt-8"></div>
 
       </div>
     </section>
@@ -328,8 +313,8 @@
 
         <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div class="reveal">
-            <p class="eyebrow">Conocé el espacio</p>
-            <h2 class="section-title">Galería</h2>
+            <p class="text-vp-gold font-bold text-2xl">Conocé el espacio</p>
+            <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Galería</h2>
           </div>
           <p class="max-w-md text-sm text-vp-text/70">
             Conocé la piscina, el rancho y el área de parrilla de Villa Peñas:
@@ -340,29 +325,35 @@
 
         <div class="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           <button type="button" class="gallery-item col-span-2 row-span-2 reveal"
-                  data-src="assets/Vista.jpeg"
+                  data-src="assets/Vista.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Vista.jpeg" alt="Espacio de eventos" class="h-full min-h-[390px] w-full object-cover">
+            <img src="assets/Vista.JPG" alt="Espacio de eventos" class="h-full min-h-[390px] w-full object-cover">
           </button>
           <button type="button" class="gallery-item reveal"
-                  data-src="assets/ZonaExterna.jpeg"
+                  data-src="assets/Silla.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/ZonaExterna.jpeg" alt="Piscina" class="h-48 w-full object-cover">
+            <img src="assets/Silla.JPG" alt="Silla" class="h-48 w-full object-cover">
           </button>
           <button type="button" class="gallery-item reveal"
-                  data-src="assets/Piscina(2).jpeg"
+                  data-src="assets/Piscina.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Piscina(2).jpeg" alt="Área exterior" class="h-48 w-full object-cover">
+            <img src="assets/Piscina.JPG" alt="Piscina" class="h-48 w-full object-cover">
           </button>
           <button type="button" class="gallery-item reveal"
-                  data-src="assets/Parrilla(1).jpeg"
+                  data-src="assets/Parrilla.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Parrila.jpeg" alt="Parrilla" class="h-80 w-full object-cover object-center">
+            <img src="assets/Parrilla.JPG" alt="Parrilla" class="h-80 w-full object-cover object-center">
           </button>
           <button type="button" class="gallery-item reveal"
-                  data-src="assets/Rancho(3).jpeg"
+                  data-src="assets/Rancho(2).JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Rancho(3).jpeg" alt="Rancho" class="h-80 w-full object-cover object-center">
+            <img src="assets/Rancho(2).JPG" alt="Rancho" class="h-80 w-full object-cover object-center">
+          </button>
+        </div>
+        <div id="galeriaExtra" class="gallery-extra" hidden></div>
+        <div class="gallery-control">
+          <button type="button" id="verMasGaleria" class="gallery-more" aria-expanded="false" aria-controls="galeriaExtra" hidden>
+            Ver más
           </button>
         </div>
       </div>
@@ -373,18 +364,22 @@
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="reveal">
-          <p class="eyebrow">Familias que ya celebraron en Villa Peñas</p>
-          <h2 class="section-title">Experiencias que generan confianza.</h2>
+          <p class="text-vp-gold font-bold text-2xl">
+            Familias que ya celebraron en Villa Peñas
+          </p>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Experiencias que generan confianza.</h2>
         </div>
 
         <div class="mt-8 grid gap-4 md:grid-cols-3">
           <article class="testimonial-card reveal">
             <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <p class="mt-3 text-sm leading-6">
+              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
+            </p>
             <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">M</span>
+              <span class="avatar">D</span>
               <div>
-                <strong>Marcela V.</strong>
+                <strong>Dulce Vargas.</strong>
                 <small>Reunión familiar</small>
               </div>
             </div>
@@ -392,11 +387,13 @@
 
           <article class="testimonial-card reveal">
             <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <p class="mt-3 text-sm leading-6">
+              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
+            </p>
             <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">J</span>
+              <span class="avatar">R</span>
               <div>
-                <strong>Jonathan R.</strong>
+                <strong>Randy Gutierrez.</strong>
                 <small>Reunión familiar</small>
               </div>
             </div>
@@ -404,11 +401,13 @@
 
           <article class="testimonial-card reveal">
             <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">“Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”</p>
+            <p class="mt-3 text-sm leading-6">
+              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
+            </p>
             <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">T</span>
+              <span class="avatar">L</span>
               <div>
-                <strong>Tatiana R.</strong>
+                <strong>Leonora Zuñiga.</strong>
                 <small>Baby shower</small>
               </div>
             </div>
@@ -418,78 +417,79 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         CONTACTO / SOLICITUD
-         ========================================================= -->
+    <!--CONTACTO / SOLICITUD-->
     <section id="contacto" class="bg-vp-coffee py-16 text-white sm:py-20">
       <div class="mx-auto max-w-6xl px-5">
 
         <div class="grid gap-10 lg:grid-cols-[.75fr_1.25fr]">
 
           <div class="reveal">
-            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-beige">Contanos sobre tu evento</p>
-            <h2 class="mt-3 font-display text-5xl">Hablemos de tu celebración.</h2>
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-vp-brown">Contanos sobre tu evento</p>
+            <h2 class="mt-3 font-display text-5xl text-vp-white">
+              Hablemos de tu celebración.
+            </h2>
             <p class="mt-5 text-sm leading-6 text-white/80">
               Completá el formulario con los datos de tu evento. Al enviar, se preparará
               una solicitud y se abrirá WhatsApp para que Villa Peñas pueda revisarla
               y comunicarse contigo.
             </p>
 
-            <div class="mt-7 rounded-2xl bg-vp-gold/40 p-5">
-              <p class="font-bold">Importante</p>
-              <p class="mt-1 text-sm leading-6 text-white/80">
-                En esta etapa no existe una reserva automática ni calendario público.
-                La solicitud queda sujeta a confirmación por parte de Villa Peñas.
-              </p>
-            </div>
           </div>
 
           <form id="solicitudForm" class="reveal rounded-2xl bg-vp-cream p-5 text-vp-text shadow-xl sm:p-7" novalidate>
 
             <div id="formMessage" class="mb-4 hidden rounded-xl p-3 text-sm" role="alert" aria-atomic="true"></div>
 
-            <noscript><p class="mb-4">Activá JavaScript para seleccionar paquetes y preparar la solicitud por WhatsApp.</p></noscript>
+            
 
             <div class="grid gap-4 sm:grid-cols-2">
 
               <div>
-                <label for="nombre" class="form-label">Nombre *</label>
-                <input id="nombre" name="nombre" type="text" autocomplete="name" class="form-input" required>
+                <label for="nombre" class="form-label">Nombre<span class="text-rose-500">*</span></label>
+                <input id="nombre" name="nombre" type="text" autocomplete="name" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="telefono" class="form-label">Teléfono *</label>
-                <input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" class="form-input" required>
+                <label for="telefono" class="form-label">Teléfono<span class="text-rose-500">*</span></label>
+                <input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="correo" class="form-label">Correo *</label>
-                <input id="correo" name="correo" type="email" autocomplete="email" class="form-input" required>
+                <label for="correo" class="form-label">Correo<span class="text-rose-500">*</span></label>
+                <input id="correo" name="correo" type="email" autocomplete="email" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="fecha" class="form-label">Fecha del evento *</label>
-                <input id="fecha" name="fecha" type="date" class="form-input" required>
+                <label for="fecha" class="form-label">Fecha del evento<span class="text-rose-500">*</span></label>
+                <input id="fecha" name="fecha" type="date" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="horaInicio" class="form-label">Hora de Entrada <span class="text-rose-500">*</span></label>
-                <input id="horaInicio" name="horaInicio" type="time" max="18:00" class="form-input" required>
+                <label for="horaInicio" class="form-label">Hora de Entrada<span class="text-rose-500">*</span></label>
+                <input id="horaInicio" name="horaInicio" type="time" max="18:00" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="horaFinal" class="form-label">Hora de Salida<span class="text-rose-500">*</span></label>
-                <input id="horaFinal" name="horaFinal" type="time" class="form-input" readonly>
+                <label for="horaFinal" class="form-label">Hora de Salida</label>
+                <input id="horaFinal" name="horaFinal" type="time" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" readonly>
               </div>
 
               <div>
-                <label for="personas" class="form-label">Cantidad de personas *</label>
-                <input id="personas" name="personas" type="number" min="1" step="1" class="form-input" required>
+                <label for="personas" class="form-label">Cantidad de personas<span class="text-rose-500">*</span></label>
+                <input id="personas" name="personas" type="number" min="1" step="1" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
-                <label for="paquete" class="form-label">Paquete *</label>
-                <select id="paquete" name="paquete" class="form-input" required>
+                <label for="paquete" class="form-label">Paquete<span class="text-rose-500">*</span></label>
+                <select id="paquete" name="paquete" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
                   <option value="">Seleccionar...</option>
                 </select>
               </div>
@@ -503,16 +503,58 @@
 
             <div class="mt-5">
               <label for="mensaje" class="form-label">Contanos sobre tu evento</label>
-              <textarea id="mensaje" name="mensaje" rows="4" class="form-input" placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
+              <textarea id="mensaje" name="mensaje" rows="4" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
             </div>
 
-            <button type="submit" class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold">
-              Enviar solicitud por WhatsApp
-            </button>
+            <div class="mt-5 rounded-2xl border border-vp-gold bg-white p-5">
+  <p class="font-bold text-vp-brown">Importante</p>
 
-            <p class="mt-3 text-center text-xs text-vp-text/60">
-              * Campos obligatorios. El envío no confirma una reserva.
-            </p>
+  <p class="mt-1 text-sm leading-6 text-vp-text/80">
+    Una vez recibidos y revisados los datos proporcionados, se contactará
+    para confirmar la disponibilidad y los detalles de la reserva.
+    Una vez confirmada, se solicitará un adelanto para formalizar la reserva.
+  </p>
+</div>
+
+<div class="mt-5">
+  <label
+    for="acepta"
+    class="flex cursor-pointer items-start gap-3 rounded-2xl border border-vp-beige bg-white p-5 transition hover:border-vp-gold"
+  >
+    <input
+      id="acepta"
+      name="acepta"
+      type="checkbox"
+      required
+      class="mt-1 h-5 w-5 accent-vp-gold"
+    >
+
+    <span class="block font-bold text-vp-brown">
+      He leído las indicaciones sobre la reserva.
+    </span>
+  </label>
+</div>
+
+<button
+  type="submit"
+  class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold"
+>
+  Cotizar
+</button>
+
+<div class="mt-3">
+  <button
+    type="reset"
+    class="w-full rounded-xl border border-vp-gold bg-white px-4 py-3 font-bold text-vp-brown hover:bg-vp-gold hover:text-white"
+  >
+    Limpiar formulario
+  </button>
+</div>
+
+<p class="mt-3 text-center text-xs text-vp-text/60">
+  * Campos obligatorios. El envío no confirma una reserva.
+</p>
           </form>
 
         </div>
@@ -551,9 +593,7 @@
 
   </main>
 
-  <!-- =========================================================
-       FOOTER
-       ========================================================= -->
+  <!--FOOTER-->
   <footer class="bg-vp-brown text-white">
     <div class="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-9 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -573,7 +613,7 @@
   <div id="modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-vp-white p-6 shadow-2xl">
       <button type="button" id="closeModal" class="absolute right-4 top-3 text-2xl" aria-label="Cerrar">×</button>
-      <p class="eyebrow">Detalle del paquete</p>
+      <p class="text-vp-gold font-bold text-2xl">Detalle del paquete</p>
       <h2 id="modalTitle" class="mt-1 font-display text-4xl text-vp-brown"></h2>
       <p id="modalPrice" class="mt-3 text-xl font-bold text-vp-gold"></p>
       <p id="modalDescription" class="mt-4 text-sm leading-6"></p>

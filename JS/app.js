@@ -1,21 +1,20 @@
-// Mismo estilo del ejercicio DOM_Poo_js visto en clase.
-// Los arreglos paquetes y adicionales están en datos.js.
-// La transición inicial se controla únicamente desde styles.css.
-
-// Buscamos los elementos del HTML.
+// buscamos los elementos del HTML.
 const formulario = document.querySelector("#solicitudForm");
+//paquetes y adicionales
 const listaPaquetes = document.querySelector("#paquetesContainer");
-const listaAdicionales = document.querySelector("#adicionalesContainer");
+const contenedorAdicionales = document.querySelector("#adicionalesContainer");
 const opcionesAdicionales = document.querySelector("#checksAdicionales");
 const seleccionarPaquete = document.querySelector("#paquete");
 const mostrarAviso = document.querySelector("#formMessage");
 const campos = formulario.querySelectorAll(".form-input");
+//formulario
 const campoNombre = document.querySelector("#nombre");
 const campoTelefono = document.querySelector("#telefono");
 const campoCorreo = document.querySelector("#correo");
 const campoFecha = document.querySelector("#fecha");
 const campoPersonas = document.querySelector("#personas");
 const campoMensaje = document.querySelector("#mensaje");
+const acepta = document.querySelector("#acepta");
 const botonMenu = document.querySelector("#menuButton");
 const menu = document.querySelector("#menu");
 const modal = document.querySelector("#modal");
@@ -25,19 +24,25 @@ const descripcionModal = document.querySelector("#modalDescription");
 const serviciosModal = document.querySelector("#modalServices");
 const botonCerrarModal = document.querySelector("#closeModal");
 const botonElegirPaquete = document.querySelector("#choosePackage");
+//galeria section
 const galeria = document.querySelector("#lightbox");
 const imagenGaleria = document.querySelector("#lightboxImg");
 const botonCerrarGaleria = document.querySelector("#closeLightbox");
+//hora de formulario
+const horaInicio = document.querySelector("#horaInicio");
+const horaFinal = document.querySelector("#horaFinal");
+//galeria ver mas 
+const galeriaExtra = document.querySelector("#galeriaExtra");
+const botonVerMas = document.querySelector("#verMasGaleria");
 
 let paqueteSeleccionado = null;
+let adicionalesSeleccionados = [];
+// se conserva pendiente hasta confirmar el WhatsApp oficial, este numero de momento es de prueba.
+const WHATSAPP_NUMBER = "50660121469";
 
-// Se conserva pendiente hasta confirmar el WhatsApp oficial.
-// Los teléfonos existentes son 8537-3750 y 8850-7712.
-const WHATSAPP_NUMBER = "50685048785";
-
-// Escuchamos el formulario, igual que en el ejercicio de productos.
+// escuchamos el formulario.
 formulario.addEventListener("submit", function(event) {
-    // Evitar que el formulario recargue la página.
+    // evitar recarga de página.
     event.preventDefault();
     campoFecha.min = fechaLocalHoy();
     campoNombre.value = campoNombre.value.trim();
@@ -48,7 +53,7 @@ formulario.addEventListener("submit", function(event) {
         return;
     }
 
-    // Tomamos los valores y hacemos la conversión numérica.
+    // toma los valores y hacemos la conversión numérica.
     const nombre = campoNombre.value;
     const telefono = campoTelefono.value;
     const correo = campoCorreo.value;
@@ -58,7 +63,7 @@ formulario.addEventListener("submit", function(event) {
     const mensaje = campoMensaje.value.trim();
     const seleccionados = obtenerAdicionalesSeleccionados();
 
-    // Creamos un objeto, como el objeto producto del ejemplo de clase.
+    // crea un objeto, como el objeto producto del ejemplo de clase.
     const solicitud = {
         nombre: nombre,
         telefono: telefono,
@@ -69,18 +74,19 @@ formulario.addEventListener("submit", function(event) {
         personas: personas,
         paquete: paquete,
         adicionales: seleccionados,
-        mensaje: mensaje
+        mensaje: mensaje,
+        acepta: acepta.checked
     };
 
     abrirWhatsApp(solicitud);
 });
 
-// Mostramos los paquetes que están en el arreglo de datos.js.
+// muestra los paquetes que están en el arreglo de datos.js.
 function mostrarPaquetes() {
     listaPaquetes.innerHTML = "";
 
     paquetes.forEach(function(paquete) {
-        // Crear tarjeta.
+        // crea la tarjeta.
         const tarjeta = document.createElement("article");
         tarjeta.className = "package-card reveal";
         const encabezado = document.createElement("div");
@@ -113,7 +119,7 @@ function mostrarPaquetes() {
             abrirModalPaquete(paquete);
         });
 
-        // Agregar los elementos a la tarjeta y la tarjeta al HTML.
+        // agrega los elementos a la tarjeta y la tarjeta al HTML.
         encabezado.appendChild(marca);
         encabezado.appendChild(titulo);
         tarjeta.appendChild(encabezado);
@@ -140,70 +146,288 @@ function mostrarOpcionesPaquetes() {
     });
 }
 
-function mostrarAdicionales() {
-    listaAdicionales.innerHTML = "";
+function mostrarAdicionales(){
+      contenedorAdicionales.innerHTML = "";
 
     adicionales.forEach(function(adicional) {
-        const tarjeta = document.createElement("article");
-        tarjeta.className = "additional-card reveal";
-        const encabezado = document.createElement("div");
-        encabezado.className = "additional-head";
-        const categoria = document.createElement("p");
-        categoria.className = "text-[9px] font-bold uppercase tracking-wider text-vp-gold";
-        categoria.textContent = adicional.categoria;
+        const seccion = document.createElement("div");
+        seccion.className = "mb-10";
         const titulo = document.createElement("h3");
-        titulo.textContent = adicional.paquete;
-        const detalles = document.createElement("ul");
-        const cantidad = document.createElement("li");
-        const textoCantidad = document.createElement("strong");
-        textoCantidad.textContent = "• " + adicional.cantidad;
-        cantidad.appendChild(textoCantidad);
-        const detalle = document.createElement("li");
-        detalle.textContent = "• " + adicional.detalle;
-        const precio = document.createElement("p");
-        precio.className = "price";
-        precio.textContent = "₡" + adicional.precio.toLocaleString("es-CR");
 
-        encabezado.appendChild(categoria);
-        encabezado.appendChild(titulo);
-        detalles.appendChild(cantidad);
-        detalles.appendChild(detalle);
-        tarjeta.appendChild(encabezado);
-        tarjeta.appendChild(detalles);
-        tarjeta.appendChild(precio);
-        listaAdicionales.appendChild(tarjeta);
+        titulo.className =
+            "text-2xl font-bold text-vp-text";
+        titulo.textContent = adicional.categoria;
+        const descripcion = document.createElement("p");
+
+        descripcion.className =
+            "mt-2 max-w-2xl text-sm text-vp-text/70";
+        descripcion.textContent = adicional.descripcion;
+
+        const contenedorPaquetesAdicional = document.createElement("div");
+
+        contenedorPaquetesAdicional.className =
+            "mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3";
+
+        adicional.paquetes.forEach(function(paquete) {
+            const tarjeta = document.createElement("article");
+
+            tarjeta.className =
+                "rounded-2xl border border-vp-beige bg-vp-white p-5 shadow-sm";
+            const nombre = document.createElement("h4");
+
+            nombre.className =
+                "text-lg font-bold text-vp-text";
+
+            nombre.textContent = paquete.nombre;
+            const cantidad = document.createElement("p");
+
+            cantidad.className =
+                "mt-2 text-sm text-vp-text/70";
+
+            cantidad.textContent = paquete.cantidad;
+            const detalle = document.createElement("p");
+
+            detalle.className =
+                "mt-1 text-sm text-vp-text/70";
+
+            detalle.textContent = paquete.detalle;
+            const precio = document.createElement("p");
+
+            precio.className =
+                "mt-4 text-lg font-bold text-vp-brown";
+
+            precio.textContent =
+                "₡" + paquete.precio.toLocaleString("es-CR");
+            const boton = document.createElement("button");
+
+            boton.type = "button";
+
+            boton.className =
+                "package-button mt-4 w-full";
+
+            boton.textContent =
+                "Solicitar este adicional";
+
+            boton.setAttribute(
+                "data-adicional-id",
+                adicional.id
+            );
+
+            boton.setAttribute(
+                "data-paquete-id",
+                paquete.id
+            );
+        
+            boton.addEventListener("click", function() {
+
+                seleccionarAdicional(adicional, paquete);
+
+            });
+            tarjeta.appendChild(nombre);
+            tarjeta.appendChild(cantidad);
+            tarjeta.appendChild(detalle);
+            tarjeta.appendChild(precio);
+            tarjeta.appendChild(boton);
+            contenedorPaquetesAdicional.appendChild(tarjeta);
+
+        });
+
+
+        // agregar todo el servicio
+        seccion.appendChild(titulo);
+        seccion.appendChild(descripcion);
+        seccion.appendChild(contenedorPaquetesAdicional);
+
+        contenedorAdicionales.appendChild(seccion);
     });
 }
 
 function mostrarOpcionesAdicionales() {
-    opcionesAdicionales.innerHTML = "";
-    const categorias = [];
 
-    // Guardamos cada categoría una sola vez en el arreglo.
-    adicionales.forEach(function(adicional) {
-        if (categorias.indexOf(adicional.categoria) === -1) {
-            categorias.push(adicional.categoria);
-        }
+    mostrarAdicionalesSeleccionados();
+
+}
+
+function seleccionarAdicional(adicional, paquete) {
+
+    const seleccionado = {
+        adicionalId: adicional.id,
+        paqueteId: paquete.id
+    };
+
+
+    const indice = adicionalesSeleccionados.findIndex(function(elemento) {
+
+        return elemento.adicionalId === adicional.id &&
+               elemento.paqueteId === paquete.id;
+
     });
 
-    categorias.forEach(function(categoria) {
-        const etiqueta = document.createElement("label");
-        etiqueta.className = "flex cursor-pointer items-center gap-2 rounded-lg border border-vp-beige bg-vp-white p-2 text-xs";
-        const casilla = document.createElement("input");
-        casilla.type = "checkbox";
-        casilla.name = "adicional";
-        casilla.value = categoria;
-        casilla.className = "h-4 w-4 accent-[#321D0E]";
-        const texto = document.createElement("span");
-        texto.textContent = categoria;
 
-        etiqueta.appendChild(casilla);
-        etiqueta.appendChild(texto);
-        opcionesAdicionales.appendChild(etiqueta);
+    if (indice === -1) {
+
+        adicionalesSeleccionados.push(seleccionado);
+
+    } else {
+
+        adicionalesSeleccionados.splice(indice, 1);
+    }
+
+
+    mostrarAdicionalesSeleccionados();
+
+    actualizarBotonAdicional(
+        adicional.id,
+        paquete.id
+    );
+}
+
+function mostrarAdicionalesSeleccionados() {
+
+    opcionesAdicionales.innerHTML = "";
+
+
+    if (adicionalesSeleccionados.length === 0) {
+
+        const texto = document.createElement("p");
+
+        texto.className =
+            "text-sm text-vp-text/60";
+
+        texto.textContent =
+            "No has seleccionado adicionales.";
+
+        opcionesAdicionales.appendChild(texto);
+
+        return;
+    }
+
+
+    adicionalesSeleccionados.forEach(function(seleccionado) {
+
+        const adicional = adicionales.find(function(elemento) {
+
+            return elemento.id === seleccionado.adicionalId;
+
+        });
+
+
+        if (!adicional) {
+            return;
+        }
+
+
+        const paquete = adicional.paquetes.find(function(elemento) {
+
+            return elemento.id === seleccionado.paqueteId;
+
+        });
+
+
+        if (!paquete) {
+            return;
+        }
+
+
+        const elemento = document.createElement("div");
+
+        elemento.className =
+            "flex items-center justify-between rounded-lg border border-vp-beige bg-vp-white p-3 text-sm";
+
+
+        const texto = document.createElement("span");
+
+        texto.textContent =
+            "✓ " +
+            adicional.categoria +
+            " · " +
+            paquete.nombre;
+
+
+        const boton = document.createElement("button");
+
+        boton.type = "button";
+
+        boton.textContent = "×";
+
+        boton.className =
+            "ml-3 font-bold text-vp-brown";
+
+
+        boton.addEventListener("click", function() {
+
+            quitarAdicional(
+                adicional.id,
+                paquete.id
+            );
+
+        });
+
+
+        elemento.appendChild(texto);
+        elemento.appendChild(boton);
+
+        opcionesAdicionales.appendChild(elemento);
     });
 }
 
-// Menú de celulares.
+function quitarAdicional(adicionalId, paqueteId) {
+
+    const indice = adicionalesSeleccionados.findIndex(function(elemento) {
+
+        return elemento.adicionalId === adicionalId &&
+               elemento.paqueteId === paqueteId;
+
+    });
+
+
+    if (indice !== -1) {
+
+        adicionalesSeleccionados.splice(indice, 1);
+    }
+
+
+    mostrarAdicionalesSeleccionados();
+
+    actualizarBotonAdicional(
+        adicionalId,
+        paqueteId
+    );
+}
+
+function actualizarBotonAdicional(adicionalId, paqueteId) {
+
+    const boton = document.querySelector(
+        '[data-adicional-id="' +
+        adicionalId +
+        '"][data-paquete-id="' +
+        paqueteId +
+        '"]'
+    );
+
+
+    if (boton) {
+
+        const seleccionado =
+            adicionalesSeleccionados.some(function(elemento) {
+
+                return elemento.adicionalId === adicionalId &&
+                       elemento.paqueteId === paqueteId;
+
+            });
+
+
+        if (seleccionado) {
+
+            boton.textContent = "Agregado ✓";
+
+        } else {
+
+            boton.textContent = "Agregar al formulario";
+        }
+    }
+}
+// ver menú de celulares.
 botonMenu.addEventListener("click", function() {
     const abierto = menu.classList.toggle("mobile-open");
     botonMenu.setAttribute("aria-expanded", String(abierto));
@@ -215,7 +439,7 @@ document.querySelectorAll(".menu-link").forEach(function(enlace) {
         botonMenu.setAttribute("aria-expanded", "false");
     });
 });
-// Indicador animado del menú
+// indicador animado del menú
 const indicadorMenu = document.querySelector("#menuIndicator");
 const enlacesMenu = document.querySelectorAll(".menu-link");
 
@@ -231,7 +455,7 @@ menu.addEventListener("mouseleave", function() {
     indicadorMenu.style.opacity = "0";
 });
 
-// Ventana con los detalles del paquete.
+// ventana con los detalles del paquete.
 function abrirModalPaquete(paquete) {
      paqueteSeleccionado = paquete;
 
@@ -318,7 +542,97 @@ galeria.addEventListener("click", function(event) {
     }
 });
 
-// Fecha mínima usando el día local del navegador.
+//ver mas de la galaeria
+
+const fotosGaleria = [
+    {src:"assets/Reglas.JPG", descripcion: "Relas, Villa Peña"},
+    {src:"assets/Senal.JPG", descripcion: "Cartel exterior, Villa Peña"},
+    {src:"assets/CartelArriba.JPG", descripcion: "Cartel en la puerta, Villa Peña"},
+    {src:"assets/DesdeArriba.JPG", descripcion: "Vista desde arriba, Villa Peña"},
+    {src:"assets/SillasExteriores.JPG", descripcion: "Sillas exteriores, Villa Peña"},
+    {src:"assets/BrincaBrinca.JPG", descripcion: "Brinca brincas, Villa Peña"},
+    {src:"assets/PlayGround(1).JPG", descripcion: "Area de juegos, Villa Peña"},
+    {src:"assets/Tobogan.JPG", descripcion: "Tobogan, Villa Peña"},
+    {src:"assets/Tobogan(1).JPG", descripcion: "Tobogan, Villa Peña"},
+    {src:"assets/Llantas.JPG", descripcion: "Parte del Playground, Villa Peña"},
+    {src:"assets/CartelArriba.JPG", descripcion: "Cartel y parrila, Villa Peña"},
+    {src:"assets/Parrilla(1).JPG", descripcion: "Parrilla, Villa Peña"},
+    {src:"assets/Rancho(3).JPG", descripcion: "Rancho intro mesas, Villa Peña"},
+    {src:"assets/MesasInteriores.JPG", descripcion: "Mesas interiores, Villa Peña"},
+    {src:"assets/MesasInteriores(1).JPG", descripcion: "Mesas interiores, Villa Peña"},
+    {src:"assets/MesasInteriores(2).JPG", descripcion: "Mesas interiores, Villa Peña"},
+    {src:"assets/Corazon.JPG", descripcion: "Mesas interiores, Villa Peña"},
+    {src:"assets/SillasAltas.JPG", descripcion: "Sillas altas, Villa Peña"},
+    {src:"assets/Entretenimiento.JPG", descripcion: "Entretenimiento, Villa Peña"},
+    {src:"assets/Entretenimiento(1).JPG", descripcion: "Entretenimiento, Villa Peña"},
+    {src:"assets/Piscina(1).JPG", descripcion: "Area piscina, Villa Peña"},
+    {src:"assets/Piscina(2).JPG", descripcion: "Area piscina, Villa Peña"},
+    {src:"assets/Piscina(3).JPG", descripcion: "Area piscina, Villa Peña"},
+    {src:"assets/Fuente.JPG", descripcion: "Fuente, Villa Peña"},
+    {src:"assets/PiscinayRancho.JPG", descripcion: "Area exterior, Villa Peña"},
+    {src:"assets/Piscina(4).JPG", descripcion: "Area piscina, Villa Peña"},
+    {src:"assets/Amaca.JPG", descripcion: "Amaca, Villa Peña"},
+    {src:"assets/Panoramica.JPG", descripcion: "Vista panoramica, Villa Peña"},
+];
+
+function prepararImagenGaleria(boton){
+    boton.addEventListener("click", function(){
+        imagenGaleria.src = getAttribute("data-src");
+        imagenGaleria.alt = boton.querySelector("img").alt;
+        galeria.classList.remove("hidden");
+        galeria.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+    });
+}
+
+document.querySelectorAll(".gallery-item").forEach(function(boton){
+    prepararImagenGaleria(boton);
+});
+
+function mostrarFotosGaleria(){
+    fotosGaleria.forEach(function(foto){
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "gallery-item";
+        boton.setAttribute("data-src", foto.src);
+        boton.setAttribute("arial-label", "Abrir imagen:" + foto.descripcion);
+
+        const imagen = document.createElement("img");
+        imagen.src = foto.src;
+        imagen.alt = foto.descripcion;
+        imagen.leading = "lazy";
+
+        boton.appendChild(imagen);
+        prepararImagenGaleria(boton);
+        galeriaExtra.appendChild(boton);
+    });
+}
+
+botonVerMas.hidden = false;
+botonVerMas.addEventListener("click", function() {
+    // evita duplicar
+    if (galeriaExtra.childElementCount === 0) {
+        mostrarFotosGaleria();
+    }
+
+    galeriaExtra.hidden = !galeriaExtra.hidden;
+    botonVerMas.textContent = galeriaExtra.hidden ? "Ver más" : "Ver menos";
+    botonVerMas.setAttribute("aria-expanded", String(!galeriaExtra.hidden));
+});
+
+function cerrarGaleria() {
+    galeria.classList.add("hidden");
+    galeria.classList.remove("flex");
+    document.body.classList.remove("overflow-hidden");
+}
+
+botonCerrarGaleria.addEventListener("click", cerrarGaleria);
+galeria.addEventListener("click", function(event) {
+    if (event.target === galeria) {
+        cerrarGaleria();
+    }
+});
+// fecha mínima usando el día local del navegador.
 function fechaLocalHoy() {
     const hoy = new Date();
     const anio = hoy.getFullYear();
@@ -365,7 +679,7 @@ function validarCampo(campo) {
     if (campo.required && valor === "") {
         campo.setCustomValidity("Completá este campo obligatorio.");
     } else if (campo.id === "telefono" && valor !== "") {
-        // Contar dígitos sin espacios, paréntesis ni guiones.
+        // contar dígitos sin espacios, paréntesis ni guiones.
         const digitos = valor.replace(/\D/g, "");
         const formatoValido = /^\+?[\d\s()-]+$/.test(valor);
         if (formatoValido === false || digitos.length < 8 || digitos.length > 15) {
@@ -422,11 +736,53 @@ function validarFormulario() {
 }
 
 function obtenerAdicionalesSeleccionados() {
+
     const seleccionados = [];
-    const casillas = formulario.querySelectorAll('input[name="adicional"]:checked');
-    casillas.forEach(function(casilla) {
-        seleccionados.push(casilla.value);
+
+
+    adicionalesSeleccionados.forEach(function(seleccionado) {
+
+        const adicional = adicionales.find(function(elemento) {
+
+            return elemento.id === seleccionado.adicionalId;
+
+        });
+
+
+        if (!adicional) {
+            return;
+        }
+
+
+        const paquete = adicional.paquetes.find(function(elemento) {
+
+            return elemento.id === seleccionado.paqueteId;
+
+        });
+
+
+        if (!paquete) {
+            return;
+        }
+
+
+        seleccionados.push({
+
+            categoria: adicional.categoria,
+
+            paquete: paquete.nombre,
+
+            cantidad: paquete.cantidad,
+
+            detalle: paquete.detalle,
+
+            precio: paquete.precio
+
+        });
+
     });
+
+
     return seleccionados;
 }
 
@@ -446,20 +802,32 @@ function crearMensajeSolicitud(solicitud) {
     texto += "Paquete: " + solicitud.paquete + "\n\n";
     texto += "*Adicionales*\n";
 
-    if (solicitud.adicionales.length === 0) {
-        texto += "Ninguno seleccionado\n";
-    } else {
-        solicitud.adicionales.forEach(function(adicional) {
-            texto += "• " + adicional + "\n";
-        });
-    }
+   if (solicitud.adicionales.length === 0) {
 
+    texto += "Ninguno seleccionado\n";
+
+} else {
+
+    solicitud.adicionales.forEach(function(adicional) {
+
+        texto +=
+            "• " +
+            adicional.categoria +
+            " - " +
+            adicional.paquete +
+            " - ₡" +
+            adicional.precio.toLocaleString("es-CR") +
+            "\n";
+
+    });
+}
     texto += "\n*Mensaje*\n";
     if (solicitud.mensaje === "") {
         texto += "Sin mensaje adicional.\n\n";
     } else {
         texto += solicitud.mensaje + "\n\n";
     }
+    texto += "Indicaciones sobre la reserva: El cliente confirma haberlas leído.\n";
     texto += "Quedo atento/a a la información y disponibilidad.";
     return texto;
 }
@@ -477,7 +845,7 @@ function abrirWhatsApp(solicitud) {
     const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(texto);
     mostrarMensaje("Solicitud preparada. Confirmá el envío en WhatsApp.", "success");
 
-    // Mostrar un enlace por si el navegador bloquea la nueva pestaña.
+    // mostrar un enlace por si el navegador bloquea la nueva pestaña.
     const enlace = document.createElement("a");
     enlace.href = url;
     enlace.target = "_blank";
@@ -489,7 +857,7 @@ function abrirWhatsApp(solicitud) {
     window.open(url, "_blank", "noopener,noreferrer");
 }
 
-// Mantener la animación al desplazarse, con contenido visible como respaldo.
+// mantener la animación al desplazarse, con contenido visible como respaldo.
 function prepararAnimaciones() {
     const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducirMovimiento || !("IntersectionObserver" in window)) {
@@ -512,7 +880,7 @@ function prepararAnimaciones() {
     });
 }
 
-// Cargar los datos en el HTML al abrir la página.
+// cargar los datos en el HTML al abrir la página.
 mostrarPaquetes();
 mostrarOpcionesPaquetes();
 mostrarAdicionales();
@@ -520,10 +888,8 @@ mostrarOpcionesAdicionales();
 campoFecha.min = fechaLocalHoy();
 prepararAnimaciones();
 
-//hora de formulario
-const horaInicio = document.querySelector("#horaInicio");
-const horaFinal = document.querySelector("#horaFinal");
 
+//hora inicio hora fin
 horaInicio.addEventListener("change", function(){
     const [horas, minutos] = horaInicio.value
         .split(":")
