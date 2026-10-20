@@ -12,21 +12,16 @@ const common_1 = require("@nestjs/common");
 const observe_1 = require("@nestjs/observe");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const paquetes_module_1 = require("./Paquetes/paquetes.module");
 _a = (0, observe_1.createObserveModule)(), exports.ObserveModule = _a.ObserveModule, exports.ObserveInstrument = _a.ObserveInstrument;
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            exports.ObserveModule.forRoot({
-                appKey: process.env.OBSERVE_APP_KEY ?? 'YOUR_APP_KEY',
-                appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
-                serviceId: 'villa-penas-backend',
-            }),
-        ],
+        imports: [paquetes_module_1.PaquetesModule],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService]
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
