@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#321D0E"><title>
+    Administración | Villa Peñas
+  </title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer>
+  </script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#inicio" aria-label="Villa Peñas administración"><img src="assets/logo.png" alt="Villa Peñas"><span>
+      ADMINISTRACIÓN
+    </span>
+    </a>
+    <nav class="side-nav" aria-label="Menú de administración">
+      <button class="nav-link active" data-view="calendario"><span class="nav-icon">
+        ▦</span>
+        Calendario
+      </button>
+      <button class="nav-link" data-view="paquetes"><span class="nav-icon">
+        ◇</span>
+        Paquetes
+      </button>
+      <button class="nav-link" data-view="resenas"><span class="nav-icon">
+        ☆
+      </span>
+      Reseñas
+      <span class="nav-count" id="pendingCount">
+        3
+      </span>
+    </button>
+      
+    </nav>
+    <div class="sidebar-bottom">
+      <span class="online-dot">
+      </span> 
+      Panel de administración 
+      <button id="resetDemo" class="text-button" title="Restaurar datos de demostración">
+        Restaurar demo
+      </button>
+    </div>
+  </aside>
+  <div class="app-shell">
+    <header class="topbar"><button class="icon-button mobile-menu" id="mobileMenu" aria-label="Abrir menú">
+      ☰
+    </button>
+    <div class="crumb">
+      <span class="crumb-dot">
+      </span>
+      Villa Peñas 
+      <span>/</span> 
+      <strong id="crumbTitle">
+        Calendario
+      </strong>
+      </div>
+      <div class="profile">
+        <div class="avatar avatar-dark">
+          VP
+        </div>
+        <div>
+          <strong>
+            Villa Peñas
+          </strong>
+          <small>
+            Administradora
+          </small>
+        </div>
+        <span class="chevron">
+          ⌄
+        </span>
+      </div>
+    </header>
+    <main class="main-content">
+      <div class="welcome-row">
+        <div>
+          <p class="eyebrow">ESPACIO DE GESTIÓN</p>
+          <h1 id="pageTitle">Calendario de reservaciones</h1>
+          <p class="subheading" id="pageDescription">Visualiza y administra las reservaciones y fechas bloqueadas.</p>
+        </div>
+        <div class="welcome-actions" id="headerActions">
+          <button class="btn btn-primary" id="newReservation">
+            <span>＋</span> Nueva reservación
+          </button>
+          <button class="btn btn-outline" id="blockDate">
+            <span>▣</span> Bloquear fecha
+          </button>
+        </div>
+      </div>
+      <section class="stats-grid" aria-label="Resumen de actividad">
+        <article class="stat-card">
+          <span class="stat-icon icon-calendar">
+          ▦
+        </span>
+        <div>
+          <span>
+            Eventos este mes
+          </span>
+          <strong id="statEvents">
+            8</strong>
+            <small>
+              Reservaciones registradas
+            </small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon icon-pending">
+            ◷</span>
+            <div>
+              <span>
+                Fechas ocupadas
+              </span>
+              <strong id="statOccupied">
+                6
+              </strong>
+              <small>
+                Eventos y bloqueos
+              </small>
+            </div>
+          </article>
+        <article class="stat-card">
+          <span class="stat-icon icon-review">
+            ☆
+          </span>
+          <div>
+            <span>
+              Reseñas pendientes
+            </span>
+            <strong id="statReviews">
+              3
+            </strong>
+            <small>
+              Por revisar antes de publicar
+            </small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon icon-request">
+            ✉
+          </span>
+          <div>
+            <span>
+              Solicitudes nuevas
+            </span>
+            <strong id="statRequests">
+              2
+            </strong>
+            <small>
+              Esperando respuesta
+            </small>
+          </div>
+        </article>
+      </section>
+
+      <section class="view-panel active" id="view-calendario">
+        <div class="panel calendar-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">
+                OPERACIÓN
+              </p>
+              <h2>
+                Calendario de eventos
+              </h2>
+              <p>
+                Selecciona un evento para consultar sus detalles o una fecha vacía para bloquearla.
+              </p>
+            </div>
+            <div class="calendar-legend">
+              <span>
+                <i class="legend-dot confirmed">
+                </i>
+                Confirmada
+              </span>
+              <span>
+                <i class="legend-dot pending">
+                </i>
+                Pendiente
+              </span>
+              <span>
+                <i class="legend-dot blocked">
+                </i>
+                Bloqueada
+              </span>
+            </div>
+          </div>
+          <div class="calendar-toolbar">
+            <div class="calendar-controls">
+              <button class="btn btn-soft" id="todayBtn">
+                Hoy
+              </button>
+              <button class="icon-button" id="prevMonth" aria-label="Mes anterior">
+                ‹
+              </button>
+              <button class="icon-button" id="nextMonth" aria-label="Mes siguiente">
+                ›
+              </button>
+            </div>
+            <h3 id="monthLabel">
+              octubre de 2026
+            </h3>
+            <div class="view-toggle">
+              <button class="selected" data-mode="month">
+                Mes
+              </button>
+              <button data-mode="week">
+                Semana
+              </button>
+              <button data-mode="day">
+                Día
+              </button>
+            </div>
+          </div>
+          <div class="calendar-scroll">
+            <div class="calendar-grid" id="calendarGrid">
+            </div>
+          </div>
+          <div class="calendar-footer">
+            <span>
+              <span class="tiny-dot"></span> 
+              Datos de demostración para visualizar el panel.
+            </span>
+            <button class="text-button" id="addEventFromCalendar">
+              ＋ Agregar evento
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-panel" id="view-paquetes">
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">
+                CONTENIDO DEL SITIO
+              </p>
+              <h2>
+                Paquetes
+              </h2>
+              <p>
+                Edita los paquetes que se muestran en la página pública de Villa Peñas.
+              </p>
+            </div>
+            <button class="btn btn-primary" id="addPackage">
+              ＋ Nuevo paquete
+            </button>
+          </div>
+          <div class="notice">
+            <span>
+              ⓘ
+            </span>
+            <div>
+              <strong>
+                Vista previa de administración
+              </strong>
+              <p>
+                Los cambios se guardan localmente en este prototipo. Para que se reflejen en la web pública para todas las personas, hay que conectar este panel con la API de NestJS.
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    Paquete
+                  </th>
+                  <th>
+                    Descripción
+                  </th>
+                  <th>
+                    Precio
+                  </th>
+                  <th>
+                    Estado
+                  </th>
+                  <th class="right">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="packageRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view-panel" id="view-resenas">
+        <div class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">
+                REPUTACIÓN
+              </p>
+              <h2>
+                Reseñas y testimonios</h2><p>Revisa cada comentario y decide si quieres publicarlo en la página principal.
+                </p>
+              </div>
+              <span class="pill pill-pending" id="reviewsPill">
+                3 pendientes
+              </span>
+            </div>
+          <div class="notice">
+            <span>
+              ☆
+            </span>
+            <div>
+              <strong>
+                Moderación de reseñas
+              </strong>
+              <p>
+                Las reseñas de ejemplo permiten probar los botones. En producción, la API debe recibir los comentarios y guardar su estado de aprobación.
+              </p>
+            </div>
+          </div>
+          <div class="tabs" id="reviewTabs">
+            <button class="selected" data-status="pendiente">
+              Pendientes 
+              <span id="tabPending">
+                3
+              </span>
+            </button>
+            <button data-status="publicada">
+              Publicadas 
+              <span id="tabPublished">2</span>
+            </button>
+            <button data-status="rechazada">
+              Rechazadas 
+              <span id="tabRejected">1</span>
+            </button>
+          </div>
+          <div class="reviews-list" id="reviewsList"></div>
+        </div>
+      </section>
+
+      
+      <footer class="footer">
+        <span>
+          Villa Peñas · Panel interno
+        </span>
+        <span>
+          Diseñado para gestión de reservaciones y contenido
+        </span>
+      </footer>
+    </main>
+  </div>
+
+  <dialog id="packageDialog" class="modal">
+    <form id="packageForm" method="dialog">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">
+            GESTIÓN DE CONTENIDO
+          </p>
+          <h2 id="packageDialogTitle">
+            Nuevo paquete
+          </h2>
+        </div>
+        <button type="button" class="icon-button close-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <input type="hidden" id="packageId">
+      <label>Nombre del paquete
+        <input id="packageName" required maxlength="70" placeholder="Ej. Paquete Premium">
+      </label>
+      <label>Descripción
+        <textarea id="packageDescription" required rows="3" maxlength="220" placeholder="Describe qué incluye el paquete"></textarea>
+      </label>
+      <div class="form-row">
+        <label>Precio en colones
+          <input id="packagePrice" required type="number" min="0" step="500" placeholder="150000">
+        </label>
+        <label>Estado
+          <select id="packageActive">
+            <option value="true">
+              Activo
+            </option>
+            <option value="false">
+              Oculto
+            </option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline close-dialog">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Guardar paquete
+        </button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="eventDialog" class="modal">
+    <form id="eventForm" method="dialog">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">
+            CALENDARIO
+          </p>
+          <h2 id="eventDialogTitle">
+            Nueva reservación
+          </h2>
+        </div>
+        <button type="button" class="icon-button close-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <input type="hidden" id="eventId">
+      <label>Nombre del evento
+        <input id="eventName" required placeholder="Ej. Cumpleaños familiar">
+      </label>
+      <div class="form-row">
+        <label>Fecha
+          <input id="eventDate" type="date" required>
+        </label>
+        <label>Hora
+          <input id="eventTime" type="time" value="16:00" required>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Cliente
+          <input id="eventClient" placeholder="Nombre del cliente" required>
+        </label>
+        <label>Personas
+          <input id="eventGuests" type="number" min="1" max="1000" value="30" required>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Paquete
+          <select id="eventPackage"></select>
+        </label>
+        <label>Estado
+          <select id="eventStatus">
+            <option value="confirmada">Confirmada</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="bloqueada">Fecha bloqueada</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline close-dialog">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar en calendario</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+</body></html>
