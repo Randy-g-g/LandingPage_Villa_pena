@@ -16,7 +16,7 @@ exports.GaleriaModule = GaleriaModule;
 exports.GaleriaModule = GaleriaModule = __decorate([
     (0, common_1.Module)({
         controllers: [galeria_controller_1.GaleriaController],
-        providers: [galeria_service_1.GaleriaService]
+        providers: [galeria_service_1.GaleriaService],
     })
 ], GaleriaModule);
 //# sourceMappingURL=galeria.module.js.map

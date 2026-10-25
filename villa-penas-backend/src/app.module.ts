@@ -5,9 +5,11 @@ import { AppService } from './app.service';
 import { PaquetesModule } from './Paquetes/paquetes.module';
 import { GaleriaModule } from './galeria/galeria.module';
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
+import { ResenasModule } from './Resenas/resenas.module';
+
 
 @Module({
-  imports: [PaquetesModule, GaleriaModule],
+  imports: [PaquetesModule, GaleriaModule, ResenasModule],
   controllers: [AppController],
   providers: [AppService]
 })
