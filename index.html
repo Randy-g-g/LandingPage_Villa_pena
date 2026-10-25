@@ -359,63 +359,44 @@
       </div>
     </section>
 
-          <!--TESTIMONIOS-->
-    <section id="testimonios" class="py-16">
-      <div class="mx-auto max-w-6xl px-5">
+          <!-- TESTIMONIOS / RESEÑAS -->
+<section id="testimonios" class="py-16">
+  <div class="mx-auto max-w-6xl px-5">
 
-        <div class="reveal">
-          <p class="text-vp-gold font-bold text-2xl">
-            Familias que ya celebraron en Villa Peñas
-          </p>
-          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Experiencias que generan confianza.</h2>
-        </div>
+    <div class="reveal">
+      <p class="text-vp-gold font-bold text-2xl">
+        Familias que ya celebraron en Villa Peñas
+      </p>
 
-        <div class="mt-8 grid gap-4 md:grid-cols-3">
-          <article class="testimonial-card reveal">
-            <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">
-              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
-            </p>
-            <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">D</span>
-              <div>
-                <strong>Dulce Vargas.</strong>
-                <small>Reunión familiar</small>
-              </div>
-            </div>
-          </article>
+      <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">
+        Experiencias que generan confianza.
+      </h2>
 
-          <article class="testimonial-card reveal">
-            <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">
-              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
-            </p>
-            <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">R</span>
-              <div>
-                <strong>Randy Gutierrez.</strong>
-                <small>Reunión familiar</small>
-              </div>
-            </div>
-          </article>
+      <p class="mt-4 text-sm leading-6">
+        Conocé las experiencias de quienes han disfrutado de Villa Peñas.
+      </p>
+    </div>
 
-          <article class="testimonial-card reveal">
-            <div class="stars">★★★★★</div>
-            <p class="mt-3 text-sm leading-6">
-              “Opinión de demostración. Este texto debe sustituirse por una experiencia real autorizada.”
-            </p>
-            <div class="mt-5 flex items-center gap-3">
-              <span class="avatar">L</span>
-              <div>
-                <strong>Leonora Zuñiga.</strong>
-                <small>Baby shower</small>
-              </div>
-            </div>
-          </article>
-        </div>
+    <!-- Aquí se cargarán las reseñas aprobadas desde el backend -->
+    <div
+      id="resenasContainer"
+      class="mt-8 grid gap-4 md:grid-cols-3"
+      aria-live="polite"
+    >
+      <p class="text-sm">Cargando reseñas...</p>
+    </div>
 
-      </div>
-    </section>
+    <div class="mt-8 text-center">
+      <a
+        href="resena.html"
+        class="inline-block rounded-full bg-vp-brown px-7 py-3 font-bold text-white transition hover:bg-vp-gold"
+      >
+        + Agregar reseña
+      </a>
+    </div>
+
+  </div>
+</section>
 
     <!--CONTACTO / SOLICITUD-->
     <section id="contacto" class="bg-vp-coffee py-16 text-white sm:py-20">
@@ -632,5 +613,6 @@
 
   <script src="js/datos.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/resenas.js"></script>
 </body>
 </html>

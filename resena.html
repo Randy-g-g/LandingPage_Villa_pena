@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Comparte tu experiencia en Villa Peñas.">
+  <title>Agregar reseña | Villa Peñas</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen bg-[#F5EFE5] text-[#493329]">
+
+  <!-- Encabezado -->
+  <header class="bg-[#493329] px-5 py-6 text-white shadow-md">
+    <div class="mx-auto flex max-w-5xl items-center justify-between">
+      <div>
+        <a href="index.html"
+           class="font-serif text-3xl font-bold tracking-wide">
+          Villa Peñas
+        </a>
+        <p class="mt-1 text-sm text-[#E5D3B4]">
+          Momentos especiales, recuerdos inolvidables
+        </p>
+      </div>
+
+      <a href="index.html#testimonios"
+         class="rounded-full border border-[#D2B477] px-4 py-2 text-sm transition hover:bg-[#D2B477] hover:text-[#493329]">
+        Volver
+      </a>
+    </div>
+  </header>
+
+  <!-- Formulario -->
+  <main class="px-5 py-12 sm:py-16">
+    <div class="mx-auto max-w-2xl">
+
+      <div class="mb-7 text-center">
+        <p class="font-bold uppercase tracking-[0.2em] text-[#A88449]">
+          Tu experiencia importa
+        </p>
+
+        <h1 class="mt-3 font-serif text-4xl font-bold text-[#493329] sm:text-5xl">
+          Compartí tu reseña
+        </h1>
+
+        <p class="mx-auto mt-4 max-w-lg leading-7 text-[#746256]">
+          Nos encantaría conocer tu experiencia en Villa Peñas.
+          Tu opinión ayuda a otras personas a descubrir nuestro espacio.
+        </p>
+      </div>
+
+      <section class="rounded-2xl border border-[#E3D5C1] bg-[#FFFCF7] p-6 shadow-xl sm:p-9">
+
+        <form id="resenaForm" class="space-y-6">
+
+          <div>
+            <label for="usuario"
+                   class="mb-2 block text-sm font-bold text-[#493329]">
+              Tu nombre
+            </label>
+
+            <input
+              id="usuario"
+              name="usuario"
+              type="text"
+              maxlength="100"
+              required
+              placeholder="¿Cómo te llamás?"
+              class="w-full rounded-xl border border-[#D9C8B2] bg-white px-4 py-3 outline-none transition focus:border-[#B89556] focus:ring-2 focus:ring-[#B89556]/30"
+            >
+          </div>
+
+          <div>
+            <label for="comentario"
+                   class="mb-2 block text-sm font-bold text-[#493329]">
+              Contanos tu experiencia
+            </label>
+
+            <textarea
+              id="comentario"
+              name="comentario"
+              rows="5"
+              maxlength="1000"
+              required
+              placeholder="¿Qué fue lo que más te gustó de Villa Peñas?"
+              class="w-full resize-y rounded-xl border border-[#D9C8B2] bg-white px-4 py-3 outline-none transition focus:border-[#B89556] focus:ring-2 focus:ring-[#B89556]/30"
+            ></textarea>
+
+            <p class="mt-2 text-xs text-[#8C7A69]">
+              Máximo 1000 caracteres.
+            </p>
+          </div>
+
+          <div>
+            <label for="calificacion"
+                   class="mb-2 block text-sm font-bold text-[#493329]">
+              ¿Cómo calificás tu experiencia?
+            </label>
+
+            <select
+              id="calificacion"
+              name="calificacion"
+              required
+              class="w-full rounded-xl border border-[#D9C8B2] bg-white px-4 py-3 outline-none transition focus:border-[#B89556] focus:ring-2 focus:ring-[#B89556]/30"
+            >
+              <option value="5">★★★★★ — Excelente</option>
+              <option value="4">★★★★☆ — Muy bueno</option>
+              <option value="3">★★★☆☆ — Bueno</option>
+              <option value="2">★★☆☆☆ — Regular</option>
+              <option value="1">★☆☆☆☆ — Malo</option>
+            </select>
+          </div>
+
+          <div id="resenaMensaje"
+               class="hidden rounded-xl p-4 text-sm"
+               role="status"
+               aria-live="polite">
+          </div>
+
+          <button
+            id="btnEnviarResena"
+            type="submit"
+            class="w-full rounded-full bg-[#493329] px-6 py-4 font-bold text-white shadow-md transition hover:bg-[#A88449] hover:shadow-lg"
+          >
+            Enviar reseña
+          </button>
+
+          <p class="text-center text-xs leading-5 text-[#8C7A69]">
+            Las reseñas se revisan antes de aparecer en nuestra página.
+          </p>
+
+        </form>
+      </section>
+
+      <p class="mt-6 text-center text-sm text-[#746256]">
+        Gracias por formar parte de los recuerdos de Villa Peñas.
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="border-t border-[#E3D5C1] bg-[#493329] px-5 py-5 text-center text-sm text-[#E5D3B4]">
+    © Villa Peñas · Todos los derechos reservados
+  </footer>
+
+  <script src="JS/resena.js"></script>
+</body>
+</html>
