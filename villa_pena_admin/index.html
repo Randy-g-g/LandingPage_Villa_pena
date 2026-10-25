@@ -25,6 +25,12 @@
         ◇</span>
         Paquetes
       </button>
+      <!-- GALERÍA -->
+      <button class="nav-link" data-view="galeria">
+      <span class="nav-icon">
+        ▧</span>
+         Galería
+      </button>
       <button class="nav-link" data-view="resenas"><span class="nav-icon">
         ☆
       </span>
@@ -229,7 +235,6 @@
           </div>
         </div>
       </section>
-
       <section class="view-panel" id="view-paquetes">
         <div class="panel">
           <div class="panel-heading">
@@ -287,7 +292,44 @@
           </div>
         </div>
       </section>
-
+<!--agregar foto-->
+<section class="view-panel" id="view-galeria">
+    <div class="panel">
+        <!-- Encabezado -->
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">CONTENIDO DEL SITIO</p>
+                <h2>Galería de fotografías</h2>
+                <p>
+                    Administra las fotografías que se mostrarán
+                    en la página pública de Villa Peña.
+                </p>
+            </div>
+            <button
+                class="btn btn-primary"
+                id="addPhoto"
+                type="button">
+                ＋ Nueva fotografía
+            </button>
+        </div>
+        <!-- Aviso informativo -->
+        <div class="notice">
+            <span>ⓘ</span>
+            <div>
+                <strong>Vista previa de administración</strong>
+                <p>
+                    Las fotografías se administrarán localmente
+                    durante esta etapa. Posteriormente se conectarán
+                    con la API de NestJS.
+                </p>
+            </div>
+        </div>
+        <!-- Fotografías registradas -->
+        <div class="gallery-admin-grid" id="adminGallery">
+            <!-- Las fotografías se generarán desde app.js -->
+        </div>
+    </div>
+  </section>
       <section class="view-panel" id="view-resenas">
         <div class="panel">
           <div class="panel-heading">
@@ -335,8 +377,6 @@
           <div class="reviews-list" id="reviewsList"></div>
         </div>
       </section>
-
-      
       <footer class="footer">
         <span>
           Villa Peñas · Panel interno
@@ -347,6 +387,63 @@
       </footer>
     </main>
   </div>
+
+  <!--formulario emergente-->
+<dialog id="photoDialog" class="modal">
+    <form id="photoForm">
+        <div class="modal-heading">
+            <div>
+                <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
+                <h2 id="photoDialogTitle">Nueva fotografía</h2>
+            </div>
+            <button
+                type="button"
+                class="icon-button close-dialog"
+                aria-label="Cerrar">
+                ×
+            </button>
+        </div>
+        <!-- Seleccionar imagen -->
+        <label>
+            Seleccionar fotografía
+            <input
+                type="file"
+                id="photoFile"
+                accept="image/jpeg,image/png,image/webp"
+                required>
+        </label>
+        <!-- Descripción -->
+        <label>
+            Descripción
+            <textarea
+                id="photoDescription"
+                rows="3"
+                maxlength="200"
+                placeholder="Ej. Piscina principal de Villa Peña"
+                required></textarea>
+        </label>
+        <!-- Vista previa -->
+        <div id="photoPreviewContainer" hidden>
+            <img
+                id="photoPreview"
+                alt="Vista previa de la fotografía"
+                style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;">
+        </div>
+        <!-- Botones -->
+        <div class="modal-actions">
+            <button
+                type="button"
+                class="btn btn-outline close-dialog">
+                Cancelar
+            </button>
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Guardar fotografía
+            </button>
+        </div>
+    </form>
+</dialog>
 
   <dialog id="packageDialog" class="modal">
     <form id="packageForm" method="dialog">

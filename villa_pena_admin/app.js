@@ -387,6 +387,12 @@ function setView(next) {
             "Actualiza los paquetes y la información que se mostrará en la página pública."
         ],
 
+        galeria: [
+             "Galería",
+             "Administración de galería",
+             "Administra las fotografías que se mostrarán en la página pública de Villa Peña."
+        ],
+
         resenas: [
             "Reseñas",
             "Reseñas y testimonios",
@@ -422,10 +428,7 @@ function setView(next) {
     if (next === "calendario") renderCalendar();
 }
 
-
-// ==========================================
 // 9. EVENTOS DE NAVEGACIÓN
-// ==========================================
 
 $$(".nav-link").forEach(boton => {
 
@@ -457,10 +460,7 @@ $("#resetDemo").addEventListener("click", () => {
     }
 });
 
-
-// ==========================================
 // 10. CALENDARIO
-// ==========================================
 
 function renderCalendar() {
 
@@ -620,10 +620,7 @@ function renderCalendar() {
     updateStats();
 }
 
-
-// ==========================================
 // 11. FORMATO DE HORA
-// ==========================================
 
 function formatTime(time) {
 
@@ -638,10 +635,7 @@ function formatTime(time) {
     }`;
 }
 
-
-// ==========================================
 // 12. NAVEGACIÓN DEL CALENDARIO
-// ==========================================
 
 $("#prevMonth").addEventListener("click", () => {
 
@@ -714,18 +708,13 @@ $("#blockDate").addEventListener("click", () => {
     openEventDialog(null, null, true);
 });
 
-
 $("#addEventFromCalendar").addEventListener("click", () => {
     openEventDialog();
 });
 
-
-// ==========================================
 // 13. FORMULARIO DE RESERVACIONES
-// ==========================================
 
 const eventDialog = $("#eventDialog");
-
 
 function fillPackageOptions(selected) {
 
@@ -827,10 +816,7 @@ $("#eventForm").addEventListener("submit", event => {
     showToast("Evento guardado en este navegador");
 });
 
-
-// ==========================================
 // 14. ADMINISTRACIÓN DE PAQUETES
-// ==========================================
 
 function renderPackages() {
 
@@ -914,13 +900,9 @@ function renderPackages() {
     });
 }
 
-
-// ==========================================
 // 15. FORMULARIO DE PAQUETES
-// ==========================================
 
 const packageDialog = $("#packageDialog");
-
 
 function openPackageDialog(id = null) {
 
@@ -990,10 +972,7 @@ $("#packageForm").addEventListener("submit", event => {
     );
 });
 
-
-// ==========================================
 // 16. ELIMINAR PAQUETES
-// ==========================================
 
 function deletePackage(id) {
 
@@ -1016,10 +995,7 @@ function deletePackage(id) {
     showToast("Paquete eliminado localmente");
 }
 
-
-// ==========================================
 // 17. ADMINISTRACIÓN DE RESEÑAS
-// ==========================================
 
 function renderReviews() {
 
@@ -1148,10 +1124,7 @@ function renderReviews() {
     updateStats();
 }
 
-
-// ==========================================
 // 18. CAMBIAR ESTADO DE RESEÑAS
-// ==========================================
 
 function setReviewStatus(id, status) {
 
@@ -1176,10 +1149,7 @@ function setReviewStatus(id, status) {
     );
 }
 
-
-// ==========================================
 // 19. FILTROS DE RESEÑAS
-// ==========================================
 
 $("#reviewTabs")
     .querySelectorAll("button")
@@ -1193,10 +1163,7 @@ $("#reviewTabs")
         });
     });
 
-
-// ==========================================
 // 20. SOLICITUDES DE RESERVACIÓN
-// ==========================================
 
 function renderRequests() {
 
@@ -1298,10 +1265,7 @@ function renderRequests() {
     updateStats();
 }
 
-
-// ==========================================
 // 21. CERRAR VENTANAS EMERGENTES
-// ==========================================
 
 $$(".close-dialog").forEach(boton => {
 
@@ -1323,10 +1287,7 @@ $$("dialog").forEach(dialogo => {
     });
 });
 
-
-// ==========================================
 // 22. INICIALIZACIÓN DEL PANEL
-// ==========================================
 
 function renderAll() {
 
@@ -1341,6 +1302,29 @@ function renderAll() {
     updateStats();
 }
 
+// galeria ventana emergente
 
+const photoDialog = document.getElementById("photoDialog");
+const addPhoto = document.getElementById("addPhoto");
+const photoForm = document.getElementById("photoForm");
+
+// abrir formulario
+addPhoto.addEventListener("click", function () {
+
+    photoForm.reset();
+
+    document.getElementById("photoPreviewContainer").hidden = true;
+
+    photoDialog.showModal();
+});
+
+// Cerrar formulario
+photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
+
+    boton.addEventListener("click", function () {
+        photoDialog.close();
+    });
+
+});
 // Iniciar todas las secciones
 renderAll();
