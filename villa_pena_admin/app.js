@@ -1308,17 +1308,84 @@ const photoDialog = document.getElementById("photoDialog");
 const addPhoto = document.getElementById("addPhoto");
 const photoForm = document.getElementById("photoForm");
 
+// vista previa de la foto
+
+const photoFile = document.getElementById("photoFile");
+const photoPreview = document.getElementById("photoPreview");
+
+const photoPreviewContainer = document.getElementById(
+    "photoPreviewContainer"
+);
+
+let photoPreviewURL = null;
+
+// liberar la vista previa anterior
+function limpiarVistaPrevia() {
+
+    if (photoPreviewURL) {
+        URL.revokeObjectURL(photoPreviewURL);
+        photoPreviewURL = null;
+    }
+
+    photoPreview.removeAttribute("src");
+    photoPreviewContainer.hidden = true;
+}
+
+// mostrar fotografía seleccionada
+photoFile.addEventListener("change", function () {
+
+    limpiarVistaPrevia();
+
+    const archivo = photoFile.files[0];
+
+    if (!archivo) return;
+
+    // validar formato
+    const formatosPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!formatosPermitidos.includes(archivo.type)) {
+        alert("Seleccioná una imagen JPG, PNG o WebP.");
+        photoFile.value = "";
+        return;
+    }
+
+    // validar tamaño máximo de 5 MB
+    if (archivo.size > 5 * 1024 * 1024) {
+        alert("La imagen no puede superar los 5 MB.");
+        photoFile.value = "";
+        return;
+    }
+
+    // crear URL temporal para mostrar la imagen
+    photoPreviewURL = URL.createObjectURL(archivo);
+
+    photoPreview.src = photoPreviewURL;
+
+    photoPreviewContainer.hidden = false;
+});
+
 // abrir formulario
 addPhoto.addEventListener("click", function () {
 
     photoForm.reset();
 
-    document.getElementById("photoPreviewContainer").hidden = true;
+    limpiarVistaPrevia();
 
     photoDialog.showModal();
 });
 
-// Cerrar formulario
+//liberar memoria
+photoDialog.addEventListener("close", function () {
+
+    limpiarVistaPrevia();
+
+});
+
+// cerrar formulario
 photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
 
     boton.addEventListener("click", function () {
@@ -1326,5 +1393,5 @@ photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
     });
 
 });
-// Iniciar todas las secciones
+// iniciar todas las secciones
 renderAll();
