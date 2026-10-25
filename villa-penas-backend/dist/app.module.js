@@ -13,13 +13,14 @@ const observe_1 = require("@nestjs/observe");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const paquetes_module_1 = require("./Paquetes/paquetes.module");
+const galeria_module_1 = require("./galeria/galeria.module");
 _a = (0, observe_1.createObserveModule)(), exports.ObserveModule = _a.ObserveModule, exports.ObserveInstrument = _a.ObserveInstrument;
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [paquetes_module_1.PaquetesModule],
+        imports: [paquetes_module_1.PaquetesModule, galeria_module_1.GaleriaModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService]
     })
