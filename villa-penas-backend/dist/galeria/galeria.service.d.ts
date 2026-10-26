@@ -8,6 +8,8 @@ export declare class GaleriaService {
     obtenerTodas(): Promise<Foto[]>;
     obtenerUna(id: string): Promise<Foto>;
     subirFoto(archivo: Express.Multer.File, descripcion: string): Promise<Foto>;
-    actualizarFoto(id: string, descripcion: string): Promise<Foto>;
-    eliminarFoto(id: string): Promise<void>;
+    actualizarFoto(id: string, descripcion?: string, archivo?: Express.Multer.File): Promise<Foto>;
+    eliminarFoto(id: string): Promise<{
+        mensaje: string;
+    }>;
 }

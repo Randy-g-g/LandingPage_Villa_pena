@@ -677,6 +677,57 @@
     </form>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- editar galeria-->
+<dialog id="modalEditarFoto" class="modal-editar-foto">
+  <form id="formEditarFoto" class="form-editar-foto">
+    <h2>Editar fotografía</h2>
 
+    <img
+      id="previewEditarFoto"
+      class="preview-editar-foto"
+      alt="Vista previa de la fotografía"
+    >
+
+    <label for="descripcionEditarFoto">
+      Descripción
+    </label>
+
+    <textarea
+      id="descripcionEditarFoto"
+      rows="3"
+      maxlength="200"
+      required
+    ></textarea>
+
+    <label for="archivoEditarFoto">
+      Reemplazar fotografía (opcional)
+    </label>
+
+    <input
+      id="archivoEditarFoto"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+    >
+
+    <small>
+      Si no seleccionás una nueva imagen,
+      se conservará la actual. Máximo 5 MB.
+    </small>
+
+    <div class="acciones-editar">
+      <button
+        type="button"
+        id="cancelarEditarFoto">
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        id="guardarEditarFoto">
+        Guardar cambios
+      </button>
+    </div>
+  </form>
+</dialog>
 </body>
 </html>

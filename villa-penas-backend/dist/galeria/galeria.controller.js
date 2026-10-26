@@ -32,11 +32,24 @@ let GaleriaController = class GaleriaController {
     subirFoto(archivo, datos) {
         return this.galeriaService.subirFoto(archivo, datos.descripcion.trim());
     }
-    actualizarFoto(id, datos) {
-        if (datos.descripcion === undefined) {
-            return this.galeriaService.obtenerUna(id);
+    actualizarFoto(id, datos, archivo) {
+        if (datos.descripcion === undefined && !archivo) {
+            throw new common_1.BadRequestException('Debés proporcionar una descripción o una imagen.');
         }
-        return this.galeriaService.actualizarFoto(id, datos.descripcion.trim());
+        if (archivo) {
+            const tiposPermitidos = [
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+            ];
+            if (!tiposPermitidos.includes(archivo.mimetype)) {
+                throw new common_1.BadRequestException('Solo se permiten imágenes JPG, PNG o WebP.');
+            }
+            if (archivo.size > 5 * 1024 * 1024) {
+                throw new common_1.BadRequestException('La imagen no puede superar los 5 MB.');
+            }
+        }
+        return this.galeriaService.actualizarFoto(id, datos.descripcion, archivo);
     }
     eliminarFoto(id) {
         return this.galeriaService.eliminarFoto(id);
@@ -80,10 +93,16 @@ __decorate([
 ], GaleriaController.prototype, "subirFoto", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('imagen', {
+        limits: {
+            fileSize: 5 * 1024 * 1024,
+        },
+    })),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_foto_dto_1.UpdateFotoDto]),
+    __metadata("design:paramtypes", [String, update_foto_dto_1.UpdateFotoDto, Object]),
     __metadata("design:returntype", Promise)
 ], GaleriaController.prototype, "actualizarFoto", null);
 __decorate([
