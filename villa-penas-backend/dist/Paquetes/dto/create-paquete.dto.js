@@ -32,6 +32,7 @@ class CreatePaqueteDto {
     servicios;
     precio;
     detalles;
+    activo;
 }
 exports.CreatePaqueteDto = CreatePaqueteDto;
 __decorate([
@@ -60,4 +61,8 @@ __decorate([
     (0, class_transformer_1.Type)(() => DetallePaqueteDto),
     __metadata("design:type", Array)
 ], CreatePaqueteDto.prototype, "detalles", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreatePaqueteDto.prototype, "activo", void 0);
 //# sourceMappingURL=create-paquete.dto.js.map

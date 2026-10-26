@@ -28,6 +28,9 @@ let ResenasController = class ResenasController {
     obtenerPendientes() {
         return this.resenasService.obtenerPendientes();
     }
+    obtenerRechazadas() {
+        return this.resenasService.obtenerRechazadas();
+    }
     obtenerPorId(id) {
         return this.resenasService.obtenerPorId(id);
     }
@@ -54,6 +57,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Array)
 ], ResenasController.prototype, "obtenerPendientes", null);
+__decorate([
+    (0, common_1.Get)('rechazadas'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Array)
+], ResenasController.prototype, "obtenerRechazadas", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

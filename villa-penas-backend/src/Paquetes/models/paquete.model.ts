@@ -11,4 +11,5 @@ export interface Paquete {
   servicios: string[];
   precio: number;
   detalles: DetallePaquete[];
+  activo: boolean;
 }

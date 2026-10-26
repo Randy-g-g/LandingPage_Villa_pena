@@ -1,6 +1,7 @@
 [
   {
     "id": 1,
+    "activo": true,
     "nombre": "Paquete Essentials",
     "descripcion": "Una opción sencilla para disfrutar del rancho y compartir con tus invitados.",
     "servicios": [
@@ -41,6 +42,7 @@
   },
   {
     "id": 2,
+    "activo": true,
     "nombre": "Paquete Premium",
     "descripcion": "Una opción más completa con entretenimiento y productos adicionales.",
     "servicios": [

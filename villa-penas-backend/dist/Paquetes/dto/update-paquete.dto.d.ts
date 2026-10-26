@@ -8,5 +8,6 @@ export declare class UpdatePaqueteDto {
     servicios?: string[];
     precio?: number;
     detalles?: DetallePaqueteDto[];
+    activo?: boolean;
 }
 export {};

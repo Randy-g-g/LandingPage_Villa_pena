@@ -85,7 +85,11 @@ formulario.addEventListener("submit", function(event) {
 function mostrarPaquetes() {
     listaPaquetes.innerHTML = "";
 
-    paquetes.forEach(function(paquete) {
+   paquetes
+    .filter(function(paquete) {
+        return paquete.activo !== false;
+    })
+    .forEach(function(paquete) {
         // crea la tarjeta.
         const tarjeta = document.createElement("article");
         tarjeta.className = "package-card reveal";
@@ -138,7 +142,11 @@ function mostrarOpcionesPaquetes() {
     opcionInicial.textContent = "Seleccionar...";
     seleccionarPaquete.appendChild(opcionInicial);
 
-    paquetes.forEach(function(paquete) {
+  paquetes
+    .filter(function(paquete) {
+        return paquete.activo !== false;
+    })
+    .forEach(function(paquete) {
         const opcion = document.createElement("option");
         opcion.value = paquete.nombre;
         opcion.textContent = paquete.nombre;
@@ -632,11 +640,16 @@ campos.forEach(function(campo) {
 
 function existePaquete(nombre) {
     let encontrado = false;
+
     paquetes.forEach(function(paquete) {
-        if (paquete.nombre === nombre) {
+        if (
+            paquete.nombre === nombre &&
+            paquete.activo !== false
+        ) {
             encontrado = true;
         }
     });
+
     return encontrado;
 }
 
