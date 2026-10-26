@@ -303,6 +303,46 @@ function showToast(message) {
 
 function updateStats() {
 
+    
+async function actualizarContadoresResenas() {
+    try {
+        const [respuestaPendientes, respuestaPublicadas] =
+            await Promise.all([
+                fetch(`${API_BASE}/resenas/pendientes`),
+                fetch(`${API_BASE}/resenas`)
+            ]);
+
+        if (!respuestaPendientes.ok || !respuestaPublicadas.ok) {
+            throw new Error("No se pudieron consultar las reseñas.");
+        }
+
+        const pendientes = await respuestaPendientes.json();
+        const publicadas = await respuestaPublicadas.json();
+
+        const cantidadPendientes = pendientes.length;
+        const cantidadPublicadas = publicadas.length;
+
+        document.querySelector("#statReviews").textContent =
+            cantidadPendientes;
+
+        document.querySelector("#pendingCount").textContent =
+            cantidadPendientes;
+
+        document.querySelector("#tabPending").textContent =
+            cantidadPendientes;
+
+        document.querySelector("#tabPublished").textContent =
+            cantidadPublicadas;
+
+        document.querySelector("#reviewsPill").textContent =
+            `${cantidadPendientes} pendientes`;
+
+    } catch (error) {
+        console.error("Error al actualizar contadores:", error);
+    }
+}
+
+
     const ym = `${currentDate.getFullYear()}-${String(
         currentDate.getMonth() + 1
     ).padStart(2, "0")}`;
@@ -1489,97 +1529,116 @@ async function eliminarAdicional(id) {
 
 // 17. ADMINISTRACIÓN DE RESEÑAS
 
-function renderReviews() {
 
-    const filtered = data.reviews.filter(
-        r => r.status === reviewStatus
-    );
+async function renderReviews() {
+    const lista = document.querySelector("#reviewsList");
 
-    $("#reviewsList").innerHTML = filtered.map(r => `
+    lista.innerHTML = `
+        <div class="empty-state">Cargando reseñas...</div>
+    `;
 
-        <article class="review-item">
+    let endpoint;
 
-            <div class="avatar avatar-light">
-                ${escapeHTML(
-                    r.name
-                        .split(" ")
-                        .map(s => s[0])
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()
-                )}
+    if (reviewStatus === "pendiente") {
+        endpoint = `${API_BASE}/resenas/pendientes`;
+    } else if (reviewStatus === "publicada") {
+        endpoint = `${API_BASE}/resenas`;
+    } else {
+        lista.innerHTML = `
+            <div class="empty-state">
+                La consulta de reseñas rechazadas todavía
+                no está disponible en el backend.
             </div>
+        `;
+        updateStats();
+        return;
+    }
 
-            <div class="review-main">
+    try {
+        const respuesta = await fetch(endpoint);
 
-                <strong>
-                    ${escapeHTML(r.name)}
-                </strong>
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron consultar las reseñas.");
+        }
 
-                <div class="review-date">
-                    ${escapeHTML(r.date)}
+        const resenas = await respuesta.json();
+
+        const resenasAdmin = resenas.map(r => ({
+            id: r.id,
+            name: r.usuario,
+            date: r.fechaCreacion
+                ? new Date(r.fechaCreacion).toLocaleDateString("es-CR")
+                : "",
+            rating: r.calificacion,
+            comment: r.comentario,
+            status: r.estado === "APROBADA"
+                ? "publicada"
+                : r.estado === "RECHAZADA"
+                    ? "rechazada"
+                    : "pendiente"
+        }));
+
+        lista.innerHTML = resenasAdmin.map(r => `
+            <article class="review-item">
+                <div class="avatar avatar-light">
+                    ${escapeHTML(
+                        r.name.split(" ")
+                            .map(s => s[0])
+                            .slice(0, 2)
+                            .join("")
+                            .toUpperCase()
+                    )}
                 </div>
 
-                <div class="stars">
-                    ${"★".repeat(r.rating)}
-                    ${"☆".repeat(5 - r.rating)}
+                <div class="review-main">
+                    <strong>${escapeHTML(r.name)}</strong>
+
+                    <div class="review-date">
+                        ${escapeHTML(r.date)}
+                    </div>
+
+                    <div class="stars">
+                        ${"★".repeat(r.rating)}
+                        ${"☆".repeat(5 - r.rating)}
+                    </div>
+
+                    <div class="review-comment">
+                        ${escapeHTML(r.comment)}
+                    </div>
                 </div>
 
-                <div class="review-comment">
-                    ${escapeHTML(r.comment)}
+                <div class="review-actions">
+                    ${r.status === "pendiente" ? `
+                        <button
+                            class="btn-small btn-approve"
+                            data-approve="${r.id}">
+                            Publicar
+                        </button>
+
+                        <button
+                            class="btn-small btn-reject"
+                            data-reject="${r.id}">
+                            Rechazar
+                        </button>
+                    ` : ""}
                 </div>
-
+            </article>
+        `).join("") || `
+            <div class="empty-state">
+                No hay reseñas en esta categoría.
             </div>
+        `;
 
-            <div class="review-actions">
+        document.querySelectorAll("#reviewTabs button")
+            .forEach(boton => {
+                boton.classList.toggle(
+                    "selected",
+                    boton.dataset.status === reviewStatus
+                );
+            });
 
-                ${
-                    r.status === "pendiente"
-                        ? `
-                            <button
-                                class="btn-small btn-approve"
-                                data-approve="${r.id}">
-                                Publicar
-                            </button>
-
-                            <button
-                                class="btn-small btn-reject"
-                                data-reject="${r.id}">
-                                Rechazar
-                            </button>
-                        `
-                        : `
-                            <button
-                                class="btn-small btn-neutral"
-                                data-pending="${r.id}">
-                                Volver a pendientes
-                            </button>
-                        `
-                }
-
-            </div>
-
-        </article>
-
-    `).join("") ||
-    '<div class="empty-state">No hay reseñas en esta categoría.</div>';
-
-    $("#reviewTabs")
-        .querySelectorAll("button")
-        .forEach(boton => {
-
-            boton.classList.toggle(
-                "selected",
-                boton.dataset.status === reviewStatus
-            );
-        });
-
-    $("#reviewsList")
-        .querySelectorAll("[data-approve]")
-        .forEach(boton => {
-
+        lista.querySelectorAll("[data-approve]").forEach(boton => {
             boton.addEventListener("click", () => {
-
                 setReviewStatus(
                     Number(boton.dataset.approve),
                     "publicada"
@@ -1587,12 +1646,8 @@ function renderReviews() {
             });
         });
 
-    $("#reviewsList")
-        .querySelectorAll("[data-reject]")
-        .forEach(boton => {
-
+        lista.querySelectorAll("[data-reject]").forEach(boton => {
             boton.addEventListener("click", () => {
-
                 setReviewStatus(
                     Number(boton.dataset.reject),
                     "rechazada"
@@ -1600,46 +1655,65 @@ function renderReviews() {
             });
         });
 
-    $("#reviewsList")
-        .querySelectorAll("[data-pending]")
-        .forEach(boton => {
+    } catch (error) {
+        console.error("Error al cargar reseñas:", error);
 
-            boton.addEventListener("click", () => {
+        lista.innerHTML = `
+            <div class="empty-state">
+                No se pudieron cargar las reseñas.
+                Verifica que NestJS esté funcionando.
+            </div>
+        `;
+    }
 
-                setReviewStatus(
-                    Number(boton.dataset.pending),
-                    "pendiente"
-                );
-            });
-        });
-
-    updateStats();
+    actualizarContadoresResenas();
 }
+
 
 // 18. CAMBIAR ESTADO DE RESEÑAS
 
-function setReviewStatus(id, status) {
 
-    const review = data.reviews.find(
-        r => r.id === id
-    );
+async function setReviewStatus(id, status) {
+    const estadoAPI = status === "publicada"
+        ? "APROBADA"
+        : status === "rechazada"
+            ? "RECHAZADA"
+            : null;
 
-    if (!review) return;
+    if (!estadoAPI) return;
 
-    review.status = status;
+    try {
+        const respuesta = await fetch(
+            `${API_BASE}/resenas/${id}/estado`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    estado: estadoAPI
+                })
+            }
+        );
 
-    saveData();
+        if (!respuesta.ok) {
+            const mensaje = await respuesta.text();
+            throw new Error(mensaje || "No se pudo actualizar la reseña.");
+        }
 
-    renderReviews();
+        showToast(
+            status === "publicada"
+                ? "Reseña aprobada correctamente."
+                : "Reseña rechazada correctamente."
+        );
 
-    showToast(
-        status === "publicada"
-            ? "Reseña aprobada en la demostración. La web pública necesita la API para reflejarlo."
-            : status === "rechazada"
-                ? "Reseña rechazada."
-                : "Reseña devuelta a pendientes."
-    );
+    } catch (error) {
+        console.error("Error al actualizar la reseña:", error);
+        showToast("No se pudo actualizar la reseña. Revisa la consola.");
+    }
+    await actualizarContadoresResenas();
 }
+
 
 // 19. FILTROS DE RESEÑAS
 
@@ -1892,3 +1966,4 @@ photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
 // iniciar todas las secciones
 renderAll();
 obtenerAdicionales();
+actualizarContadoresResenas();

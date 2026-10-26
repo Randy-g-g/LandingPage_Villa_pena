@@ -96,5 +96,19 @@
         "precio": 20000
       }
     ]
+  },
+  {
+    "id": 5,
+    "categoria": "Paloma de maiz",
+    "descripcion": "Muy rico",
+    "paquetes": [
+      {
+        "id": 1,
+        "nombre": "Paquete #1",
+        "cantidad": "25",
+        "detalle": "Hola",
+        "precio": 10000
+      }
+    ]
   }
 ]
