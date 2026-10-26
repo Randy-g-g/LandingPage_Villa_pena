@@ -1,80 +1,101 @@
+
 import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
-import { Resena } from './models/resena.model';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs';
+
+import { join } from 'path';
+
 import { CreateResenaDto } from './dto/create-resena.dto';
 import { UpdateResenaDto } from './dto/update-resena.dto';
+import { Resena } from './models/resena.model';
 
 @Injectable()
 export class ResenasService {
-  
-  private resenas: Resena[] = [
-  {
-    id: 1,
-    usuario: 'María González',
-    comentario: 'Un lugar hermoso para celebrar eventos familiares.',
-    calificacion: 5,
-    estado: 'APROBADA',
-    fechaCreacion: '2026-10-20T10:00:00.000Z',
-  },
-  {
-    id: 2,
-    usuario: 'Carlos Rodríguez',
-    comentario: 'Las instalaciones son bonitas y la atención excelente.',
-    calificacion: 5,
-    estado: 'PENDIENTE',
-    fechaCreacion: '2026-10-21T14:30:00.000Z',
-  },
-  {
-    id: 3,
-    usuario: 'Ana López',
-    comentario: 'Un buen lugar para compartir con amigos.',
-    calificacion: 4,
-    estado: 'RECHAZADA',
-    fechaCreacion: '2026-10-22T09:15:00.000Z',
-  },
-  {
-    id: 4,
-    usuario: 'José Vargas',
-    comentario: 'Muy bonito el espacio y todo estaba limpio.',
-    calificacion: 5,
-    estado: 'APROBADA',
-    fechaCreacion: '2026-10-23T16:00:00.000Z',
-  },
-];
-obtenerPorId(id: number): Resena {
-  const resena = this.resenas.find(
-    elemento => elemento.id === id,
+  private readonly carpetaDatos = join(process.cwd(), 'data');
+  private readonly rutaArchivo = join(
+    this.carpetaDatos,
+    'resenas.json',
   );
 
-  if (!resena) {
-    throw new NotFoundException(
-      `No existe una reseña con el ID ${id}.`,
+  constructor() {
+    if (!existsSync(this.carpetaDatos)) {
+      mkdirSync(this.carpetaDatos, { recursive: true });
+    }
+
+    if (!existsSync(this.rutaArchivo)) {
+      writeFileSync(
+        this.rutaArchivo,
+        JSON.stringify([], null, 2),
+        'utf-8',
+      );
+    }
+  }
+
+  private leerResenas(): Resena[] {
+    const contenido = readFileSync(this.rutaArchivo, 'utf-8');
+    return JSON.parse(contenido) as Resena[];
+  }
+
+  private guardarResenas(resenas: Resena[]): void {
+    writeFileSync(
+      this.rutaArchivo,
+      JSON.stringify(resenas, null, 2),
+      'utf-8',
     );
   }
 
-  return resena;
-}
+  obtenerTodas(): Resena[] {
+    return this.leerResenas();
+  }
 
   obtenerPublicadas(): Resena[] {
-    return this.resenas.filter(
+    return this.leerResenas().filter(
       resena => resena.estado === 'APROBADA',
     );
   }
 
   obtenerPendientes(): Resena[] {
-    return this.resenas.filter(
+    return this.leerResenas().filter(
       resena => resena.estado === 'PENDIENTE',
     );
   }
 
+  obtenerRechazadas(): Resena[] {
+    return this.leerResenas().filter(
+      resena => resena.estado === 'RECHAZADA',
+    );
+  }
+
+  obtenerPorId(id: number): Resena {
+    const resenas = this.leerResenas();
+
+    const resena = resenas.find(
+      elemento => elemento.id === id,
+    );
+
+    if (!resena) {
+      throw new NotFoundException(
+        `No existe una reseña con el ID ${id}.`,
+      );
+    }
+
+    return resena;
+  }
+
   crear(dto: CreateResenaDto): Resena {
-    const nuevoId =
-      this.resenas.length > 0
-        ? Math.max(...this.resenas.map(r => r.id)) + 1
-        : 1;
+    const resenas = this.leerResenas();
+
+    const nuevoId = resenas.length > 0
+      ? Math.max(...resenas.map(resena => resena.id)) + 1
+      : 1;
 
     const nuevaResena: Resena = {
       id: nuevoId,
@@ -85,7 +106,8 @@ obtenerPorId(id: number): Resena {
       fechaCreacion: new Date().toISOString(),
     };
 
-    this.resenas.push(nuevaResena);
+    resenas.push(nuevaResena);
+    this.guardarResenas(resenas);
 
     return nuevaResena;
   }
@@ -94,23 +116,9 @@ obtenerPorId(id: number): Resena {
     id: number,
     dto: UpdateResenaDto,
   ): Resena {
-    const resena = this.resenas.find(
-      elemento => elemento.id === id,
-    );
+    const resenas = this.leerResenas();
 
-    if (!resena) {
-      throw new NotFoundException(
-        `No existe una reseña con el ID ${id}.`,
-      );
-    }
-
-    resena.estado = dto.estado;
-
-    return resena;
-  }
-
-  eliminar(id: number): { mensaje: string } {
-    const indice = this.resenas.findIndex(
+    const indice = resenas.findIndex(
       elemento => elemento.id === id,
     );
 
@@ -120,7 +128,28 @@ obtenerPorId(id: number): Resena {
       );
     }
 
-    this.resenas.splice(indice, 1);
+    resenas[indice].estado = dto.estado;
+
+    this.guardarResenas(resenas);
+
+    return resenas[indice];
+  }
+
+  eliminar(id: number): { mensaje: string } {
+    const resenas = this.leerResenas();
+
+    const indice = resenas.findIndex(
+      elemento => elemento.id === id,
+    );
+
+    if (indice === -1) {
+      throw new NotFoundException(
+        `No existe una reseña con el ID ${id}.`,
+      );
+    }
+
+    resenas.splice(indice, 1);
+    this.guardarResenas(resenas);
 
     return {
       mensaje: `La reseña ${id} fue eliminada correctamente.`,

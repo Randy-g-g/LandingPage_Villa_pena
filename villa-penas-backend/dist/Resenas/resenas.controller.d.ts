@@ -7,6 +7,7 @@ export declare class ResenasController {
     constructor(resenasService: ResenasService);
     obtenerPublicadas(): Resena[];
     obtenerPendientes(): Resena[];
+    obtenerRechazadas(): Resena[];
     obtenerPorId(id: number): Resena;
     crear(dto: CreateResenaDto): Resena;
     actualizarEstado(id: number, dto: UpdateResenaDto): Resena;

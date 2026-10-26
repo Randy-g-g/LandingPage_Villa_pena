@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "usuario": "María González",
+    "comentario": "Un lugar hermoso para celebrar eventos familiares.",
+    "calificacion": 5,
+    "estado": "APROBADA",
+    "fechaCreacion": "2026-10-20T10:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "usuario": "Carlos Rodríguez",
+    "comentario": "Las instalaciones son bonitas y la atención excelente.",
+    "calificacion": 5,
+    "estado": "APROBADA",
+    "fechaCreacion": "2026-10-21T14:30:00.000Z"
+  },
+  {
+    "id": 3,
+    "usuario": "Ana López",
+    "comentario": "Un buen lugar para compartir con amigos.",
+    "calificacion": 4,
+    "estado": "RECHAZADA",
+    "fechaCreacion": "2026-10-22T09:15:00.000Z"
+  },
+  {
+    "id": 4,
+    "usuario": "José Vargas",
+    "comentario": "Muy bonito el espacio y todo estaba limpio.",
+    "calificacion": 5,
+    "estado": "APROBADA",
+    "fechaCreacion": "2026-10-23T16:00:00.000Z"
+  },
+  {
+    "id": 5,
+    "usuario": "Raquel nova",
+    "comentario": "hermoso",
+    "calificacion": 5,
+    "estado": "RECHAZADA",
+    "fechaCreacion": "2026-10-26T07:07:58.028Z"
+  },
+  {
+    "id": 6,
+    "usuario": "Nam Bin",
+    "comentario": "hermosa",
+    "calificacion": 5,
+    "estado": "RECHAZADA",
+    "fechaCreacion": "2026-10-26T07:09:23.250Z"
+  }
+]

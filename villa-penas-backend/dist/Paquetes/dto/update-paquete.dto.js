@@ -32,6 +32,7 @@ class UpdatePaqueteDto {
     servicios;
     precio;
     detalles;
+    activo;
 }
 exports.UpdatePaqueteDto = UpdatePaqueteDto;
 __decorate([
@@ -65,4 +66,9 @@ __decorate([
     (0, class_transformer_1.Type)(() => DetallePaqueteDto),
     __metadata("design:type", Array)
 ], UpdatePaqueteDto.prototype, "detalles", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], UpdatePaqueteDto.prototype, "activo", void 0);
 //# sourceMappingURL=update-paquete.dto.js.map

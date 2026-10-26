@@ -31,6 +31,10 @@ export class ResenasController {
   obtenerPendientes(): Resena[] {
     return this.resenasService.obtenerPendientes();
   }
+  @Get('rechazadas')
+obtenerRechazadas(): Resena[] {
+  return this.resenasService.obtenerRechazadas();
+}
   
   @Get(':id')
 obtenerPorId(

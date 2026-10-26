@@ -5,60 +5,56 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResenasService = void 0;
 const common_1 = require("@nestjs/common");
+const fs_1 = require("fs");
+const path_1 = require("path");
 let ResenasService = class ResenasService {
-    resenas = [
-        {
-            id: 1,
-            usuario: 'María González',
-            comentario: 'Un lugar hermoso para celebrar eventos familiares.',
-            calificacion: 5,
-            estado: 'APROBADA',
-            fechaCreacion: '2026-10-20T10:00:00.000Z',
-        },
-        {
-            id: 2,
-            usuario: 'Carlos Rodríguez',
-            comentario: 'Las instalaciones son bonitas y la atención excelente.',
-            calificacion: 5,
-            estado: 'PENDIENTE',
-            fechaCreacion: '2026-10-21T14:30:00.000Z',
-        },
-        {
-            id: 3,
-            usuario: 'Ana López',
-            comentario: 'Un buen lugar para compartir con amigos.',
-            calificacion: 4,
-            estado: 'RECHAZADA',
-            fechaCreacion: '2026-10-22T09:15:00.000Z',
-        },
-        {
-            id: 4,
-            usuario: 'José Vargas',
-            comentario: 'Muy bonito el espacio y todo estaba limpio.',
-            calificacion: 5,
-            estado: 'APROBADA',
-            fechaCreacion: '2026-10-23T16:00:00.000Z',
-        },
-    ];
+    carpetaDatos = (0, path_1.join)(process.cwd(), 'data');
+    rutaArchivo = (0, path_1.join)(this.carpetaDatos, 'resenas.json');
+    constructor() {
+        if (!(0, fs_1.existsSync)(this.carpetaDatos)) {
+            (0, fs_1.mkdirSync)(this.carpetaDatos, { recursive: true });
+        }
+        if (!(0, fs_1.existsSync)(this.rutaArchivo)) {
+            (0, fs_1.writeFileSync)(this.rutaArchivo, JSON.stringify([], null, 2), 'utf-8');
+        }
+    }
+    leerResenas() {
+        const contenido = (0, fs_1.readFileSync)(this.rutaArchivo, 'utf-8');
+        return JSON.parse(contenido);
+    }
+    guardarResenas(resenas) {
+        (0, fs_1.writeFileSync)(this.rutaArchivo, JSON.stringify(resenas, null, 2), 'utf-8');
+    }
+    obtenerTodas() {
+        return this.leerResenas();
+    }
+    obtenerPublicadas() {
+        return this.leerResenas().filter(resena => resena.estado === 'APROBADA');
+    }
+    obtenerPendientes() {
+        return this.leerResenas().filter(resena => resena.estado === 'PENDIENTE');
+    }
+    obtenerRechazadas() {
+        return this.leerResenas().filter(resena => resena.estado === 'RECHAZADA');
+    }
     obtenerPorId(id) {
-        const resena = this.resenas.find(elemento => elemento.id === id);
+        const resenas = this.leerResenas();
+        const resena = resenas.find(elemento => elemento.id === id);
         if (!resena) {
             throw new common_1.NotFoundException(`No existe una reseña con el ID ${id}.`);
         }
         return resena;
     }
-    obtenerPublicadas() {
-        return this.resenas.filter(resena => resena.estado === 'APROBADA');
-    }
-    obtenerPendientes() {
-        return this.resenas.filter(resena => resena.estado === 'PENDIENTE');
-    }
     crear(dto) {
-        const nuevoId = this.resenas.length > 0
-            ? Math.max(...this.resenas.map(r => r.id)) + 1
+        const resenas = this.leerResenas();
+        const nuevoId = resenas.length > 0
+            ? Math.max(...resenas.map(resena => resena.id)) + 1
             : 1;
         const nuevaResena = {
             id: nuevoId,
@@ -68,23 +64,28 @@ let ResenasService = class ResenasService {
             estado: 'PENDIENTE',
             fechaCreacion: new Date().toISOString(),
         };
-        this.resenas.push(nuevaResena);
+        resenas.push(nuevaResena);
+        this.guardarResenas(resenas);
         return nuevaResena;
     }
     actualizarEstado(id, dto) {
-        const resena = this.resenas.find(elemento => elemento.id === id);
-        if (!resena) {
-            throw new common_1.NotFoundException(`No existe una reseña con el ID ${id}.`);
-        }
-        resena.estado = dto.estado;
-        return resena;
-    }
-    eliminar(id) {
-        const indice = this.resenas.findIndex(elemento => elemento.id === id);
+        const resenas = this.leerResenas();
+        const indice = resenas.findIndex(elemento => elemento.id === id);
         if (indice === -1) {
             throw new common_1.NotFoundException(`No existe una reseña con el ID ${id}.`);
         }
-        this.resenas.splice(indice, 1);
+        resenas[indice].estado = dto.estado;
+        this.guardarResenas(resenas);
+        return resenas[indice];
+    }
+    eliminar(id) {
+        const resenas = this.leerResenas();
+        const indice = resenas.findIndex(elemento => elemento.id === id);
+        if (indice === -1) {
+            throw new common_1.NotFoundException(`No existe una reseña con el ID ${id}.`);
+        }
+        resenas.splice(indice, 1);
+        this.guardarResenas(resenas);
         return {
             mensaje: `La reseña ${id} fue eliminada correctamente.`,
         };
@@ -92,6 +93,7 @@ let ResenasService = class ResenasService {
 };
 exports.ResenasService = ResenasService;
 exports.ResenasService = ResenasService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [])
 ], ResenasService);
 //# sourceMappingURL=resenas.service.js.map

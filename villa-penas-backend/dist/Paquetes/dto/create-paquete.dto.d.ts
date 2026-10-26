@@ -8,5 +8,6 @@ export declare class CreatePaqueteDto {
     servicios: string[];
     precio: number;
     detalles: DetallePaqueteDto[];
+    activo: boolean;
 }
 export {};

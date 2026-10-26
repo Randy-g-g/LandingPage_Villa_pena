@@ -1,5 +1,7 @@
+
 import {
   IsArray,
+  IsBoolean,
   IsNumber,
   IsOptional,
   IsString,
@@ -46,4 +48,8 @@ export class UpdatePaqueteDto {
   @ValidateNested({ each: true })
   @Type(() => DetallePaqueteDto)
   detalles?: DetallePaqueteDto[];
+
+  @IsOptional()
+  @IsBoolean()
+  activo?: boolean;
 }

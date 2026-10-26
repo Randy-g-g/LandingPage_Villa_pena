@@ -258,19 +258,7 @@
               ＋ Nuevo paquete
             </button>
           </div>
-          <div class="notice">
-            <span>
-              ⓘ
-            </span>
-            <div>
-              <strong>
-                Vista previa de administración
-              </strong>
-              <p>
-                Los cambios se guardan localmente en este prototipo. Para que se reflejen en la web pública para todas las personas, hay que conectar este panel con la API de NestJS.
-              </p>
-            </div>
-          </div>
+         
           <div class="table-wrap">
             <table>
               <thead>
@@ -389,19 +377,6 @@
                 3 pendientes
               </span>
             </div>
-          <div class="notice">
-            <span>
-              ☆
-            </span>
-            <div>
-              <strong>
-                Moderación de reseñas
-              </strong>
-              <p>
-                Las reseñas de ejemplo permiten probar los botones. En producción, la API debe recibir los comentarios y guardar su estado de aprobación.
-              </p>
-            </div>
-          </div>
           <div class="tabs" id="reviewTabs">
             <button class="selected" data-status="pendiente">
               Pendientes 
@@ -490,54 +465,101 @@
 </dialog>
 
   <dialog id="packageDialog" class="modal">
-    <form id="packageForm" method="dialog">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow">
-            GESTIÓN DE CONTENIDO
-          </p>
-          <h2 id="packageDialogTitle">
-            Nuevo paquete
-          </h2>
-        </div>
-        <button type="button" class="icon-button close-dialog" aria-label="Cerrar">
-          ×
-        </button>
-      </div>
-      <input type="hidden" id="packageId">
-      <label>Nombre del paquete
-        <input id="packageName" required maxlength="70" placeholder="Ej. Paquete Premium">
-      </label>
-      <label>Descripción
-        <textarea id="packageDescription" required rows="3" maxlength="220" placeholder="Describe qué incluye el paquete"></textarea>
-      </label>
-      <div class="form-row">
-        <label>Precio en colones
-          <input id="packagePrice" required type="number" min="0" step="500" placeholder="150000">
-        </label>
-        <label>Estado
-          <select id="packageActive">
-            <option value="true">
-              Activo
-            </option>
-            <option value="false">
-              Oculto
-            </option>
-          </select>
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-outline close-dialog">
-          Cancelar
-        </button>
-        <button type="submit" class="btn btn-primary">
-          Guardar paquete
-        </button>
-      </div>
-    </form>
-  </dialog>
+  <form id="packageForm" method="dialog">
 
-  
+    <div class="modal-heading">
+      <h2 id="packageDialogTitle">Nuevo paquete</h2>
+      <button type="button" class="btn btn-outline close-dialog">
+        Cerrar
+      </button>
+    </div>
+
+    <input type="hidden" id="packageId">
+
+    <label for="packageName">Nombre del paquete</label>
+    <input
+      id="packageName"
+      type="text"
+      required
+      maxlength="70"
+      placeholder="Ej. Paquete Premium"
+    >
+
+    <label for="packageDescription">Descripción</label>
+    <textarea
+      id="packageDescription"
+      required
+      rows="3"
+      maxlength="220"
+      placeholder="Describe qué incluye el paquete"
+    ></textarea>
+
+    <div class="form-row">
+      <label for="packagePrice">
+        Precio en colones
+        <input
+          id="packagePrice"
+          required
+          type="number"
+          min="0"
+          step="500"
+          placeholder="60000"
+        >
+      </label>
+
+      <label for="packageActive">
+        Estado
+        <select id="packageActive">
+          <option value="true">Activo</option>
+          <option value="false">Oculto</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Servicios -->
+    <div class="form-group">
+      <label>Servicios incluidos</label>
+      <div id="packageServicesContainer"></div>
+
+      <button
+        type="button"
+        id="btnAgregarServicio"
+        class="btn btn-outline"
+      >
+        + Agregar servicio
+      </button>
+    </div>
+
+    <!-- Detalles -->
+    <div class="form-group">
+      <label>Detalles de los servicios</label>
+      <div id="packageDetailsContainer"></div>
+
+      <button
+        type="button"
+        id="btnAgregarDetalle"
+        class="btn btn-outline"
+      >
+        + Agregar detalle
+      </button>
+    </div>
+
+    <div class="modal-actions">
+      <button
+        type="button"
+        class="btn btn-outline close-dialog"
+      >
+        Cancelar
+      </button>
+
+      <button type="submit" class="btn btn-primary">
+        Guardar paquete
+      </button>
+    </div>
+
+  </form>
+</dialog>
+
 <!-- Formulario emergente para administrar adicionales -->
 <dialog id="adicionalDialog" class="modal">
     <form id="adicionalForm">

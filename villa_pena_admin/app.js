@@ -18,7 +18,7 @@ const API_BASE = "http://localhost:3000";
 
 const STORAGE_KEY = "villaPenasAdminDemoV1";
 
-
+let packageItems = [];
 // ==========================================
 // 2. DATOS INICIALES
 // ==========================================
@@ -302,47 +302,6 @@ function showToast(message) {
 // ==========================================
 
 function updateStats() {
-
-    
-async function actualizarContadoresResenas() {
-    try {
-        const [respuestaPendientes, respuestaPublicadas] =
-            await Promise.all([
-                fetch(`${API_BASE}/resenas/pendientes`),
-                fetch(`${API_BASE}/resenas`)
-            ]);
-
-        if (!respuestaPendientes.ok || !respuestaPublicadas.ok) {
-            throw new Error("No se pudieron consultar las reseñas.");
-        }
-
-        const pendientes = await respuestaPendientes.json();
-        const publicadas = await respuestaPublicadas.json();
-
-        const cantidadPendientes = pendientes.length;
-        const cantidadPublicadas = publicadas.length;
-
-        document.querySelector("#statReviews").textContent =
-            cantidadPendientes;
-
-        document.querySelector("#pendingCount").textContent =
-            cantidadPendientes;
-
-        document.querySelector("#tabPending").textContent =
-            cantidadPendientes;
-
-        document.querySelector("#tabPublished").textContent =
-            cantidadPublicadas;
-
-        document.querySelector("#reviewsPill").textContent =
-            `${cantidadPendientes} pendientes`;
-
-    } catch (error) {
-        console.error("Error al actualizar contadores:", error);
-    }
-}
-
-
     const ym = `${currentDate.getFullYear()}-${String(
         currentDate.getMonth() + 1
     ).padStart(2, "0")}`;
@@ -357,10 +316,6 @@ async function actualizarContadoresResenas() {
             .filter(e => e.date.startsWith(ym))
             .map(e => e.date)
     ).size;
-
-    $("#statReviews").textContent = data.reviews.filter(
-        r => r.status === "pendiente"
-    ).length;
 
     $("#statRequests").textContent = data.requests.filter(
         r => r.status === "Nueva"
@@ -388,6 +343,46 @@ async function actualizarContadoresResenas() {
         ).length} pendientes`;
 }
 
+async function actualizarContadoresResenas() {
+    try {
+        const [
+            respuestaPendientes,
+            respuestaPublicadas,
+            respuestaRechazadas
+        ] = await Promise.all([
+            fetch(`${API_BASE}/resenas/pendientes`),
+            fetch(`${API_BASE}/resenas`),
+            fetch(`${API_BASE}/resenas/rechazadas`)
+        ]);
+
+        if (
+            !respuestaPendientes.ok ||
+            !respuestaPublicadas.ok ||
+            !respuestaRechazadas.ok
+        ) {
+            throw new Error("No se pudieron consultar las reseñas.");
+        }
+
+        const pendientes = await respuestaPendientes.json();
+        const publicadas = await respuestaPublicadas.json();
+        const rechazadas = await respuestaRechazadas.json();
+
+        $("#statReviews").textContent = pendientes.length;
+        $("#pendingCount").textContent = pendientes.length;
+        $("#tabPending").textContent = pendientes.length;
+        $("#tabPublished").textContent = publicadas.length;
+        $("#tabRejected").textContent = rechazadas.length;
+
+        $("#reviewsPill").textContent =
+            `${pendientes.length} pendientes`;
+
+    } catch (error) {
+        console.error(
+            "Error al actualizar los contadores:",
+            error
+        );
+    }
+}
 
 // ==========================================
 // 8. NAVEGACIÓN DEL PANEL
@@ -863,10 +858,158 @@ $("#eventForm").addEventListener("submit", event => {
 });
 
 // 14. ADMINISTRACIÓN DE PAQUETES
+function agregarCampoServicio(valor = "") {
+  const contenedor = $("#packageServicesContainer");
+  const fila = document.createElement("div");
 
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "servicio-input";
+  input.placeholder = "Ej. Uso del rancho";
+  input.maxLength = 100;
+  input.value = valor;
+
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "btn btn-outline";
+  boton.textContent = "Eliminar";
+
+  boton.addEventListener("click", () => {
+    fila.remove();
+  });
+
+  fila.appendChild(input);
+  fila.appendChild(boton);
+  contenedor.appendChild(fila);
+}
+
+function obtenerServiciosFormulario() {
+  return Array.from(
+    document.querySelectorAll(
+      "#packageServicesContainer .servicio-input"
+    )
+  )
+    .map(input => input.value.trim())
+    .filter(servicio => servicio !== "");
+}
+
+function agregarCampoDetalle(detalle = {}) {
+  const contenedor = $("#packageDetailsContainer");
+  const fila = document.createElement("div");
+  fila.className = "detalle-form-row";
+
+  const etiquetaNombre = document.createElement("label");
+  etiquetaNombre.textContent = "Nombre del servicio";
+
+  const inputNombre = document.createElement("input");
+  inputNombre.type = "text";
+  inputNombre.className = "detalle-nombre";
+  inputNombre.placeholder = "Ej. Piscina";
+  inputNombre.maxLength = 100;
+  inputNombre.value = detalle.nombre || "";
+
+  const etiquetaDescripcion = document.createElement("label");
+  etiquetaDescripcion.textContent = "Descripción del servicio";
+
+  const inputDescripcion = document.createElement("textarea");
+  inputDescripcion.className = "detalle-descripcion";
+  inputDescripcion.rows = 2;
+  inputDescripcion.maxLength = 300;
+  inputDescripcion.placeholder = "Describe el servicio";
+  inputDescripcion.value = detalle.descripcion || "";
+
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "btn btn-outline";
+  boton.textContent = "Eliminar detalle";
+
+  boton.addEventListener("click", () => {
+    fila.remove();
+  });
+
+  fila.appendChild(etiquetaNombre);
+  fila.appendChild(inputNombre);
+  fila.appendChild(etiquetaDescripcion);
+  fila.appendChild(inputDescripcion);
+  fila.appendChild(boton);
+
+  contenedor.appendChild(fila);
+}
+
+function obtenerDetallesFormulario() {
+  return Array.from(
+    document.querySelectorAll(
+      "#packageDetailsContainer .detalle-form-row"
+    )
+  ).map(fila => ({
+    nombre: fila.querySelector(".detalle-nombre").value.trim(),
+    descripcion: fila.querySelector(".detalle-descripcion").value.trim()
+  }));
+}
+
+$("#btnAgregarServicio").addEventListener("click", () => {
+  agregarCampoServicio();
+});
+
+$("#btnAgregarDetalle").addEventListener("click", () => {
+  agregarCampoDetalle();
+});
+async function obtenerPaquetes() {
+
+    const body = $("#packageRows");
+
+    try {
+
+        const respuesta = await fetch(`${API_BASE}/paquetes`);
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron consultar los paquetes.");
+        }
+
+        const paquetesAPI = await respuesta.json();
+
+        // Convertir los nombres del backend a los del panel
+        data.packages = paquetesAPI.map(p => ({
+            id: p.id,
+            name: p.nombre,
+            description: p.descripcion,
+            price: p.precio,
+            active: p.activo !== false,
+            servicios: p.servicios || [],
+            detalles: p.detalles || []
+        }));
+
+        renderPackages();
+
+        // Actualizar las opciones de paquetes de las reservaciones
+        if ($("#eventPackage")) {
+            fillPackageOptions($("#eventPackage").value);
+        }
+
+    } catch (error) {
+
+        console.error("Error al consultar paquetes:", error);
+
+        if (body) {
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        No se pudieron cargar los paquetes.
+                        Verifica que NestJS esté funcionando.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
+
+
+// Mostrar paquetes en la tabla
 function renderPackages() {
 
     const body = $("#packageRows");
+
+    if (!body) return;
 
     body.innerHTML = data.packages.map(p => `
 
@@ -902,6 +1045,7 @@ function renderPackages() {
                 <div class="row-actions">
 
                     <button
+                        type="button"
                         class="mini-action"
                         data-edit-package="${p.id}"
                         title="Editar paquete"
@@ -910,6 +1054,7 @@ function renderPackages() {
                     </button>
 
                     <button
+                        type="button"
                         class="mini-action delete"
                         data-delete-package="${p.id}"
                         title="Eliminar paquete"
@@ -922,125 +1067,210 @@ function renderPackages() {
 
         </tr>
 
-    `).join("") ||
-    '<tr><td colspan="5" class="empty-state">Todavía no hay paquetes. Agrega el primero.</td></tr>';
+    `).join("") || `
+        <tr>
+            <td colspan="5" class="empty-state">
+                Todavía no hay paquetes registrados.
+            </td>
+        </tr>
+    `;
 
     body.querySelectorAll("[data-edit-package]").forEach(boton => {
 
         boton.addEventListener("click", () => {
-
-            openPackageDialog(
-                Number(boton.dataset.editPackage)
-            );
+            openPackageDialog(Number(boton.dataset.editPackage));
         });
+
     });
 
     body.querySelectorAll("[data-delete-package]").forEach(boton => {
 
         boton.addEventListener("click", () => {
-
-            deletePackage(
-                Number(boton.dataset.deletePackage)
-            );
+            deletePackage(Number(boton.dataset.deletePackage));
         });
+
     });
+
 }
 
+
+// ==========================================
 // 15. FORMULARIO DE PAQUETES
+// ==========================================
 
 const packageDialog = $("#packageDialog");
 
 function openPackageDialog(id = null) {
+  const p = data.packages.find(x => x.id === id);
 
-    const p = data.packages.find(x => x.id === id);
+  $("#packageForm").reset();
 
-    $("#packageForm").reset();
+  $("#packageId").value = p?.id || "";
+  $("#packageDialogTitle").textContent = p
+    ? "Editar paquete"
+    : "Nuevo paquete";
 
-    $("#packageId").value = p?.id || "";
+  $("#packageName").value = p?.name || "";
+  $("#packageDescription").value = p?.description || "";
+  $("#packagePrice").value = p?.price ?? "";
+  $("#packageActive").value = String(p?.active ?? true);
 
-    $("#packageDialogTitle").textContent =
-        p ? "Editar paquete" : "Nuevo paquete";
+  $("#packageServicesContainer").innerHTML = "";
+  $("#packageDetailsContainer").innerHTML = "";
 
-    $("#packageName").value = p?.name || "";
+  const servicios = p?.servicios || [];
+  const detalles = p?.detalles || [];
 
-    $("#packageDescription").value = p?.description || "";
+  servicios.forEach(servicio => {
+    agregarCampoServicio(servicio);
+  });
 
-    $("#packagePrice").value = p?.price ?? "";
+  detalles.forEach(detalle => {
+    agregarCampoDetalle(detalle);
+  });
 
-    $("#packageActive").value = String(p?.active ?? true);
+  if (servicios.length === 0) {
+    agregarCampoServicio();
+  }
 
-    packageDialog.showModal();
+  if (detalles.length === 0) {
+    agregarCampoDetalle();
+  }
+
+  packageDialog.showModal();
 }
 
-
+// Abrir formulario para un paquete nuevo
 $("#addPackage").addEventListener("click", () => {
     openPackageDialog();
 });
 
 
-$("#packageForm").addEventListener("submit", event => {
+// Crear o actualizar un paquete en NestJS
+$("#packageForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-    event.preventDefault();
+  const idActual = Number($("#packageId").value);
+  const esNuevo = !idActual;
 
-    const id = Number($("#packageId").value) || Date.now();
+  const paquete = {
+  nombre: $("#packageName").value.trim(),
+  descripcion: $("#packageDescription").value.trim(),
+  precio: Number($("#packagePrice").value),
+  servicios: obtenerServiciosFormulario(),
+  detalles: obtenerDetallesFormulario(),
+  activo: $("#packageActive").value === "true"
+};
+  if (
+    !paquete.nombre ||
+    !paquete.descripcion ||
+    !Number.isFinite(paquete.precio) ||
+    paquete.precio < 0
+  ) {
+    showToast("Revisa el nombre, la descripción y el precio.");
+    return;
+  }
 
-    const p = {
+  if (paquete.servicios.length === 0) {
+    showToast("Agrega al menos un servicio.");
+    return;
+  }
 
-        id: id,
+  if (
+    paquete.detalles.length === 0 ||
+    paquete.detalles.some(
+      detalle => !detalle.nombre || !detalle.descripcion
+    )
+  ) {
+    showToast("Completa los detalles del paquete.");
+    return;
+  }
 
-        name: $("#packageName").value.trim(),
-
-        description: $("#packageDescription").value.trim(),
-
-        price: Number($("#packagePrice").value),
-
-        active: $("#packageActive").value === "true"
-    };
-
-    const i = data.packages.findIndex(
-        x => x.id === id
+  try {
+    const respuesta = await fetch(
+      esNuevo
+        ? `${API_BASE}/paquetes`
+        : `${API_BASE}/paquetes/${idActual}`,
+      {
+        method: esNuevo ? "POST" : "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(paquete)
+      }
     );
 
-    if (i >= 0) {
-        data.packages[i] = p;
-    } else {
-        data.packages.push(p);
+    if (!respuesta.ok) {
+      const mensaje = await respuesta.text();
+      throw new Error(mensaje || "No se pudo guardar el paquete.");
     }
-
-    saveData();
 
     packageDialog.close();
 
-    renderPackages();
+    await obtenerPaquetes();
 
     showToast(
-        "Paquete guardado localmente. Falta conectarlo a la API para publicar el cambio."
+      esNuevo
+        ? "Paquete creado correctamente."
+        : "Paquete actualizado correctamente."
     );
+
+  } catch (error) {
+    console.error("Error al guardar el paquete:", error);
+    showToast("No se pudo guardar el paquete. Revisa el backend.");
+  }
 });
 
+
+// ==========================================
 // 16. ELIMINAR PAQUETES
+// ==========================================
 
-function deletePackage(id) {
+async function deletePackage(id) {
 
-    const p = data.packages.find(x => x.id === id);
+    const paquete = data.packages.find(p => p.id === id);
 
-    if (!p || !confirm(
-        `¿Eliminar el paquete “${p.name}” de esta demostración?`
+    if (!paquete) return;
+
+    if (!confirm(
+        `¿Deseas eliminar el paquete "${paquete.name}"?`
     )) {
         return;
     }
 
-    data.packages = data.packages.filter(
-        x => x.id !== id
-    );
+    try {
 
-    saveData();
+        const respuesta = await fetch(
+            `${API_BASE}/paquetes/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
 
-    renderPackages();
+        if (!respuesta.ok) {
 
-    showToast("Paquete eliminado localmente");
+            const mensaje = await respuesta.text();
+
+            throw new Error(
+                mensaje || "No se pudo eliminar el paquete."
+            );
+        }
+
+        await obtenerPaquetes();
+
+        showToast("Paquete eliminado correctamente.");
+
+    } catch (error) {
+
+        console.error("Error al eliminar el paquete:", error);
+
+        showToast(
+            "No se pudo eliminar el paquete. Verifica NestJS."
+        );
+
+    }
+
 }
-
  // ==========================================
  // 16.1. ADMINISTRACIÓN DE ADICIONALES
  // ==========================================
@@ -1111,27 +1341,27 @@ function renderAdditionals() {
                 ${adicional.paquetes.length}
             </td>
 
-            <td>
-                <div class="row-actions">
+          <td>
+    <div class="row-actions">
 
-                    <button
-                        type="button"
-                        class="mini-action"
-                        data-edit-adicional="${adicional.id}"
-                        title="Editar adicional">
-                        ✎
-                    </button>
+        <button
+            class="mini-action"
+            data-edit-adicional="${adicional.id}"
+            title="Editar adicional"
+            aria-label="Editar ${escapeHTML(adicional.categoria)}">
+            ✎
+        </button>
 
-                    <button
-                        type="button"
-                        class="mini-action delete"
-                        data-delete-adicional="${adicional.id}"
-                        title="Eliminar adicional">
-                        ⌫
-                    </button>
+        <button
+            class="mini-action delete"
+            data-delete-adicional="${adicional.id}"
+            title="Eliminar adicional"
+            aria-label="Eliminar ${escapeHTML(adicional.categoria)}">
+            ⌫
+        </button>
 
-                </div>
-            </td>
+    </div>
+</td>
         </tr>
 
     `).join("") || `
@@ -1528,8 +1758,6 @@ async function eliminarAdicional(id) {
 }
 
 // 17. ADMINISTRACIÓN DE RESEÑAS
-
-
 async function renderReviews() {
     const lista = document.querySelector("#reviewsList");
 
@@ -1543,15 +1771,8 @@ async function renderReviews() {
         endpoint = `${API_BASE}/resenas/pendientes`;
     } else if (reviewStatus === "publicada") {
         endpoint = `${API_BASE}/resenas`;
-    } else {
-        lista.innerHTML = `
-            <div class="empty-state">
-                La consulta de reseñas rechazadas todavía
-                no está disponible en el backend.
-            </div>
-        `;
-        updateStats();
-        return;
+    } else if (reviewStatus === "rechazada") {
+        endpoint = `${API_BASE}/resenas/rechazadas`;
     }
 
     try {
@@ -1582,7 +1803,8 @@ async function renderReviews() {
             <article class="review-item">
                 <div class="avatar avatar-light">
                     ${escapeHTML(
-                        r.name.split(" ")
+                        (r.name || "")
+                            .split(" ")
                             .map(s => s[0])
                             .slice(0, 2)
                             .join("")
@@ -1591,7 +1813,7 @@ async function renderReviews() {
                 </div>
 
                 <div class="review-main">
-                    <strong>${escapeHTML(r.name)}</strong>
+                    <strong>${escapeHTML(r.name || "")}</strong>
 
                     <div class="review-date">
                         ${escapeHTML(r.date)}
@@ -1603,7 +1825,7 @@ async function renderReviews() {
                     </div>
 
                     <div class="review-comment">
-                        ${escapeHTML(r.comment)}
+                        ${escapeHTML(r.comment || "")}
                     </div>
                 </div>
 
@@ -1619,6 +1841,22 @@ async function renderReviews() {
                             class="btn-small btn-reject"
                             data-reject="${r.id}">
                             Rechazar
+                        </button>
+                    ` : ""}
+
+                    ${r.status === "publicada" ? `
+                        <button
+                            class="btn-small btn-reject"
+                            data-withdraw="${r.id}">
+                            Retirar publicación
+                        </button>
+                    ` : ""}
+
+                    ${r.status === "rechazada" ? `
+                        <button
+                            class="btn-small btn-approve"
+                            data-approve="${r.id}">
+                            Volver a publicar
                         </button>
                     ` : ""}
                 </div>
@@ -1637,26 +1875,44 @@ async function renderReviews() {
                 );
             });
 
-        lista.querySelectorAll("[data-approve]").forEach(boton => {
-            boton.addEventListener("click", () => {
-                setReviewStatus(
-                    Number(boton.dataset.approve),
-                    "publicada"
-                );
+        lista.querySelectorAll("[data-approve]")
+            .forEach(boton => {
+                boton.addEventListener("click", () => {
+                    setReviewStatus(
+                        Number(boton.dataset.approve),
+                        "publicada"
+                    );
+                });
             });
-        });
 
-        lista.querySelectorAll("[data-reject]").forEach(boton => {
-            boton.addEventListener("click", () => {
-                setReviewStatus(
-                    Number(boton.dataset.reject),
-                    "rechazada"
-                );
+        lista.querySelectorAll("[data-reject]")
+            .forEach(boton => {
+                boton.addEventListener("click", () => {
+                    setReviewStatus(
+                        Number(boton.dataset.reject),
+                        "rechazada"
+                    );
+                });
             });
-        });
+
+        lista.querySelectorAll("[data-withdraw]")
+            .forEach(boton => {
+                boton.addEventListener("click", () => {
+                    const confirmar = confirm(
+                        "¿Deseas retirar esta reseña de la página principal?"
+                    );
+
+                    if (confirmar) {
+                        setReviewStatus(
+                            Number(boton.dataset.withdraw),
+                            "rechazada"
+                        );
+                    }
+                });
+            });
 
     } catch (error) {
-        console.error("Error al cargar reseñas:", error);
+        console.error("Error al cargar las reseñas:", error);
 
         lista.innerHTML = `
             <div class="empty-state">
@@ -1666,12 +1922,10 @@ async function renderReviews() {
         `;
     }
 
-    actualizarContadoresResenas();
+    await actualizarContadoresResenas();
 }
 
-
 // 18. CAMBIAR ESTADO DE RESEÑAS
-
 
 async function setReviewStatus(id, status) {
     const estadoAPI = status === "publicada"
@@ -1698,21 +1952,32 @@ async function setReviewStatus(id, status) {
 
         if (!respuesta.ok) {
             const mensaje = await respuesta.text();
-            throw new Error(mensaje || "No se pudo actualizar la reseña.");
+
+            throw new Error(
+                mensaje || "No se pudo actualizar la reseña."
+            );
         }
 
         showToast(
             status === "publicada"
-                ? "Reseña aprobada correctamente."
-                : "Reseña rechazada correctamente."
+                ? "Reseña publicada correctamente."
+                : "Reseña retirada o rechazada correctamente."
         );
 
+        await renderReviews();
+
     } catch (error) {
-        console.error("Error al actualizar la reseña:", error);
-        showToast("No se pudo actualizar la reseña. Revisa la consola.");
+        console.error(
+            "Error al actualizar la reseña:",
+            error
+        );
+
+        showToast(
+            "No se pudo actualizar la reseña. Revisa la consola."
+        );
     }
-    await actualizarContadoresResenas();
 }
+
 
 
 // 19. FILTROS DE RESEÑAS
@@ -1965,5 +2230,6 @@ photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
 });
 // iniciar todas las secciones
 renderAll();
+obtenerPaquetes();
 obtenerAdicionales();
 actualizarContadoresResenas();
