@@ -25,6 +25,11 @@
         ◇</span>
         Paquetes
       </button>
+      <!-- adicionales -->
+       <button class="nav-link" data-view="adicionales">
+        <span class="nav-icon">✧</span>
+        Adicionales
+       </button>
       <!-- GALERÍA -->
       <button class="nav-link" data-view="galeria">
       <span class="nav-icon">
@@ -292,6 +297,45 @@
           </div>
         </div>
       </section>
+
+<!-- Admin adicionales -->
+<section class="view-panel" id="view-adicionales">
+    <div class="panel">
+        <div class="panel-heading">
+            <div>
+                <p class="eyebrow">CONTENIDO DEL SITIO</p>
+                <h2>Administración de adicionales</h2>
+                <p>
+                    Administra los servicios adicionales y sus paquetes.
+                </p>
+            </div>
+
+            <button
+                class="btn btn-primary"
+                type="button"
+                id="btnNuevoAdicional">
+                ＋ Nuevo adicional
+            </button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Cantidad de paquetes</th>
+                        <th class="right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="adicionalesTableBody">
+    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 <!--agregar foto-->
 <section class="view-panel" id="view-galeria">
     <div class="panel">
@@ -492,6 +536,67 @@
       </div>
     </form>
   </dialog>
+
+  
+<!-- Formulario emergente para administrar adicionales -->
+<dialog id="adicionalDialog" class="modal">
+    <form id="adicionalForm">
+        <div class="modal-heading">
+            <div>
+                <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
+                <h2 id="adicionalDialogTitle">Nuevo adicional</h2>
+            </div>
+
+            <button
+                type="button"
+                class="icon-button close-dialog"
+                aria-label="Cerrar">
+                ×
+            </button>
+        </div>
+
+        <input type="hidden" id="adicionalId">
+
+        <label for="adicionalCategoria">Categoría</label>
+        <input
+            type="text"
+            id="adicionalCategoria"
+            required
+            maxlength="100"
+            placeholder="Ej. Palomitas de maíz">
+
+        <label for="adicionalDescripcion">Descripción</label>
+        <textarea
+            id="adicionalDescripcion"
+            rows="3"
+            required
+            placeholder="Describe el servicio adicional"></textarea>
+
+        <h3>Paquetes del adicional</h3>
+
+        <div id="adicionalPaquetesContainer"></div>
+
+        <button
+            type="button"
+            class="btn btn-outline"
+            id="btnAgregarPaqueteAdicional">
+            ＋ Agregar paquete
+        </button>
+
+        <div class="modal-actions">
+            <button
+                type="button"
+                class="btn btn-outline close-dialog">
+                Cancelar
+            </button>
+
+            <button type="submit" class="btn btn-primary">
+                Guardar adicional
+            </button>
+        </div>
+    </form>
+</dialog>
+
   <dialog id="eventDialog" class="modal">
     <form id="eventForm" method="dialog">
       <div class="modal-heading">

@@ -1,8 +1,12 @@
-import { DetallePaquete } from '../models/paquete.model';
+declare class DetallePaqueteDto {
+    nombre: string;
+    descripcion: string;
+}
 export declare class UpdatePaqueteDto {
     nombre?: string;
     descripcion?: string;
     servicios?: string[];
     precio?: number;
-    detalles?: DetallePaquete[];
+    detalles?: DetallePaqueteDto[];
 }
+export {};

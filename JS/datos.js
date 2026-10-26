@@ -3,7 +3,7 @@
  * Paquetes dE Villa Peñas
  */
 
-const paquetes = [
+let paquetes = [
   {
     id: 1,
     nombre: "Paquete Essentials",
@@ -109,7 +109,7 @@ const paquetes = [
   }
 ];
 
-const adicionales = [
+let adicionales = [
 
     {
         id: 1,
