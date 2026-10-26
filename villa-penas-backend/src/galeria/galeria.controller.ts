@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -9,6 +8,7 @@ import {
   Body,
   UploadedFile,
   UseInterceptors,
+  BadRequestException,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
@@ -77,17 +77,49 @@ export class GaleriaController {
 
   // PATCH /galeria/:id
   @Patch(':id')
+  @UseInterceptors(
+    FileInterceptor('imagen', {
+      limits: {
+        fileSize: 5 * 1024 * 1024,
+      },
+    }),
+  )
   actualizarFoto(
     @Param('id') id: string,
     @Body() datos: UpdateFotoDto,
+    @UploadedFile() archivo?: Express.Multer.File,
   ): Promise<Foto> {
-    if (datos.descripcion === undefined) {
-      return this.galeriaService.obtenerUna(id);
+    if (datos.descripcion === undefined && !archivo) {
+      throw new BadRequestException(
+        'Debés proporcionar una descripción o una imagen.',
+      );
+    }
+
+    // Validar tipo y tamaño cuando se reemplaza la imagen
+    if (archivo) {
+      const tiposPermitidos = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+      ];
+
+      if (!tiposPermitidos.includes(archivo.mimetype)) {
+        throw new BadRequestException(
+          'Solo se permiten imágenes JPG, PNG o WebP.',
+        );
+      }
+
+      if (archivo.size > 5 * 1024 * 1024) {
+        throw new BadRequestException(
+          'La imagen no puede superar los 5 MB.',
+        );
+      }
     }
 
     return this.galeriaService.actualizarFoto(
       id,
-      datos.descripcion.trim(),
+      datos.descripcion,
+      archivo,
     );
   }
 
@@ -95,7 +127,7 @@ export class GaleriaController {
   @Delete(':id')
   eliminarFoto(
     @Param('id') id: string,
-  ): Promise<void> {
+  ): Promise<{ mensaje: string }> {
     return this.galeriaService.eliminarFoto(id);
   }
 }

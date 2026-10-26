@@ -85,14 +85,70 @@ let GaleriaService = class GaleriaService {
         }
         return nuevaFoto;
     }
-    async actualizarFoto(id, descripcion) {
+    async actualizarFoto(id, descripcion, archivo) {
         const fotos = await this.leerFotos();
         const foto = fotos.find((f) => f.id === id);
         if (!foto) {
             throw new common_1.NotFoundException('Fotografía no encontrada');
         }
-        foto.descripcion = descripcion;
-        await this.guardarFotos(fotos);
+        if (descripcion !== undefined) {
+            if (descripcion.trim().length === 0) {
+                throw new common_1.BadRequestException('La descripción no puede estar vacía');
+            }
+        }
+        if (!archivo && descripcion === undefined) {
+            throw new common_1.BadRequestException('Debés proporcionar una descripción o una imagen');
+        }
+        const descripcionAnterior = foto.descripcion;
+        const srcAnterior = foto.src;
+        let destinoNuevo;
+        if (archivo) {
+            if (!archivo.buffer) {
+                throw new common_1.BadRequestException('No se recibió correctamente la imagen');
+            }
+            await node_fs_1.promises.mkdir(this.carpeta, { recursive: true });
+            const nombreNuevo = `${(0, node_crypto_1.randomUUID)()}.webp`;
+            destinoNuevo = (0, node_path_1.join)(this.carpeta, nombreNuevo);
+            try {
+                await (0, sharp_1.default)(archivo.buffer)
+                    .rotate()
+                    .resize({
+                    width: 1200,
+                    withoutEnlargement: true,
+                })
+                    .webp({ quality: 78 })
+                    .toFile(destinoNuevo);
+                foto.src = `/uploads/galeria/${nombreNuevo}`;
+            }
+            catch {
+                await node_fs_1.promises.rm(destinoNuevo, { force: true });
+                throw new common_1.BadRequestException('No se pudo procesar la nueva imagen');
+            }
+        }
+        if (descripcion !== undefined) {
+            foto.descripcion = descripcion.trim();
+        }
+        try {
+            await this.guardarFotos(fotos);
+        }
+        catch (error) {
+            foto.src = srcAnterior;
+            foto.descripcion = descripcionAnterior;
+            if (destinoNuevo) {
+                await node_fs_1.promises.rm(destinoNuevo, { force: true });
+            }
+            throw error;
+        }
+        if (destinoNuevo && srcAnterior.startsWith('/uploads/galeria/')) {
+            const nombreAnterior = srcAnterior.split('/').pop();
+            if (nombreAnterior) {
+                try {
+                    await node_fs_1.promises.rm((0, node_path_1.join)(this.carpeta, nombreAnterior), { force: true });
+                }
+                catch {
+                }
+            }
+        }
         return foto;
     }
     async eliminarFoto(id) {
@@ -101,14 +157,22 @@ let GaleriaService = class GaleriaService {
         if (!foto) {
             throw new common_1.NotFoundException('Fotografía no encontrada');
         }
-        const restantes = fotos.filter((f) => f.id !== id);
-        await this.guardarFotos(restantes);
-        const nombre = foto.src.split('/').pop();
-        if (nombre) {
-            await node_fs_1.promises.rm((0, node_path_1.join)(this.carpeta, nombre), {
-                force: true,
-            });
+        const fotosActualizadas = fotos.filter((f) => f.id !== id);
+        await this.guardarFotos(fotosActualizadas);
+        if (foto.src.startsWith('/uploads/galeria/')) {
+            const nombreArchivo = foto.src.split('/').pop();
+            if (nombreArchivo) {
+                try {
+                    await node_fs_1.promises.rm((0, node_path_1.join)(this.carpeta, nombreArchivo), { force: true });
+                }
+                catch (error) {
+                    console.error('No se pudo eliminar el archivo de imagen:', error);
+                }
+            }
         }
+        return {
+            mensaje: 'Fotografía eliminada correctamente',
+        };
     }
 };
 exports.GaleriaService = GaleriaService;

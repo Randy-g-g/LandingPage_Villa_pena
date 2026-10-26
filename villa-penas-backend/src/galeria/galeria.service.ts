@@ -139,9 +139,10 @@ private async guardarFotos(
   }
 
   // Actualizar descripción
-  async actualizarFoto(
+ async actualizarFoto(
     id: string,
-    descripcion: string,
+    descripcion?: string,
+    archivo?: Express.Multer.File,
   ): Promise<Foto> {
     const fotos = await this.leerFotos();
     const foto = fotos.find((f) => f.id === id);
@@ -150,31 +151,136 @@ private async guardarFotos(
       throw new NotFoundException('Fotografía no encontrada');
     }
 
-    foto.descripcion = descripcion;
-    await this.guardarFotos(fotos);
+    if (descripcion !== undefined) {
+      if (descripcion.trim().length === 0) {
+        throw new BadRequestException(
+          'La descripción no puede estar vacía',
+        );
+      }
+    }
+
+    if (!archivo && descripcion === undefined) {
+      throw new BadRequestException(
+        'Debés proporcionar una descripción o una imagen',
+      );
+    }
+
+    const descripcionAnterior = foto.descripcion;
+    const srcAnterior = foto.src;
+
+    let destinoNuevo: string | undefined;
+
+    // Procesar la fotografía nueva si existe
+    if (archivo) {
+      if (!archivo.buffer) {
+        throw new BadRequestException(
+          'No se recibió correctamente la imagen',
+        );
+      }
+
+      await fs.mkdir(this.carpeta, { recursive: true });
+
+      const nombreNuevo = `${randomUUID()}.webp`;
+      destinoNuevo = join(this.carpeta, nombreNuevo);
+
+      try {
+        await sharp(archivo.buffer)
+          .rotate()
+          .resize({
+            width: 1200,
+            withoutEnlargement: true,
+          })
+          .webp({ quality: 78 })
+          .toFile(destinoNuevo);
+
+        foto.src = `/uploads/galeria/${nombreNuevo}`;
+      } catch {
+        await fs.rm(destinoNuevo, { force: true });
+        throw new BadRequestException(
+          'No se pudo procesar la nueva imagen',
+        );
+      }
+    }
+
+    // Actualizar descripción si fue enviada
+    if (descripcion !== undefined) {
+      foto.descripcion = descripcion.trim();
+    }
+
+    // Guardar cambios en galeria.json
+    try {
+      await this.guardarFotos(fotos);
+    } catch (error) {
+      // Recuperar los datos anteriores
+      foto.src = srcAnterior;
+      foto.descripcion = descripcionAnterior;
+
+      // Eliminar la imagen nueva si falló el guardado
+      if (destinoNuevo) {
+        await fs.rm(destinoNuevo, { force: true });
+      }
+
+      throw error;
+    }
+
+    // Eliminar imagen anterior solo después de guardar el JSON
+    if (destinoNuevo && srcAnterior.startsWith('/uploads/galeria/')) {
+      const nombreAnterior = srcAnterior.split('/').pop();
+
+      if (nombreAnterior) {
+        try {
+          await fs.rm(
+            join(this.carpeta, nombreAnterior),
+            { force: true },
+          );
+        } catch {
+          // El registro ya fue actualizado.
+          // Si falla la limpieza, conservamos la actualización.
+        }
+      }
+    }
 
     return foto;
   }
-
+  
   // Eliminar fotografía
-  async eliminarFoto(id: string): Promise<void> {
+   async eliminarFoto(id: string): Promise<{ mensaje: string }> {
     const fotos = await this.leerFotos();
+
     const foto = fotos.find((f) => f.id === id);
 
     if (!foto) {
       throw new NotFoundException('Fotografía no encontrada');
     }
 
-    const restantes = fotos.filter((f) => f.id !== id);
+    // Obtener la lista sin la fotografía eliminada
+    const fotosActualizadas = fotos.filter((f) => f.id !== id);
 
-    await this.guardarFotos(restantes);
+    // Primero actualizamos galeria.json
+    await this.guardarFotos(fotosActualizadas);
 
-    const nombre = foto.src.split('/').pop();
+    // Después eliminamos el archivo físico, si pertenece
+    // al directorio administrado por el backend
+    if (foto.src.startsWith('/uploads/galeria/')) {
+      const nombreArchivo = foto.src.split('/').pop();
 
-    if (nombre) {
-      await fs.rm(join(this.carpeta, nombre), {
-        force: true,
-      });
+      if (nombreArchivo) {
+        try {
+          await fs.rm(
+            join(this.carpeta, nombreArchivo),
+            { force: true },
+          );
+        } catch (error) {
+          console.error(
+            'No se pudo eliminar el archivo de imagen:',
+            error,
+          );
+        }
+      }
     }
+
+    return {
+      mensaje: 'Fotografía eliminada correctamente',
+    };
   }
 }

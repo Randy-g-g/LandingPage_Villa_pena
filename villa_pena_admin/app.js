@@ -2172,6 +2172,36 @@ async function renderGallery() {
             contenido.appendChild(numero);
             contenido.appendChild(descripcion);
 
+            // =====================================
+            // BOTONES EDITAR Y ELIMINAR
+            // =====================================
+
+            const acciones = document.createElement("div");
+            acciones.className = "acciones-foto";
+
+            // Botón Editar
+            const btnEditar = document.createElement("button");
+            btnEditar.type = "button";
+            btnEditar.className = "btn-editar-foto";
+            btnEditar.textContent = "Editar";
+            btnEditar.dataset.id = foto.id;
+
+            // Botón Eliminar
+            const btnEliminar = document.createElement("button");
+            btnEliminar.type = "button";
+            btnEliminar.className = "btn-eliminar-foto";
+            btnEliminar.textContent = "Eliminar";
+            btnEliminar.dataset.id = foto.id;
+
+            acciones.appendChild(btnEditar);
+            acciones.appendChild(btnEliminar);
+
+            contenido.appendChild(acciones);
+
+            // =====================================
+            // AGREGAR TODO A LA TARJETA
+            // =====================================
+
             tarjeta.appendChild(imagen);
             tarjeta.appendChild(contenido);
 
@@ -2378,6 +2408,229 @@ photoDialog.addEventListener("close", function () {
 
     limpiarVistaPrevia();
 
+});
+
+//eliminar y editar fotos
+const API_FOTOS_ADMIN = "http://localhost:3000";
+
+let fotoEnEdicion = null;
+
+const modalEditarFoto =
+  document.getElementById("modalEditarFoto");
+
+const formEditarFoto =
+  document.getElementById("formEditarFoto");
+
+const previewEditarFoto =
+  document.getElementById("previewEditarFoto");
+
+const descripcionEditarFoto =
+  document.getElementById("descripcionEditarFoto");
+
+const archivoEditarFoto =
+  document.getElementById("archivoEditarFoto");
+
+const guardarEditarFoto =
+  document.getElementById("guardarEditarFoto");
+
+const cancelarEditarFoto =
+  document.getElementById("cancelarEditarFoto");
+
+// Obtener una fotografía desde la API
+async function obtenerFotoAdmin(id) {
+  const respuesta = await fetch(
+    `${API_FOTOS_ADMIN}/galeria`
+  );
+
+  if (!respuesta.ok) {
+    throw new Error("No se pudieron cargar las fotografías");
+  }
+
+  const fotos = await respuesta.json();
+  const foto = fotos.find((f) => f.id === id);
+
+  if (!foto) {
+    throw new Error("Fotografía no encontrada");
+  }
+
+  return foto;
+}
+
+// Abrir formulario con los datos actuales
+async function abrirEditarFoto(id) {
+  try {
+    const foto = await obtenerFotoAdmin(id);
+
+    fotoEnEdicion = foto;
+
+    descripcionEditarFoto.value =
+      foto.descripcion || "";
+
+    archivoEditarFoto.value = "";
+
+    previewEditarFoto.src =
+      `${API_FOTOS_ADMIN}${foto.src}`;
+
+    modalEditarFoto.showModal();
+
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// Vista previa de una nueva fotografía
+archivoEditarFoto.addEventListener("change", () => {
+  const archivo = archivoEditarFoto.files[0];
+
+  if (!archivo) {
+    if (fotoEnEdicion) {
+      previewEditarFoto.src =
+        `${API_FOTOS_ADMIN}${fotoEnEdicion.src}`;
+    }
+    return;
+  }
+
+  if (!["image/jpeg", "image/png", "image/webp"]
+      .includes(archivo.type)) {
+    alert("Seleccioná una imagen JPG, PNG o WebP.");
+    archivoEditarFoto.value = "";
+    return;
+  }
+
+  if (archivo.size > 5 * 1024 * 1024) {
+    alert("La imagen no puede superar los 5 MB.");
+    archivoEditarFoto.value = "";
+    return;
+  }
+
+  // Vista previa local sin subir el archivo
+  const lector = new FileReader();
+
+  lector.onload = () => {
+    previewEditarFoto.src = lector.result;
+  };
+
+  lector.readAsDataURL(archivo);
+});
+
+// Guardar cambios usando PATCH
+formEditarFoto.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!fotoEnEdicion) return;
+
+  const descripcion = descripcionEditarFoto.value.trim();
+  const archivo = archivoEditarFoto.files[0];
+
+  if (!descripcion) {
+    alert("La descripción no puede estar vacía.");
+    return;
+  }
+
+  const datos = new FormData();
+
+  datos.append("descripcion", descripcion);
+
+  if (archivo) {
+    datos.append("imagen", archivo);
+  }
+
+  guardarEditarFoto.disabled = true;
+  guardarEditarFoto.textContent = "Guardando...";
+
+  try {
+    const respuesta = await fetch(
+      `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(fotoEnEdicion.id)}`,
+      {
+        method: "PATCH",
+        body: datos,
+      }
+    );
+
+    if (!respuesta.ok) {
+      const error = await respuesta.json().catch(() => ({}));
+
+      const mensaje = Array.isArray(error.message)
+        ? error.message.join(", ")
+        : error.message;
+
+      throw new Error(
+        mensaje || "No se pudo actualizar la fotografía"
+      );
+    }
+
+    modalEditarFoto.close();
+    fotoEnEdicion = null;
+
+    await renderGallery();
+
+    alert("Fotografía actualizada correctamente.");
+
+  } catch (error) {
+    alert(error.message);
+
+  } finally {
+    guardarEditarFoto.disabled = false;
+    guardarEditarFoto.textContent = "Guardar cambios";
+  }
+});
+
+// Cancelar edición
+cancelarEditarFoto.addEventListener("click", () => {
+  modalEditarFoto.close();
+});
+
+modalEditarFoto.addEventListener("close", () => {
+  fotoEnEdicion = null;
+  formEditarFoto.reset();
+});
+
+// Eliminar fotografía
+async function eliminarFotoAdmin(id) {
+  const confirmar = confirm(
+    "¿Seguro que querés eliminar esta fotografía? Esta acción no se puede deshacer."
+  );
+
+  if (!confirmar) return;
+
+  try {
+    const respuesta = await fetch(
+      `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!respuesta.ok) {
+      const error = await respuesta.json().catch(() => ({}));
+
+      throw new Error(
+        error.message || "No se pudo eliminar la fotografía"
+      );
+    }
+
+    await renderGallery();
+
+    alert("Fotografía eliminada correctamente.");
+
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// escuchar botones Editar y eliminar.
+// funciona también después de renderizar nuevamente.
+document.addEventListener("click", (e) => {
+  const editar = e.target.closest(".btn-editar-foto");
+  const eliminar = e.target.closest(".btn-eliminar-foto");
+
+  if (editar) {
+    abrirEditarFoto(editar.dataset.id);
+  }
+
+  if (eliminar) {
+    eliminarFotoAdmin(eliminar.dataset.id);
+  }
 });
 
 // iniciar todas las secciones

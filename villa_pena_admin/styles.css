@@ -1336,3 +1336,98 @@ tbody tr:last-child td {
         grid-template-columns: 1fr;
     }
 }
+
+/* EDICIÓN DE FOTOGRAFÍAS */
+
+.modal-editar-foto {
+  width: min(480px, 94vw);
+  max-height: 90vh;
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #222;
+  overflow-y: auto;
+}
+
+.modal-editar-foto::backdrop {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.form-editar-foto {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+}
+
+.form-editar-foto h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.preview-editar-foto {
+  display: block;
+  width: 100%;
+  height: 240px;
+  object-fit: contain;
+  background: #f3f3f3;
+  border-radius: 10px;
+}
+
+.form-editar-foto textarea,
+.form-editar-foto input[type="file"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.acciones-editar,
+.acciones-foto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.acciones-editar {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.btn-editar-foto,
+.btn-eliminar-foto,
+.acciones-editar button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-editar-foto,
+#guardarEditarFoto {
+  background: #2563eb;
+}
+
+.btn-eliminar-foto {
+  background: #dc2626;
+}
+
+#cancelarEditarFoto {
+  background: #666;
+}
+
+.btn-editar-foto:hover,
+.btn-eliminar-foto:hover,
+.acciones-editar button:hover {
+  filter: brightness(0.88);
+}
+
+.acciones-editar button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
