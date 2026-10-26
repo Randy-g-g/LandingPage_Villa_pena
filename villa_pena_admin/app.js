@@ -386,7 +386,11 @@ function setView(next) {
             "Administración de paquetes",
             "Actualiza los paquetes y la información que se mostrará en la página pública."
         ],
-
+        adicionales: [
+            "Adicionales",
+            "Administración de adicionales",
+            "Administra los servicios adicionales que se mostrarán en la página pública."
+        ],
         galeria: [
              "Galería",
              "Administración de galería",
@@ -420,6 +424,8 @@ function setView(next) {
     $("#sidebar").classList.remove("open");
 
     if (next === "paquetes") renderPackages();
+
+    if (next === "adicionales") renderAdditionals();
 
     if (next === "resenas") renderReviews();
 
@@ -995,6 +1001,492 @@ function deletePackage(id) {
     showToast("Paquete eliminado localmente");
 }
 
+ // ==========================================
+ // 16.1. ADMINISTRACIÓN DE ADICIONALES
+ // ==========================================
+
+let additionalItems = [];
+
+const adicionalDialog = $("#adicionalDialog");
+
+
+// Consultar adicionales desde NestJS
+async function obtenerAdicionales() {
+
+    const body = $("#adicionalesTableBody");
+
+    try {
+
+        const respuesta = await fetch(`${API_BASE}/adicionales`);
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron consultar los adicionales.");
+        }
+
+        additionalItems = await respuesta.json();
+
+        renderAdditionals();
+
+    } catch (error) {
+
+        console.error("Error al consultar adicionales:", error);
+
+        if (body) {
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        No se pudieron cargar los adicionales.
+                        Verifica que NestJS esté funcionando.
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
+
+
+// Mostrar los adicionales en la tabla
+function renderAdditionals() {
+
+    const body = $("#adicionalesTableBody");
+
+    if (!body) return;
+
+    body.innerHTML = additionalItems.map(adicional => `
+
+        <tr>
+            <td>${adicional.id}</td>
+
+            <td>
+                <span class="package-name">
+                    ${escapeHTML(adicional.categoria)}
+                </span>
+            </td>
+
+            <td>
+                ${escapeHTML(adicional.descripcion)}
+            </td>
+
+            <td>
+                ${adicional.paquetes.length}
+            </td>
+
+            <td>
+                <div class="row-actions">
+
+                    <button
+                        type="button"
+                        class="mini-action"
+                        data-edit-adicional="${adicional.id}"
+                        title="Editar adicional">
+                        ✎
+                    </button>
+
+                    <button
+                        type="button"
+                        class="mini-action delete"
+                        data-delete-adicional="${adicional.id}"
+                        title="Eliminar adicional">
+                        ⌫
+                    </button>
+
+                </div>
+            </td>
+        </tr>
+
+    `).join("") || `
+        <tr>
+            <td colspan="5" class="empty-state">
+                No hay adicionales registrados.
+            </td>
+        </tr>
+    `;
+
+
+    // Botón para editar
+    body.querySelectorAll("[data-edit-adicional]").forEach(boton => {
+
+        boton.addEventListener("click", () => {
+
+            abrirFormularioAdicional(
+                Number(boton.dataset.editAdicional)
+            );
+
+        });
+
+    });
+
+
+    // Botón para eliminar
+    body.querySelectorAll("[data-delete-adicional]").forEach(boton => {
+
+        boton.addEventListener("click", () => {
+
+            eliminarAdicional(
+                Number(boton.dataset.deleteAdicional)
+            );
+
+        });
+
+    });
+
+}
+
+
+// Crear los campos de paquetes dentro del formulario
+function renderCamposPaquetes(paquetes = []) {
+
+    const contenedor = $("#adicionalPaquetesContainer");
+
+    contenedor.innerHTML = "";
+
+    paquetes.forEach(paquete => {
+        agregarCampoPaquete(paquete);
+    });
+
+}
+
+
+// Agregar un paquete al formulario
+function agregarCampoPaquete(paquete = {}) {
+
+    const contenedor = $("#adicionalPaquetesContainer");
+
+    const idsActuales = Array.from(
+        contenedor.querySelectorAll(".adicional-paquete")
+    ).map(campo => Number(campo.dataset.paqueteId));
+
+    const id = paquete.id ??
+        (Math.max(0, ...idsActuales) + 1);
+
+    const campo = document.createElement("fieldset");
+
+    campo.className = "adicional-paquete";
+
+    campo.dataset.paqueteId = id;
+
+    campo.innerHTML = `
+
+        <legend>Paquete #${id}</legend>
+
+        <label>Nombre del paquete</label>
+        <input
+            type="text"
+            data-campo="nombre"
+            value="${escapeHTML(paquete.nombre || "")}"
+            required>
+
+        <label>Cantidad</label>
+        <input
+            type="text"
+            data-campo="cantidad"
+            value="${escapeHTML(paquete.cantidad || "")}"
+            required>
+
+        <label>Detalle</label>
+        <textarea
+            data-campo="detalle"
+            required>${escapeHTML(paquete.detalle || "")}</textarea>
+
+        <label>Precio en colones</label>
+        <input
+            type="number"
+            data-campo="precio"
+            min="0"
+            step="1"
+            value="${paquete.precio ?? ""}"
+            required>
+
+        <button
+            type="button"
+            class="btn btn-outline btn-quitar-paquete">
+            Quitar paquete
+        </button>
+
+    `;
+
+
+    campo.querySelector(".btn-quitar-paquete")
+        .addEventListener("click", () => {
+
+            campo.remove();
+
+        });
+
+
+    contenedor.appendChild(campo);
+
+}
+
+
+// Botón para agregar paquetes al adicional
+$("#btnAgregarPaqueteAdicional").addEventListener("click", () => {
+
+    const contenedor = $("#adicionalPaquetesContainer");
+
+    const idsActuales = Array.from(
+        contenedor.querySelectorAll(".adicional-paquete")
+    ).map(campo => Number(campo.dataset.paqueteId));
+
+    const siguienteId = Math.max(0, ...idsActuales) + 1;
+
+    agregarCampoPaquete({
+        id: siguienteId,
+        nombre: `Paquete #${siguienteId}`,
+        cantidad: "",
+        detalle: "",
+        precio: 0
+    });
+
+});
+
+
+// Obtener los paquetes escritos en el formulario
+function obtenerPaquetesFormulario() {
+
+    return Array.from(
+        $("#adicionalPaquetesContainer")
+            .querySelectorAll(".adicional-paquete")
+    ).map(campo => ({
+
+        id: Number(campo.dataset.paqueteId),
+
+        nombre: campo.querySelector(
+            '[data-campo="nombre"]'
+        ).value.trim(),
+
+        cantidad: campo.querySelector(
+            '[data-campo="cantidad"]'
+        ).value.trim(),
+
+        detalle: campo.querySelector(
+            '[data-campo="detalle"]'
+        ).value.trim(),
+
+        precio: Number(campo.querySelector(
+            '[data-campo="precio"]'
+        ).value)
+
+    }));
+
+}
+
+
+// Abrir el formulario para crear o editar
+function abrirFormularioAdicional(id = null) {
+
+    const adicional = additionalItems.find(
+        item => item.id === id
+    );
+
+    $("#adicionalForm").reset();
+
+    $("#adicionalId").value = adicional?.id ?? "";
+
+    $("#adicionalDialogTitle").textContent = adicional
+        ? "Editar adicional"
+        : "Nuevo adicional";
+
+    $("#adicionalCategoria").value =
+        adicional?.categoria || "";
+
+    $("#adicionalDescripcion").value =
+        adicional?.descripcion || "";
+
+
+    renderCamposPaquetes(adicional?.paquetes || [
+        {
+            id: 1,
+            nombre: "Paquete #1",
+            cantidad: "",
+            detalle: "",
+            precio: 0
+        }
+    ]);
+
+    adicionalDialog.showModal();
+
+}
+
+
+// Botón para crear un nuevo adicional
+$("#btnNuevoAdicional").addEventListener("click", () => {
+
+    abrirFormularioAdicional();
+
+});
+
+
+// Guardar un adicional nuevo o actualizar uno existente
+$("#adicionalForm").addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    const idActual = Number($("#adicionalId").value);
+
+    const paquetes = obtenerPaquetesFormulario();
+
+
+    if (paquetes.length === 0) {
+
+        showToast("Agrega al menos un paquete.");
+
+        return;
+    }
+
+
+    const adicional = {
+
+        categoria: $("#adicionalCategoria").value.trim(),
+
+        descripcion: $("#adicionalDescripcion").value.trim(),
+
+        paquetes
+
+    };
+
+
+    // Validar campos de los paquetes
+    const paqueteInvalido = paquetes.some(paquete =>
+
+        !paquete.nombre ||
+        !paquete.cantidad ||
+        !paquete.detalle ||
+        !Number.isFinite(paquete.precio) ||
+        paquete.precio < 0
+
+    );
+
+
+    if (paqueteInvalido) {
+
+        showToast("Revisa los datos de los paquetes.");
+
+        return;
+    }
+
+
+    const esNuevo = !idActual;
+
+
+    // El backend requiere un ID al crear un adicional
+    if (esNuevo) {
+
+        adicional.id = Math.max(
+            0,
+            ...additionalItems.map(item => Number(item.id))
+        ) + 1;
+
+    }
+
+
+    try {
+
+        const respuesta = await fetch(
+
+            esNuevo
+                ? `${API_BASE}/adicionales`
+                : `${API_BASE}/adicionales/${idActual}`,
+
+            {
+
+                method: esNuevo ? "POST" : "PATCH",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(adicional)
+
+            }
+
+        );
+
+
+        if (!respuesta.ok) {
+
+            const mensaje = await respuesta.text();
+
+            throw new Error(
+                mensaje || "No se pudo guardar el adicional."
+            );
+
+        }
+
+
+        adicionalDialog.close();
+
+        await obtenerAdicionales();
+
+        showToast(
+            esNuevo
+                ? "Adicional creado correctamente."
+                : "Adicional actualizado correctamente."
+        );
+
+
+    } catch (error) {
+
+        console.error("Error al guardar el adicional:", error);
+
+        showToast(
+            "No se pudo guardar. Verifica NestJS y los datos enviados."
+        );
+
+    }
+
+});
+
+
+// Eliminar un adicional
+async function eliminarAdicional(id) {
+
+    const adicional = additionalItems.find(
+        item => item.id === id
+    );
+
+    if (!adicional) return;
+
+
+    if (!confirm(
+        `¿Deseas eliminar el adicional "${adicional.categoria}"?`
+    )) {
+        return;
+    }
+
+
+    try {
+
+        const respuesta = await fetch(
+            `${API_BASE}/adicionales/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+        if (!respuesta.ok) {
+
+            throw new Error("No se pudo eliminar el adicional.");
+
+        }
+
+
+        await obtenerAdicionales();
+
+        showToast("Adicional eliminado correctamente.");
+
+
+    } catch (error) {
+
+        console.error("Error al eliminar el adicional:", error);
+
+        showToast("No se pudo eliminar el adicional.");
+
+    }
+
+}
+
 // 17. ADMINISTRACIÓN DE RESEÑAS
 
 function renderReviews() {
@@ -1167,7 +1659,11 @@ $("#reviewTabs")
 
 function renderRequests() {
 
-    $("#requestList").innerHTML = data.requests.map(r => `
+    const requestList = $("#requestList");
+
+    if (!requestList) return;
+
+    requestList.innerHTML = data.requests.map(r => `
 
         <article class="request-item">
 
@@ -1235,8 +1731,8 @@ function renderRequests() {
     `).join("") ||
     '<div class="empty-state">No hay solicitudes nuevas.</div>';
 
-    $("#requestList")
-        .querySelectorAll("[data-confirm-request]")
+    requestList
+    .querySelectorAll("[data-confirm-request]")
         .forEach(boton => {
 
             boton.addEventListener("click", () => {
@@ -1395,3 +1891,4 @@ photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
 });
 // iniciar todas las secciones
 renderAll();
+obtenerAdicionales();

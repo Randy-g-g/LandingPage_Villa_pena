@@ -880,13 +880,54 @@ function prepararAnimaciones() {
     });
 }
 
-// cargar los datos en el HTML al abrir la página.
-mostrarPaquetes();
-mostrarOpcionesPaquetes();
-mostrarAdicionales();
-mostrarOpcionesAdicionales();
-campoFecha.min = fechaLocalHoy();
-prepararAnimaciones();
+// Cargar paquetes y adicionales desde el backend.
+async function cargarDatosBackend() {
+    try {
+        const respuestaPaquetes =
+            await fetch("http://localhost:3000/paquetes");
+
+        const respuestaAdicionales =
+            await fetch("http://localhost:3000/adicionales");
+
+        if (!respuestaPaquetes.ok || !respuestaAdicionales.ok) {
+            throw new Error("No se pudieron obtener los datos.");
+        }
+
+        const datosPaquetes = await respuestaPaquetes.json();
+        const datosAdicionales = await respuestaAdicionales.json();
+
+        if (
+            !Array.isArray(datosPaquetes) ||
+            !Array.isArray(datosAdicionales)
+        ) {
+            throw new Error("Formato de datos incorrecto.");
+        }
+
+        // Reemplazar los datos locales por los del backend.
+        paquetes = datosPaquetes;
+        adicionales = datosAdicionales;
+
+        console.log("Datos cargados desde el backend.");
+
+    } catch (error) {
+        console.warn(
+            "No se pudo conectar con el backend. Se usarán los datos locales.",
+            error
+        );
+    }
+
+    // Mostrar los datos en la página.
+    mostrarPaquetes();
+    mostrarOpcionesPaquetes();
+    mostrarAdicionales();
+    mostrarOpcionesAdicionales();
+
+    // Configuración adicional de la página.
+    campoFecha.min = fechaLocalHoy();
+    prepararAnimaciones();
+}
+
+cargarDatosBackend();
 
 
 //hora inicio hora fin

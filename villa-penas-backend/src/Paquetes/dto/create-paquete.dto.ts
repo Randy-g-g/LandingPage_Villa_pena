@@ -6,8 +6,8 @@ import {
   MinLength,
   ValidateNested
 } from 'class-validator';
+
 import { Type } from 'class-transformer';
-import { DetallePaquete } from '../models/paquete.model';
 
 class DetallePaqueteDto {
   @IsString()
@@ -39,5 +39,5 @@ export class CreatePaqueteDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => DetallePaqueteDto)
-  detalles: DetallePaquete[];
+  detalles: DetallePaqueteDto[];
 }

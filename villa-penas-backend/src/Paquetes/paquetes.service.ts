@@ -1,8 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
 import { Paquete } from './models/paquete.model';
 import { CreatePaqueteDto } from './dto/create-paquete.dto';
@@ -11,209 +9,102 @@ import { UpdatePaqueteDto } from './dto/update-paquete.dto';
 @Injectable()
 export class PaquetesService {
 
-  private paquetes: Paquete[] = [
-    {
-      id: 1,
-      nombre: 'Paquete Essentials',
-      descripcion: 'Una opción sencilla para disfrutar del rancho y compartir con tus invitados.',
-      servicios: [
-        'Uso del rancho',
-        'Cocina equipada',
-        'Playground',
-        'Trampolín',
-        'Piscina',
-        'Wi-Fi'
-      ],
-      precio: 60000,
-      detalles: [
-        {
-          nombre: 'Rancho',
-          descripcion: 'Uso del rancho y sus áreas principales durante el evento.'
-        },
-        {
-          nombre: 'Cocina equipada',
-          descripcion: 'Uso de cocina equipada para preparar y almacenar alimentos.'
-        },
-        {
-          nombre: 'Playground',
-          descripcion: 'Acceso al área de juegos infantiles durante el evento.'
-        },
-        {
-          nombre: 'Trampolín',
-          descripcion: 'Uso del trampolín durante el evento.'
-        },
-        {
-          nombre: 'Piscina',
-          descripcion: 'Piscina de 1,40 metros de profundidad, con cascada e iluminación de colores.'
-        },
-        {
-          nombre: 'Wi-Fi',
-          descripcion: 'Acceso a conexión inalámbrica a Internet.'
-        }
-      ]
-    },
-    {
-      id: 2,
-      nombre: 'Paquete Premium',
-      descripcion: 'Una opción más completa con entretenimiento y productos adicionales.',
-      servicios: [
-        'Uso del rancho',
-        'Cocina equipada',
-        'Parrilla de gas Premium',
-        'Playground',
-        'Sistema de sonido',
-        'Trampolín',
-        'Micrófonos inalámbricos',
-        'Piscina',
-        'Smart TV',
-        'Wi-Fi'
-      ],
-      precio: 80000,
-      detalles: [
-        {
-          nombre: 'Rancho',
-          descripcion: 'Uso del rancho y sus áreas principales durante el evento.'
-        },
-        {
-          nombre: 'Cocina equipada',
-          descripcion: 'Uso de cocina equipada para preparar y almacenar alimentos.'
-        },
-        {
-          nombre: 'Parrilla de gas Premium',
-          descripcion: 'Uso de parrilla de gas Premium para preparar alimentos.'
-        },
-        {
-          nombre: 'Playground',
-          descripcion: 'Acceso al área de juegos infantiles.'
-        },
-        {
-          nombre: 'Sistema de sonido JBL PartyBox 720',
-          descripcion: 'Uso del sistema de sonido para música y entretenimiento.'
-        },
-        {
-          nombre: 'Trampolín',
-          descripcion: 'Uso del trampolín durante el evento.'
-        },
-        {
-          nombre: 'Micrófonos inalámbricos',
-          descripcion: 'Uso de micrófonos inalámbricos conectados al sistema de sonido.'
-        },
-        {
-          nombre: 'Piscina',
-          descripcion: 'Piscina de 1,40 metros de profundidad, con cascada e iluminación de colores.'
-        },
-        {
-          nombre: 'Smart TV de 75 pulgadas',
-          descripcion: 'Uso de Smart TV para proyección de contenido y entretenimiento.'
-        },
-        {
-          nombre: 'Wi-Fi',
-          descripcion: 'Acceso a conexión inalámbrica a Internet.'
-        }
-      ]
-    }
-  ];
+  private readonly rutaArchivo = join(
+    process.cwd(),
+    'data',
+    'paquetes.json'
+  );
 
-  // READ: consultar todos los paquetes
-  obtenerTodos(): Paquete[] {
-    return this.paquetes;
+  constructor() {
+    if (!existsSync(this.rutaArchivo)) {
+      writeFileSync(this.rutaArchivo, '[]', 'utf8');
+    }
   }
 
-  // READ: consultar un paquete por su ID
-  obtenerUno(id: number): Paquete {
-    const paquete = this.paquetes.find(
-      elemento => elemento.id === id
+  private leerPaquetes(): Paquete[] {
+    const contenido = readFileSync(this.rutaArchivo, 'utf8');
+    return JSON.parse(contenido) as Paquete[];
+  }
+
+  private guardarPaquetes(paquetes: Paquete[]): void {
+    writeFileSync(
+      this.rutaArchivo,
+      JSON.stringify(paquetes, null, 2),
+      'utf8'
     );
+  }
+
+  obtenerTodos(): Paquete[] {
+    return this.leerPaquetes();
+  }
+
+  obtenerUno(id: number): Paquete {
+    const paquetes = this.leerPaquetes();
+    const paquete = paquetes.find(p => p.id === id);
 
     if (!paquete) {
       throw new NotFoundException(
-        `No existe un paquete con el ID ${id}.`
+        `No se encontró el paquete con ID ${id}`
       );
     }
 
     return paquete;
   }
 
-  // CREATE: registrar un paquete nuevo
   crear(dto: CreatePaqueteDto): Paquete {
-    const nuevoId = this.paquetes.length > 0
-      ? Math.max(...this.paquetes.map(p => p.id)) + 1
-      : 1;
+    const paquetes = this.leerPaquetes();
+
+    const nuevoId = paquetes.length === 0
+      ? 1
+      : Math.max(...paquetes.map(p => p.id)) + 1;
 
     const nuevoPaquete: Paquete = {
       id: nuevoId,
-      nombre: dto.nombre,
-      descripcion: dto.descripcion,
-      servicios: dto.servicios,
-      precio: dto.precio,
-      detalles: dto.detalles
+      ...dto
     };
 
-    this.paquetes.push(nuevoPaquete);
+    paquetes.push(nuevoPaquete);
+    this.guardarPaquetes(paquetes);
 
     return nuevoPaquete;
   }
 
-  // UPDATE: modificar parcialmente un paquete
-  actualizar(
-    id: number,
-    dto: UpdatePaqueteDto
-  ): Paquete {
-    const indice = this.paquetes.findIndex(
-      elemento => elemento.id === id
-    );
+  actualizar(id: number, dto: UpdatePaqueteDto): Paquete {
+    const paquetes = this.leerPaquetes();
+    const indice = paquetes.findIndex(p => p.id === id);
 
     if (indice === -1) {
       throw new NotFoundException(
-        `No existe un paquete con el ID ${id}.`
+        `No se encontró el paquete con ID ${id}`
       );
     }
 
-    if (
-      dto.nombre !== undefined &&
-      !dto.nombre.trim()
-    ) {
-      throw new BadRequestException(
-        'El nombre no puede estar vacío.'
-      );
-    }
-
-    if (
-      dto.descripcion !== undefined &&
-      !dto.descripcion.trim()
-    ) {
-      throw new BadRequestException(
-        'La descripción no puede estar vacía.'
-      );
-    }
-
-    const paqueteActualizado: Paquete = {
-      ...this.paquetes[indice],
+    paquetes[indice] = {
+      ...paquetes[indice],
       ...dto,
       id
     };
 
-    this.paquetes[indice] = paqueteActualizado;
+    this.guardarPaquetes(paquetes);
 
-    return paqueteActualizado;
+    return paquetes[indice];
   }
 
-  // DELETE: eliminar un paquete
-  eliminar(id: number): { mensaje: string } {
-    const indice = this.paquetes.findIndex(
-      elemento => elemento.id === id
-    );
+  eliminar(id: number): Paquete {
+    const paquetes = this.leerPaquetes();
+    const indice = paquetes.findIndex(p => p.id === id);
 
     if (indice === -1) {
       throw new NotFoundException(
-        `No existe un paquete con el ID ${id}.`
+        `No se encontró el paquete con ID ${id}`
       );
     }
 
-    this.paquetes.splice(indice, 1);
+    const eliminado = paquetes[indice];
 
-    return {
-      mensaje: `El paquete con ID ${id} fue eliminado correctamente.`
-    };
+    paquetes.splice(indice, 1);
+    this.guardarPaquetes(paquetes);
+
+    return eliminado;
   }
 }

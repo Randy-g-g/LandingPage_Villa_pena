@@ -8,7 +8,5 @@ export declare class PaquetesController {
     obtenerUno(id: number): import("./models/paquete.model").Paquete;
     crear(dto: CreatePaqueteDto): import("./models/paquete.model").Paquete;
     actualizar(id: number, dto: UpdatePaqueteDto): import("./models/paquete.model").Paquete;
-    eliminar(id: number): {
-        mensaje: string;
-    };
+    eliminar(id: number): import("./models/paquete.model").Paquete;
 }
