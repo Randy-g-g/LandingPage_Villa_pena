@@ -118,6 +118,8 @@
       <img
         src="assets/villa.penas.JPG"
         alt="Espacio para celebrar eventos"
+        fetchpriority="high"
+        decoding="async"
         class="absolute inset-0 h-full w-full object-cover">
 
       <div class="absolute inset-0 bg-vp-brown/45"></div>
@@ -188,21 +190,28 @@
             </div>
           </div>
 
-          <div class="reveal grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-3">
             <img class="h-64 w-full rounded-2xl object-cover sm:h-72"
               src="assets/piscina.Villa.penas.JPG"
-              alt="Piscina de Villa Peñas">
+              alt="Piscina de Villa Peñas"
+              loading="lazy"
+              decoding="async">
             <img class="mt-8 h-64 w-full rounded-2xl object-cover sm:h-72"
               src="assets/parrilla.villa.penas.JPG"
-              alt="Cocina equipada">
+              alt="Cocina equipada"
+              loading="lazy"
+              decoding="async">
             <img class="h-48 w-full rounded-2xl object-cover sm:h-56"
               src="assets/Playground.villa.penas.JPG "
-                   alt="Área exterior">
+                   alt="Área exterior"
+                   loading="lazy"
+                   decoding="async">
             <img class="mt-8 h-48 w-full rounded-2xl object-cover sm:h-56"
               src="assets/Salón.Villa.Penas.JPG"
-              alt="Celebración">
+              alt="Celebración"
+              loading="lazy"
+              decoding="async">
           </div>
-
         </div>
       </div>
     </section>
@@ -324,35 +333,55 @@
         </div>
 
         <div class="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <button type="button" class="gallery-item col-span-2 row-span-2 reveal"
+          <button type="button" class="gallery-item col-span-2 row-span-2"
                   data-src="assets/Vista.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Vista.JPG" alt="Espacio de eventos" class="h-full min-h-[390px] w-full object-cover">
+            <img src="assets/Vista.JPG"
+            alt="Espacio de evento"
+            decoding="async"
+            class="h-full min-h-[390px] w-full object-cover">
           </button>
-          <button type="button" class="gallery-item reveal"
+          <button type="button" class="gallery-item"
                   data-src="assets/Silla.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Silla.JPG" alt="Silla" class="h-48 w-full object-cover">
+            <img src="assets/Silla.JPG" 
+            alt="Silla"
+            decoding="async"
+            class="h-48 w-full object-cover">
           </button>
-          <button type="button" class="gallery-item reveal"
+          <button type="button" class="gallery-item"
                   data-src="assets/Piscina.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Piscina.JPG" alt="Piscina" class="h-48 w-full object-cover">
+            <img src="assets/Piscina.JPG" 
+            alt="Piscina"
+            decoding="async"
+            class="h-48 w-full object-cover">
           </button>
-          <button type="button" class="gallery-item reveal"
+          <button type="button" class="gallery-item"
                   data-src="assets/Parrilla.JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Parrilla.JPG" alt="Parrilla" class="h-80 w-full object-cover object-center">
+            <img src="assets/Parrilla.JPG" 
+            alt="Parrilla"
+            decoding="async"
+            class="h-80 w-full object-cover object-center">
           </button>
-          <button type="button" class="gallery-item reveal"
+          <button type="button" class="gallery-item"
                   data-src="assets/Rancho(2).JPG"
                   aria-label="Abrir imagen">
-            <img src="assets/Rancho(2).JPG" alt="Rancho" class="h-80 w-full object-cover object-center">
+            <img src="assets/Rancho(2).JPG" 
+            alt="Rancho"
+            decoding="async"
+            class="h-80 w-full object-cover object-center">
           </button>
         </div>
         <div id="galeriaExtra" class="gallery-extra" hidden></div>
         <div class="gallery-control">
-          <button type="button" id="verMasGaleria" class="gallery-more" aria-expanded="false" aria-controls="galeriaExtra" hidden>
+          <button type="button" 
+            type="button"
+            id="verMasGaleria"
+            class="gallery-more"
+            aria-haspopup="dialog"
+            aria-controls="carouselGaleria">
             Ver más
           </button>
         </div>
@@ -610,6 +639,65 @@
     <button type="button" id="closeLightbox" class="absolute right-5 top-4 text-3xl text-white" aria-label="Cerrar">×</button>
     <img id="lightboxImg" src="" alt="" class="max-h-[90vh] max-w-[95vw] rounded-xl object-contain">
   </div>
+
+<!--carrusel-->
+
+<dialog id="carouselGaleria" class="carousel-modal">
+
+    <div class="carousel-contenido">
+
+        <!-- Encabezado -->
+        <div class="carousel-encabezado">
+
+            <h2>Galería de Villa Peña</h2>
+
+            <button
+                type="button"
+                id="cerrarCarousel"
+                class="carousel-cerrar"
+                aria-label="Cerrar galería">
+                &times;
+            </button>
+
+        </div>
+
+        <!-- Fotografía -->
+        <div class="carousel-visor">
+
+            <button
+                type="button"
+                id="carouselAnterior"
+                class="carousel-flecha"
+                aria-label="Fotografía anterior">
+                &#10094;
+            </button>
+
+            <img
+                id="carouselImagen"
+                alt="Fotografía de Villa Peña">
+
+            <button
+                type="button"
+                id="carouselSiguiente"
+                class="carousel-flecha"
+                aria-label="Fotografía siguiente">
+                &#10095;
+            </button>
+
+        </div>
+
+        <!-- Información -->
+        <div class="carousel-informacion">
+
+            <p id="carouselDescripcion"></p>
+
+            <span id="carouselContador"></span>
+
+        </div>
+
+    </div>
+
+</dialog>
 
   <script src="js/fotos.js"></script>
   <script src="js/datos.js"></script>

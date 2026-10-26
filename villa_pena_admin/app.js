@@ -1,27 +1,16 @@
 /* ==========================================
    VILLA PEÑAS - PANEL ADMINISTRATIVO
-   ==========================================
+   ==========================================*/
 
-   Panel de administración (frontend).
-
-   API futura: NestJS con TypeScript.
-   Actualmente utiliza localStorage.
-
-========================================== */
-
-
-// ==========================================
-// 1. CONFIGURACIÓN GENERAL
-// ==========================================
+// configuracion general aun sin aprobar
 
 const API_BASE = "http://localhost:3000";
 
 const STORAGE_KEY = "villaPenasAdminDemoV1";
 
 let packageItems = [];
-// ==========================================
-// 2. DATOS INICIALES
-// ==========================================
+
+// datos de demostración
 
 const initialData = {
 
@@ -208,10 +197,7 @@ let currentDate = new Date(2026, 9, 1);
 
 let toastTimer;
 
-
-// ==========================================
-// 4. SELECTORES DEL DOM
-// ==========================================
+// selector del dom
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -219,10 +205,7 @@ const $$ = (selector) => [
     ...document.querySelectorAll(selector)
 ];
 
-
-// ==========================================
-// 5. ALMACENAMIENTO LOCAL
-// ==========================================
+// almacenamiento local sin persistencia en el backend
 
 function loadData() {
 
@@ -251,10 +234,7 @@ function saveData() {
     updateStats();
 }
 
-
-// ==========================================
-// 6. FUNCIONES AUXILIARES
-// ==========================================
+// funciones auxiliares
 
 function money(value) {
 
@@ -296,10 +276,7 @@ function showToast(message) {
     }, 2800);
 }
 
-
-// ==========================================
-// 7. ESTADÍSTICAS
-// ==========================================
+// panel de estadisticas
 
 function updateStats() {
     const ym = `${currentDate.getFullYear()}-${String(
@@ -384,13 +361,13 @@ async function actualizarContadoresResenas() {
     }
 }
 
-// ==========================================
-// 8. NAVEGACIÓN DEL PANEL
-// ==========================================
+// navegación del panel
 
 function setView(next) {
 
     view = next;
+
+    sessionStorage.setItem("adminVistaActual", next);
 
     $$(".view-panel").forEach(panel => {
 
@@ -462,6 +439,8 @@ function setView(next) {
 
     if (next === "adicionales") renderAdditionals();
 
+    if (next === "galeria") renderGallery();
+
     if (next === "resenas") renderReviews();
 
     if (next === "solicitudes") renderRequests();
@@ -469,7 +448,7 @@ function setView(next) {
     if (next === "calendario") renderCalendar();
 }
 
-// 9. EVENTOS DE NAVEGACIÓN
+// eventos de navegación del panel
 
 $$(".nav-link").forEach(boton => {
 
@@ -501,7 +480,7 @@ $("#resetDemo").addEventListener("click", () => {
     }
 });
 
-// 10. CALENDARIO
+// calendario
 
 function renderCalendar() {
 
@@ -661,7 +640,7 @@ function renderCalendar() {
     updateStats();
 }
 
-// 11. FORMATO DE HORA
+// formato de hora
 
 function formatTime(time) {
 
@@ -676,7 +655,7 @@ function formatTime(time) {
     }`;
 }
 
-// 12. NAVEGACIÓN DEL CALENDARIO
+// navegación del calendario
 
 $("#prevMonth").addEventListener("click", () => {
 
@@ -753,7 +732,7 @@ $("#addEventFromCalendar").addEventListener("click", () => {
     openEventDialog();
 });
 
-// 13. FORMULARIO DE RESERVACIONES
+// formulario de reservaciones
 
 const eventDialog = $("#eventDialog");
 
@@ -857,7 +836,8 @@ $("#eventForm").addEventListener("submit", event => {
     showToast("Evento guardado en este navegador");
 });
 
-// 14. ADMINISTRACIÓN DE PAQUETES
+// administración de paquetes
+
 function agregarCampoServicio(valor = "") {
   const contenedor = $("#packageServicesContainer");
   const fila = document.createElement("div");
@@ -968,7 +948,8 @@ async function obtenerPaquetes() {
 
         const paquetesAPI = await respuesta.json();
 
-        // Convertir los nombres del backend a los del panel
+        // convertir los nombres del backend a los del panel
+
         data.packages = paquetesAPI.map(p => ({
             id: p.id,
             name: p.nombre,
@@ -981,7 +962,8 @@ async function obtenerPaquetes() {
 
         renderPackages();
 
-        // Actualizar las opciones de paquetes de las reservaciones
+        // actualizar las opciones de paquetes de las reservaciones
+
         if ($("#eventPackage")) {
             fillPackageOptions($("#eventPackage").value);
         }
@@ -1004,7 +986,8 @@ async function obtenerPaquetes() {
 }
 
 
-// Mostrar paquetes en la tabla
+// mostrar paquetes en la tabla
+
 function renderPackages() {
 
     const body = $("#packageRows");
@@ -1090,13 +1073,8 @@ function renderPackages() {
         });
 
     });
-
 }
-
-
-// ==========================================
-// 15. FORMULARIO DE PAQUETES
-// ==========================================
+// formulario de paquetes
 
 const packageDialog = $("#packageDialog");
 
@@ -1140,13 +1118,14 @@ function openPackageDialog(id = null) {
   packageDialog.showModal();
 }
 
-// Abrir formulario para un paquete nuevo
+// abrir formulario para un paquete nuevo
+
 $("#addPackage").addEventListener("click", () => {
     openPackageDialog();
 });
 
+// crear o actualizar un paquete en NestJS
 
-// Crear o actualizar un paquete en NestJS
 $("#packageForm").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -1221,10 +1200,7 @@ $("#packageForm").addEventListener("submit", async event => {
   }
 });
 
-
-// ==========================================
-// 16. ELIMINAR PAQUETES
-// ==========================================
+// eliminar paquetes
 
 async function deletePackage(id) {
 
@@ -1271,16 +1247,15 @@ async function deletePackage(id) {
     }
 
 }
- // ==========================================
- // 16.1. ADMINISTRACIÓN DE ADICIONALES
- // ==========================================
+
+ // administracion de adicionales
 
 let additionalItems = [];
 
 const adicionalDialog = $("#adicionalDialog");
 
 
-// Consultar adicionales desde NestJS
+// consultar adicionales desde NestJS
 async function obtenerAdicionales() {
 
     const body = $("#adicionalesTableBody");
@@ -1315,7 +1290,7 @@ async function obtenerAdicionales() {
 }
 
 
-// Mostrar los adicionales en la tabla
+// mostrar los adicionales en la tabla
 function renderAdditionals() {
 
     const body = $("#adicionalesTableBody");
@@ -1373,7 +1348,7 @@ function renderAdditionals() {
     `;
 
 
-    // Botón para editar
+    // botón para editar
     body.querySelectorAll("[data-edit-adicional]").forEach(boton => {
 
         boton.addEventListener("click", () => {
@@ -1387,7 +1362,7 @@ function renderAdditionals() {
     });
 
 
-    // Botón para eliminar
+    // botón para eliminar
     body.querySelectorAll("[data-delete-adicional]").forEach(boton => {
 
         boton.addEventListener("click", () => {
@@ -1403,7 +1378,7 @@ function renderAdditionals() {
 }
 
 
-// Crear los campos de paquetes dentro del formulario
+// crear los campos de paquetes dentro del formulario
 function renderCamposPaquetes(paquetes = []) {
 
     const contenedor = $("#adicionalPaquetesContainer");
@@ -1417,7 +1392,7 @@ function renderCamposPaquetes(paquetes = []) {
 }
 
 
-// Agregar un paquete al formulario
+// agregar un paquete al formulario
 function agregarCampoPaquete(paquete = {}) {
 
     const contenedor = $("#adicionalPaquetesContainer");
@@ -1511,7 +1486,7 @@ $("#btnAgregarPaqueteAdicional").addEventListener("click", () => {
 });
 
 
-// Obtener los paquetes escritos en el formulario
+// obtener los paquetes escritos en el formulario
 function obtenerPaquetesFormulario() {
 
     return Array.from(
@@ -1542,7 +1517,7 @@ function obtenerPaquetesFormulario() {
 }
 
 
-// Abrir el formulario para crear o editar
+// abrir el formulario para crear o editar
 function abrirFormularioAdicional(id = null) {
 
     const adicional = additionalItems.find(
@@ -1579,7 +1554,7 @@ function abrirFormularioAdicional(id = null) {
 }
 
 
-// Botón para crear un nuevo adicional
+// botón para crear un nuevo adicional
 $("#btnNuevoAdicional").addEventListener("click", () => {
 
     abrirFormularioAdicional();
@@ -1587,7 +1562,7 @@ $("#btnNuevoAdicional").addEventListener("click", () => {
 });
 
 
-// Guardar un adicional nuevo o actualizar uno existente
+// guardar un adicional nuevo o actualizar uno existente
 $("#adicionalForm").addEventListener("submit", async event => {
 
     event.preventDefault();
@@ -1616,7 +1591,7 @@ $("#adicionalForm").addEventListener("submit", async event => {
     };
 
 
-    // Validar campos de los paquetes
+    // validar campos de los paquetes
     const paqueteInvalido = paquetes.some(paquete =>
 
         !paquete.nombre ||
@@ -1639,7 +1614,7 @@ $("#adicionalForm").addEventListener("submit", async event => {
     const esNuevo = !idActual;
 
 
-    // El backend requiere un ID al crear un adicional
+    // el backend requiere un ID al crear un adicional
     if (esNuevo) {
 
         adicional.id = Math.max(
@@ -1708,7 +1683,7 @@ $("#adicionalForm").addEventListener("submit", async event => {
 });
 
 
-// Eliminar un adicional
+// eliminar un adicional
 async function eliminarAdicional(id) {
 
     const adicional = additionalItems.find(
@@ -1757,7 +1732,7 @@ async function eliminarAdicional(id) {
 
 }
 
-// 17. ADMINISTRACIÓN DE RESEÑAS
+// administración de reseñas
 async function renderReviews() {
     const lista = document.querySelector("#reviewsList");
 
@@ -1925,7 +1900,7 @@ async function renderReviews() {
     await actualizarContadoresResenas();
 }
 
-// 18. CAMBIAR ESTADO DE RESEÑAS
+// cambiar estados de la reseña
 
 async function setReviewStatus(id, status) {
     const estadoAPI = status === "publicada"
@@ -1980,7 +1955,7 @@ async function setReviewStatus(id, status) {
 
 
 
-// 19. FILTROS DE RESEÑAS
+// filtros de reseñas por estado
 
 $("#reviewTabs")
     .querySelectorAll("button")
@@ -1994,7 +1969,7 @@ $("#reviewTabs")
         });
     });
 
-// 20. SOLICITUDES DE RESERVACIÓN
+// solicitudes de reservaciones
 
 function renderRequests() {
 
@@ -2100,7 +2075,7 @@ function renderRequests() {
     updateStats();
 }
 
-// 21. CERRAR VENTANAS EMERGENTES
+// cerrar ventanas emergentes
 
 $$(".close-dialog").forEach(boton => {
 
@@ -2122,7 +2097,7 @@ $$("dialog").forEach(dialogo => {
     });
 });
 
-// 22. INICIALIZACIÓN DEL PANEL
+// inicializacion de todas las secciones
 
 function renderAll() {
 
@@ -2135,6 +2110,87 @@ function renderAll() {
     renderRequests();
 
     updateStats();
+}
+
+
+// consultar fotografias
+
+async function renderGallery() {
+
+    const contenedor = document.getElementById("adminGallery");
+
+    contenedor.innerHTML = `
+        <p class="empty-state">Cargando fotografías...</p>
+    `;
+
+    try {
+        // Obtener fotografías desde NestJS
+        const respuesta = await fetch(`${API_BASE}/galeria`);
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron consultar las fotografías");
+        }
+
+        const fotos = await respuesta.json();
+
+        contenedor.innerHTML = "";
+
+        if (fotos.length === 0) {
+            contenedor.innerHTML = `
+                <p class="empty-state">
+                    No hay fotografías registradas.
+                </p>
+            `;
+            return;
+        }
+
+        const fragmento = document.createDocumentFragment();
+
+        fotos.forEach(function(foto, indice) {
+
+            const tarjeta = document.createElement("article");
+            tarjeta.className = "gallery-admin-card";
+
+            // Imagen almacenada en NestJS
+            const imagen = document.createElement("img");
+
+            imagen.src = `${API_BASE}${foto.src}`;
+            imagen.alt = foto.descripcion;
+            imagen.loading = "lazy";
+            imagen.decoding = "async";
+
+            // Contenido de la tarjeta
+            const contenido = document.createElement("div");
+            contenido.className = "gallery-admin-content";
+
+            const numero = document.createElement("small");
+            numero.textContent = `Fotografía ${indice + 1}`;
+
+            const descripcion = document.createElement("p");
+            descripcion.textContent = foto.descripcion;
+
+            contenido.appendChild(numero);
+            contenido.appendChild(descripcion);
+
+            tarjeta.appendChild(imagen);
+            tarjeta.appendChild(contenido);
+
+            fragmento.appendChild(tarjeta);
+        });
+
+        contenedor.appendChild(fragmento);
+
+    } catch (error) {
+
+        console.error("Error al cargar fotografías:", error);
+
+        contenedor.innerHTML = `
+            <p class="empty-state">
+                No se pudieron cargar las fotografías.
+                Verificá que NestJS esté funcionando.
+            </p>
+        `;
+    }
 }
 
 // galeria ventana emergente
@@ -2213,6 +2269,110 @@ addPhoto.addEventListener("click", function () {
     photoDialog.showModal();
 });
 
+
+// guardar fotos en nestJS
+
+photoForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const archivo = photoFile.files[0];
+
+    const descripcion = document
+        .getElementById("photoDescription")
+        .value
+        .trim();
+
+    // Validar fotografía
+    if (!archivo) {
+        showToast("Seleccioná una fotografía.");
+        return;
+    }
+
+    // Validar descripción
+    if (!descripcion) {
+        showToast("Ingresá una descripción.");
+        return;
+    }
+
+    if (descripcion.length > 200) {
+        showToast("La descripción no puede superar 200 caracteres.");
+        return;
+    }
+
+    // Validar formato
+    const formatosPermitidos = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!formatosPermitidos.includes(archivo.type)) {
+        showToast("Solo se permiten imágenes JPG, PNG y WebP.");
+        return;
+    }
+
+    // Validar tamaño máximo
+    if (archivo.size > 5 * 1024 * 1024) {
+        showToast("La fotografía no puede superar los 5 MB.");
+        return;
+    }
+
+    // Preparar datos para NestJS
+    const formData = new FormData();
+
+    formData.append("imagen", archivo);
+    formData.append("descripcion", descripcion);
+
+    const botonGuardar = photoForm.querySelector(
+        'button[type="submit"]'
+    );
+
+    botonGuardar.disabled = true;
+    botonGuardar.textContent = "Guardando...";
+
+    try {
+        // Enviar fotografía al backend
+        const respuesta = await fetch(`${API_BASE}/galeria`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!respuesta.ok) {
+            const error = await respuesta.text();
+
+            throw new Error(
+                error || "No se pudo guardar la fotografía."
+            );
+        }
+
+        // Obtener información de la fotografía registrada
+        const nuevaFoto = await respuesta.json();
+
+        console.log("Fotografía registrada:", nuevaFoto);
+
+        // Cerrar formulario
+        photoDialog.close();
+
+        // Actualizar fotografías del administrador
+        await renderGallery();
+
+        showToast("Fotografía guardada correctamente.");
+
+    } catch (error) {
+
+        console.error("Error al guardar fotografía:", error);
+
+        showToast(
+            "No se pudo guardar la fotografía. Revisá la conexión con NestJS."
+        );
+
+    } finally {
+
+        botonGuardar.disabled = false;
+        botonGuardar.textContent = "Guardar fotografía";
+    }
+});
+
 //liberar memoria
 photoDialog.addEventListener("close", function () {
 
@@ -2220,16 +2380,29 @@ photoDialog.addEventListener("close", function () {
 
 });
 
-// cerrar formulario
-photoDialog.querySelectorAll(".close-dialog").forEach(function (boton) {
-
-    boton.addEventListener("click", function () {
-        photoDialog.close();
-    });
-
-});
 // iniciar todas las secciones
+
 renderAll();
+
 obtenerPaquetes();
 obtenerAdicionales();
 actualizarContadoresResenas();
+
+// Recuperar la última sección seleccionada
+const vistaGuardada =
+    sessionStorage.getItem("adminVistaActual") || "calendario";
+
+const vistasPermitidas = [
+    "calendario",
+    "paquetes",
+    "adicionales",
+    "galeria",
+    "resenas",
+    "solicitudes"
+];
+
+if (vistasPermitidas.includes(vistaGuardada)) {
+    setView(vistaGuardada);
+} else {
+    setView("calendario");
+}

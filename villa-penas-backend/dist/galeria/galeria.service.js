@@ -17,9 +17,12 @@ const node_crypto_1 = require("node:crypto");
 const sharp_1 = __importDefault(require("sharp"));
 let GaleriaService = class GaleriaService {
     carpeta = (0, node_path_1.join)(process.cwd(), 'uploads', 'galeria');
-    archivoDatos = (0, node_path_1.join)(this.carpeta, 'fotos.json');
+    carpetaDatos = (0, node_path_1.join)(process.cwd(), 'data');
+    archivoDatos = (0, node_path_1.join)(this.carpetaDatos, 'galeria.json');
     async leerFotos() {
-        await node_fs_1.promises.mkdir(this.carpeta, { recursive: true });
+        await node_fs_1.promises.mkdir(this.carpetaDatos, {
+            recursive: true,
+        });
         try {
             const contenido = await node_fs_1.promises.readFile(this.archivoDatos, 'utf8');
             return JSON.parse(contenido);
@@ -32,6 +35,9 @@ let GaleriaService = class GaleriaService {
         }
     }
     async guardarFotos(fotos) {
+        await node_fs_1.promises.mkdir(this.carpetaDatos, {
+            recursive: true,
+        });
         await node_fs_1.promises.writeFile(this.archivoDatos, JSON.stringify(fotos, null, 2), 'utf8');
     }
     async obtenerTodas() {
