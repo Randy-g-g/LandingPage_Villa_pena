@@ -527,88 +527,232 @@ botonElegirPaquete.addEventListener("click", function() {
 });
 
 // Ampliar las imágenes de la galería.
-document.querySelectorAll(".gallery-item").forEach(function(boton) {
-    boton.addEventListener("click", function() {
-        imagenGaleria.src = boton.getAttribute("data-src");
-        imagenGaleria.alt = boton.querySelector("img").alt;
-        galeria.classList.remove("hidden");
-        galeria.classList.add("flex");
-        document.body.classList.add("overflow-hidden");
-    });
-});
 
+/* ========================================
+   GALERÍA DE FOTOGRAFÍAS - VILLA PEÑA
+======================================== */
+
+// Abrir fotografía ampliada
+function abrirGaleria(boton) {
+    const imagen = boton.querySelector("img");
+
+    if (!imagen) return;
+
+    imagenGaleria.src = boton.dataset.src || imagen.src;
+    imagenGaleria.alt = imagen.alt;
+
+    galeria.classList.remove("hidden");
+    galeria.classList.add("flex");
+
+    document.body.classList.add("overflow-hidden");
+}
+
+// Cerrar fotografía ampliada
 function cerrarGaleria() {
     galeria.classList.add("hidden");
     galeria.classList.remove("flex");
+
     document.body.classList.remove("overflow-hidden");
+
+    imagenGaleria.removeAttribute("src");
 }
 
-botonCerrarGaleria.addEventListener("click", cerrarGaleria);
+// Un solo evento para todas las fotografías
+document.querySelector("#galeria").addEventListener(
+    "click",
+    function(event) {
+        const boton = event.target.closest(".gallery-item");
+
+        if (boton) {
+            abrirGaleria(boton);
+        }
+    }
+);
+
+// Cerrar con botón X
+botonCerrarGaleria.addEventListener(
+    "click",
+    cerrarGaleria
+);
+
+// Cerrar al hacer clic fuera
 galeria.addEventListener("click", function(event) {
     if (event.target === galeria) {
         cerrarGaleria();
     }
 });
 
-// mostrar más fotos de la galería.
-function prepararImagenGaleria(boton){
-    boton.addEventListener("click", function(){
-        imagenGaleria.src = getAttribute("data-src");
-        imagenGaleria.alt = boton.querySelector("img").alt;
-        galeria.classList.remove("hidden");
-        galeria.classList.add("flex");
-        document.body.classList.add("overflow-hidden");
-    });
-}
-
-document.querySelectorAll(".gallery-item").forEach(function(boton){
-    prepararImagenGaleria(boton);
-});
-
-function mostrarFotosGaleria(){
-    fotosGaleria.forEach(function(foto){
-        const boton = document.createElement("button");
-        boton.type = "button";
-        boton.className = "gallery-item";
-        boton.setAttribute("data-src", foto.src);
-        boton.setAttribute("arial-label", "Abrir imagen:" + foto.descripcion);
-
-        const imagen = document.createElement("img");
-        imagen.src = foto.src;
-        imagen.alt = foto.descripcion;
-        imagen.leading = "lazy";
-
-        boton.appendChild(imagen);
-        prepararImagenGaleria(boton);
-        galeriaExtra.appendChild(boton);
-    });
-}
-
-botonVerMas.hidden = false;
-botonVerMas.addEventListener("click", function() {
-    // evita duplicar
-    if (galeriaExtra.childElementCount === 0) {
-        mostrarFotosGaleria();
-    }
-
-    galeriaExtra.hidden = !galeriaExtra.hidden;
-    botonVerMas.textContent = galeriaExtra.hidden ? "Ver más" : "Ver menos";
-    botonVerMas.setAttribute("aria-expanded", String(!galeriaExtra.hidden));
-});
-
-function cerrarGaleria() {
-    galeria.classList.add("hidden");
-    galeria.classList.remove("flex");
-    document.body.classList.remove("overflow-hidden");
-}
-
-botonCerrarGaleria.addEventListener("click", cerrarGaleria);
-galeria.addEventListener("click", function(event) {
-    if (event.target === galeria) {
+// Cerrar con tecla Escape
+document.addEventListener("keydown", function(event) {
+    if (
+        event.key === "Escape" &&
+        !galeria.classList.contains("hidden")
+    ) {
         cerrarGaleria();
     }
 });
+
+// fotografias adicionales
+
+
+/* ========================================
+   CARRUSEL DE GALERÍA - VILLA PEÑA
+======================================== */
+
+const API_GALERIA = "http://localhost:3000";
+
+const carouselGaleria = document.getElementById("carouselGaleria");
+const carouselImagen = document.getElementById("carouselImagen");
+const carouselDescripcion = document.getElementById("carouselDescripcion");
+const carouselContador = document.getElementById("carouselContador");
+
+const carouselAnterior = document.getElementById("carouselAnterior");
+const carouselSiguiente = document.getElementById("carouselSiguiente");
+const cerrarCarousel = document.getElementById("cerrarCarousel");
+
+let fotosCarousel = [];
+let indiceCarousel = 0;
+
+// ========================================
+// CONSULTAR FOTOGRAFÍAS DESDE NESTJS
+// ========================================
+
+async function obtenerFotosCarousel() {
+
+    const respuesta = await fetch(`${API_GALERIA}/galeria`);
+
+    if (!respuesta.ok) {
+        throw new Error("No se pudieron obtener las fotografías");
+    }
+
+    const fotos = await respuesta.json();
+
+    if (!Array.isArray(fotos)) {
+        throw new Error("Respuesta de galería inválida");
+    }
+
+    return fotos;
+}
+
+// ========================================
+// MOSTRAR FOTOGRAFÍA ACTUAL
+// ========================================
+
+function mostrarFotoCarousel() {
+
+    if (fotosCarousel.length === 0) return;
+
+    const foto = fotosCarousel[indiceCarousel];
+
+    carouselImagen.src = `${API_GALERIA}${foto.src}`;
+    carouselImagen.alt = foto.descripcion;
+
+    carouselDescripcion.textContent = foto.descripcion;
+
+    carouselContador.textContent =
+        `${indiceCarousel + 1} / ${fotosCarousel.length}`;
+}
+
+// ========================================
+// CAMBIAR DE FOTOGRAFÍA
+// ========================================
+
+function cambiarFotoCarousel(direccion) {
+
+    if (fotosCarousel.length === 0) return;
+
+    indiceCarousel = (
+        indiceCarousel + direccion + fotosCarousel.length
+    ) % fotosCarousel.length;
+
+    mostrarFotoCarousel();
+}
+
+// ========================================
+// ABRIR CARRUSEL
+// ========================================
+
+botonVerMas.addEventListener("click", async function () {
+
+    botonVerMas.disabled = true;
+
+    try {
+
+        // Consultar siempre para incluir fotos nuevas
+        fotosCarousel = await obtenerFotosCarousel();
+
+        if (fotosCarousel.length === 0) {
+            alert("Todavía no hay fotografías disponibles.");
+            return;
+        }
+
+        indiceCarousel = 0;
+
+        mostrarFotoCarousel();
+
+        carouselGaleria.showModal();
+
+    } catch (error) {
+
+        console.error("Error al abrir la galería:", error);
+
+        alert("No se pudieron cargar las fotografías.");
+
+    } finally {
+
+        botonVerMas.disabled = false;
+    }
+});
+
+// ========================================
+// BOTONES DE NAVEGACIÓN
+// ========================================
+
+carouselAnterior.addEventListener("click", function () {
+    cambiarFotoCarousel(-1);
+});
+
+carouselSiguiente.addEventListener("click", function () {
+    cambiarFotoCarousel(1);
+});
+
+// ========================================
+// CERRAR CARRUSEL
+// ========================================
+
+cerrarCarousel.addEventListener("click", function () {
+    carouselGaleria.close();
+});
+
+// Cerrar al tocar fuera de la ventana
+carouselGaleria.addEventListener("click", function (event) {
+
+    if (event.target === carouselGaleria) {
+        carouselGaleria.close();
+    }
+});
+
+// Navegación con teclado
+document.addEventListener("keydown", function (event) {
+
+    if (!carouselGaleria.open) return;
+
+    if (event.key === "ArrowRight") {
+        cambiarFotoCarousel(1);
+    }
+
+    if (event.key === "ArrowLeft") {
+        cambiarFotoCarousel(-1);
+    }
+});
+
+// Liberar la imagen al cerrar
+carouselGaleria.addEventListener("close", function () {
+    carouselImagen.removeAttribute("src");
+});
+
 // fecha mínima usando el día local del navegador.
+
 function fechaLocalHoy() {
     const hoy = new Date();
     const anio = hoy.getFullYear();

@@ -15,45 +15,67 @@ import type { Foto } from './models/foto.model';
 
 @Injectable()
 export class GaleriaService {
-  private readonly carpeta = join(
-    process.cwd(),
-    'uploads',
-    'galeria',
-  );
+  // carpeta donde se almacenan las imágenes WebP
+private readonly carpeta = join(
+  process.cwd(),
+  'uploads',
+  'galeria',
+);
 
-  private readonly archivoDatos = join(
-    this.carpeta,
-    'fotos.json',
-  );
+// carpeta donde se guardan los datos JSON
+private readonly carpetaDatos = join(
+  process.cwd(),
+  'data',
+);
+
+// archivo que contiene la información de las fotografías
+private readonly archivoDatos = join(
+  this.carpetaDatos,
+  'galeria.json',
+);
 
   // Leer fotografías
-  private async leerFotos(): Promise<Foto[]> {
-    await fs.mkdir(this.carpeta, { recursive: true });
+private async leerFotos(): Promise<Foto[]> {
 
-    try {
-      const contenido = await fs.readFile(
-        this.archivoDatos,
-        'utf8',
-      );
+  await fs.mkdir(this.carpetaDatos, {
+    recursive: true,
+  });
 
-      return JSON.parse(contenido) as Foto[];
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        return [];
-      }
-
-      throw error;
-    }
-  }
-
-  // Guardar información
-  private async guardarFotos(fotos: Foto[]): Promise<void> {
-    await fs.writeFile(
+  try {
+    const contenido = await fs.readFile(
       this.archivoDatos,
-      JSON.stringify(fotos, null, 2),
       'utf8',
     );
+
+    return JSON.parse(contenido) as Foto[];
+
+  } catch (error) {
+
+    if (
+      (error as NodeJS.ErrnoException).code === 'ENOENT'
+    ) {
+      return [];
+    }
+
+    throw error;
   }
+}
+
+  // Guardar información
+private async guardarFotos(
+  fotos: Foto[],
+): Promise<void> {
+
+  await fs.mkdir(this.carpetaDatos, {
+    recursive: true,
+  });
+
+  await fs.writeFile(
+    this.archivoDatos,
+    JSON.stringify(fotos, null, 2),
+    'utf8',
+  );
+}
 
   // Obtener todas las fotografías
   async obtenerTodas(): Promise<Foto[]> {

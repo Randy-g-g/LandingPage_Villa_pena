@@ -389,3 +389,142 @@ textarea.form-input { resize: vertical; }
 #adicionalesContainer article p:last-of-type {
     color: var(--gold);
 }
+
+/* carrusel nitido */
+
+.carousel-modal {
+    width: min(1000px, 95vw);
+    max-height: 95vh;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: #211d1a;
+    color: white;
+    overflow: hidden;
+}
+
+.carousel-modal::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.carousel-contenido {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 95vh;
+}
+
+.carousel-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 20px;
+}
+
+.carousel-encabezado h2 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+}
+
+.carousel-cerrar {
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.carousel-visor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 200px;
+    padding: 10px 15px;
+    overflow: hidden;
+}
+
+.carousel-visor img {
+    display: block;
+    width: 100%;
+    max-width: 820px;
+    min-width: 0;
+    height: auto;
+    max-height: 65vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.carousel-flecha {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 23px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.carousel-flecha:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.carousel-informacion {
+    text-align: center;
+    padding: 15px 20px 22px;
+}
+
+.carousel-informacion p {
+    color: white;
+    font-size: 16px;
+    margin: 0 0 8px;
+}
+
+.carousel-informacion span {
+    color: #c9b8a8;
+    font-size: 13px;
+}
+
+/* Diseño para celulares */
+@media (max-width: 600px) {
+
+    .carousel-encabezado h2 {
+        font-size: 16px;
+    }
+
+    .carousel-visor {
+        gap: 5px;
+        padding: 8px;
+    }
+
+    .carousel-visor img {
+        max-height: 55vh;
+    }
+
+    .carousel-flecha {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+}
+
+/* estabilidad visual */
+
+#galeria .gallery-item {
+    display: block;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+#galeria .gallery-item img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+}

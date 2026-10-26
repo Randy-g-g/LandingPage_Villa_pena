@@ -1,6 +1,7 @@
 import type { Foto } from './models/foto.model';
 export declare class GaleriaService {
     private readonly carpeta;
+    private readonly carpetaDatos;
     private readonly archivoDatos;
     private leerFotos;
     private guardarFotos;
