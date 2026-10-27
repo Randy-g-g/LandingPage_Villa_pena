@@ -131,6 +131,7 @@ let ReservasService = class ReservasService {
                 client: dto.client,
                 guests: dto.guests,
                 package: dto.package,
+                packagePrice: dto.packagePrice,
                 status: dto.status,
                 phone: dto.phone,
                 email: dto.email,

@@ -12,6 +12,7 @@ export declare class CreateReservaDto {
     client: string;
     guests: number;
     package: string;
+    packagePrice?: number;
     status: 'pendiente' | 'confirmada' | 'bloqueada';
     phone?: string;
     email?: string;

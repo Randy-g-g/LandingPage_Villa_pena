@@ -48,6 +48,7 @@ class CreateReservaDto {
     client;
     guests;
     package;
+    packagePrice;
     status;
     phone;
     email;
@@ -85,6 +86,12 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateReservaDto.prototype, "package", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateReservaDto.prototype, "packagePrice", void 0);
 __decorate([
     (0, class_validator_1.IsIn)(['pendiente', 'confirmada', 'bloqueada']),
     __metadata("design:type", String)

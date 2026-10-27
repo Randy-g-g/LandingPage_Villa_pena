@@ -687,10 +687,64 @@
     </label>
 </div>
 
-      <div class="form-row">
-        <label>Cliente
-          <input id="eventClient" placeholder="Nombre del cliente" required>
-        </label>
+<!-- Cliente y teléfono -->
+<div class="form-row">
+    <label>
+        Cliente
+        <input
+            id="eventClient"
+            placeholder="Nombre del cliente"
+            required
+        >
+    </label>
+
+    <label>
+        Teléfono del cliente
+        <input
+            type="tel"
+            id="eventPhone"
+            placeholder="Sin teléfono registrado"
+            readonly
+        >
+    </label>
+</div>
+
+<!-- Correo electrónico -->
+<div class="form-row">
+    <label>
+        Correo electrónico
+        <input
+            type="email"
+            id="eventEmail"
+            placeholder="Sin correo registrado"
+            readonly
+        >
+    </label>
+</div>
+
+<!-- Observaciones -->
+<div class="form-row">
+    <label>
+        Observaciones del cliente
+        <textarea
+            id="eventMessage"
+            rows="3"
+            placeholder="Sin observaciones"
+            readonly
+        ></textarea>
+    </label>
+</div>
+
+<!-- Contacto por WhatsApp -->
+<a
+    id="eventWhatsApp"
+    href="#"
+    target="_blank"
+    rel="noopener noreferrer"
+    hidden
+>
+    Contactar por WhatsApp
+</a>
         <label>Personas
           <input id="eventGuests" type="number" min="1" max="1000" value="30" required>
         </label>
@@ -712,6 +766,37 @@
     class="mensaje-evento"
     role="alert"
     hidden>
+</div>
+
+
+<!-- Resumen de la cotización -->
+<div class="resumen-cotizacion">
+    <h3>Detalle de la cotización</h3>
+
+    <div class="resumen-fila">
+        <span id="resumenNombrePaquete">
+            Paquete principal
+        </span>
+        <strong id="resumenPrecioPaquete">
+            ₡0
+        </strong>
+    </div>
+
+    <h4>Paquetes adicionales</h4>
+
+    <div id="resumenAdicionales">
+        <p>No hay adicionales seleccionados.</p>
+    </div>
+
+    <div class="resumen-total">
+        <strong>Total estimado</strong>
+        <strong id="resumenTotal">₡0</strong>
+    </div>
+
+    <p class="resumen-nota">
+        El precio final se confirma directamente
+        con la encargada de Villa Peñas.
+    </p>
 </div>
 
 <div class="modal-actions">
