@@ -84,9 +84,6 @@
             Administradora
           </small>
         </div>
-        <span class="chevron">
-          ⌄
-        </span>
       </div>
     </header>
     <main class="main-content">
@@ -96,14 +93,7 @@
           <h1 id="pageTitle">Calendario de reservaciones</h1>
           <p class="subheading" id="pageDescription">Visualiza y administra las reservaciones y fechas bloqueadas.</p>
         </div>
-        <div class="welcome-actions" id="headerActions">
-          <button class="btn btn-primary" id="newReservation">
-            <span>＋</span> Nueva reservación
-          </button>
-          <button class="btn btn-outline" id="blockDate">
-            <span>▣</span> Bloquear fecha
-          </button>
-        </div>
+       <div class="welcome-actions" id="headerActions"></div>
       </div>
       <section class="stats-grid" aria-label="Resumen de actividad">
         <article class="stat-card">
@@ -149,22 +139,6 @@
             </strong>
             <small>
               Por revisar antes de publicar
-            </small>
-          </div>
-        </article>
-        <article class="stat-card">
-          <span class="stat-icon icon-request">
-            ✉
-          </span>
-          <div>
-            <span>
-              Solicitudes nuevas
-            </span>
-            <strong id="statRequests">
-              2
-            </strong>
-            <small>
-              Esperando respuesta
             </small>
           </div>
         </article>
@@ -221,12 +195,7 @@
               <button class="selected" data-mode="month">
                 Mes
               </button>
-              <button data-mode="week">
-                Semana
-              </button>
-              <button data-mode="day">
-                Día
-              </button>
+              
             </div>
           </div>
           <div class="calendar-scroll">
@@ -236,11 +205,10 @@
           <div class="calendar-footer">
             <span>
               <span class="tiny-dot"></span> 
-              Datos de demostración para visualizar el panel.
             </span>
-            <button class="text-button" id="addEventFromCalendar">
-              ＋ Agregar evento
-            </button>
+            <button class="btn btn-primary" id="addEventFromCalendar">
+    <span>＋</span> Agregar evento
+</button>
           </div>
         </div>
       </section>

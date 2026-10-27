@@ -294,14 +294,6 @@ function updateStats() {
             .map(e => e.date)
     ).size;
 
-    $("#statRequests").textContent = data.requests.filter(
-        r => r.status === "Nueva"
-    ).length;
-
-    $("#pendingCount").textContent = data.reviews.filter(
-        r => r.status === "pendiente"
-    ).length;
-
     $("#tabPending").textContent = data.reviews.filter(
         r => r.status === "pendiente"
     ).length;
@@ -695,42 +687,22 @@ $("#todayBtn").addEventListener("click", () => {
 });
 
 
-$$(".view-toggle button").forEach(boton => {
+const newReservationButton = $("#newReservation");
 
-    boton.addEventListener("click", () => {
-
-        if (boton.dataset.mode !== "month") {
-
-            showToast(
-                "Las vistas de semana y día se habilitarán en una siguiente versión."
-            );
-
-            return;
-        }
-
-        $$(".view-toggle button").forEach(elemento => {
-
-            elemento.classList.toggle(
-                "selected",
-                elemento === boton
-            );
-        });
+if (newReservationButton) {
+    newReservationButton.addEventListener("click", () => {
+        openEventDialog();
     });
-});
+}
 
+const addEventButton = $("#addEventFromCalendar");
 
-$("#newReservation").addEventListener("click", () => {
-    openEventDialog();
-});
+if (addEventButton) {
+    addEventButton.addEventListener("click", () => {
+        openEventDialog();
+    });
+}
 
-
-$("#blockDate").addEventListener("click", () => {
-    openEventDialog(null, null, true);
-});
-
-$("#addEventFromCalendar").addEventListener("click", () => {
-    openEventDialog();
-});
 
 // formulario de reservaciones
 
