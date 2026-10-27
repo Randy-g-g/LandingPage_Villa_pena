@@ -16,6 +16,7 @@ const paquetes_module_1 = require("./Paquetes/paquetes.module");
 const adicionales_module_1 = require("./adicionales/adicionales.module");
 const galeria_module_1 = require("./galeria/galeria.module");
 const resenas_module_1 = require("./Resenas/resenas.module");
+const reservas_module_1 = require("./reservas/reservas.module");
 _a = (0, observe_1.createObserveModule)(), exports.ObserveModule = _a.ObserveModule, exports.ObserveInstrument = _a.ObserveInstrument;
 let AppModule = class AppModule {
 };
@@ -26,7 +27,8 @@ exports.AppModule = AppModule = __decorate([
             paquetes_module_1.PaquetesModule,
             adicionales_module_1.AdicionalesModule,
             galeria_module_1.GaleriaModule,
-            resenas_module_1.ResenasModule
+            resenas_module_1.ResenasModule,
+            reservas_module_1.ReservasModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService]

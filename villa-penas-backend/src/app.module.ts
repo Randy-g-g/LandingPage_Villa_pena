@@ -7,7 +7,7 @@ import { PaquetesModule } from './Paquetes/paquetes.module';
 import { AdicionalesModule } from './adicionales/adicionales.module';
 import { GaleriaModule } from './galeria/galeria.module';
 import { ResenasModule } from './Resenas/resenas.module';
-
+import { ReservasModule } from './reservas/reservas.module';
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
@@ -15,7 +15,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     PaquetesModule,
     AdicionalesModule,
     GaleriaModule,
-    ResenasModule
+    ResenasModule,
+    ReservasModule
   ],
   controllers: [AppController],
   providers: [AppService]
