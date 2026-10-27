@@ -1,38 +1,86 @@
 
 import {
+  IsArray,
+  IsEmail,
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
+  IsOptional,
   IsString,
   Matches,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
+import { Type } from 'class-transformer';
+
+// Información de los adicionales seleccionados
+export class AdicionalReservaDto {
+
+  @IsString()
+  categoria!: string;
+
+  @IsString()
+  paquete!: string;
+
+  @IsString()
+  cantidad!: string;
+
+  @IsString()
+  detalle!: string;
+
+  @IsNumber()
+  @Min(0)
+  precio!: number;
+}
+
 export class CreateReservaDto {
+
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @Matches(/^\d{4}-\d{2}-\d{2}$/)
-  date: string;
+  date!: string;
 
   @IsString()
-  @Matches(/^\d{2}:\d{2}$/)
-  time: string;
+  @Matches(/^([01]\d|2[0-3]):[0-5]\d$/)
+  time!: string;
 
   @IsString()
   @IsNotEmpty()
-  client: string;
+  client!: string;
 
   @IsInt()
-  @Min(0)
-  guests: number;
+  @Min(1)
+  guests!: number;
 
   @IsString()
   @IsNotEmpty()
-  package: string;
+  package!: string;
 
-  @IsIn(['confirmada', 'pendiente', 'bloqueada'])
-  status: 'confirmada' | 'pendiente' | 'bloqueada';
+  @IsIn(['pendiente', 'confirmada', 'bloqueada'])
+  status!: 'pendiente' | 'confirmada' | 'bloqueada';
+
+  // Datos de contacto del cliente
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  message?: string;
+
+  // Servicios adicionales
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AdicionalReservaDto)
+  adicionales?: AdicionalReservaDto[];
 }

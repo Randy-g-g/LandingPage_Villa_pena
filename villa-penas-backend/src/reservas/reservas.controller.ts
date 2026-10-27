@@ -13,6 +13,7 @@ import {
 import { ReservasService } from './reservas.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
+import { CreateSolicitudReservaDto } from './dto/create-solicitud-reserva.dto';
 
 @Controller('reservas')
 export class ReservasController {
@@ -47,4 +48,14 @@ export class ReservasController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.reservasService.remove(id);
   }
+
+  // Registrar solicitudes desde la página pública
+  @Post('solicitudes')
+  crearSolicitud(
+  @Body() dto: CreateSolicitudReservaDto,) {
+  return this.reservasService.create({
+    ...dto,
+    status: 'pendiente',});
+  }
 }
+

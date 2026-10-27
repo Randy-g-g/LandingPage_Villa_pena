@@ -1,0 +1,33 @@
+[
+  {
+    "id": 3,
+    "name": "Solicitud de reservación",
+    "date": "2026-11-25",
+    "time": "10:00",
+    "endTime": "18:00",
+    "endDate": "2026-11-25",
+    "client": "Randy Grijalba Gutierrez",
+    "guests": 27,
+    "package": "Paquete Essentials",
+    "status": "pendiente",
+    "phone": "61134585",
+    "email": "ran2511dy@gmail.com",
+    "message": "",
+    "adicionales": [
+      {
+        "categoria": "Palomitas de maíz",
+        "paquete": "Paquete #1",
+        "cantidad": "15 porciones para 15 personas",
+        "detalle": "15 bolsitas individuales, ya sea en papel o en bolsa transparente",
+        "precio": 10000
+      },
+      {
+        "categoria": "Algodón de azúcar",
+        "paquete": "Paquete #2",
+        "cantidad": "30 porciones para 30 personas",
+        "detalle": "30 envases plásticos transparentes de 24 oz.",
+        "precio": 15000
+      }
+    ]
+  }
+]

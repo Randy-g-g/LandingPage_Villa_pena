@@ -1,4 +1,3 @@
-
 import {
   IsIn,
   IsInt,
@@ -22,7 +21,7 @@ export class UpdateReservaDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^\d{2}:\d{2}$/)
+  @Matches(/^([01]\d|2[0-3]):[0-5]\d$/)
   time?: string;
 
   @IsOptional()

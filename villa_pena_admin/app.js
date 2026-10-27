@@ -40,120 +40,10 @@ const initialData = {
     ],
 
     // RESERVACIONES
-    events: [
-        {
-            id: 101,
-            name: "Cumpleaños adulto",
-            date: "2026-10-03",
-            time: "16:00",
-            client: "Jimena Pérez Baltodano",
-            guests: 30,
-            package: "Paquete Premium",
-            status: "confirmada"
-        },
-        {
-            id: 102,
-            name: "Reunión amistades",
-            date: "2026-10-04",
-            time: "17:00",
-            client: "María Rojas",
-            guests: 40,
-            package: "Paquete Essentials",
-            status: "pendiente"
-        },
-        {
-            id: 103,
-            name: "Reunión familiar",
-            date: "2026-10-11",
-            time: "10:00",
-            client: "Carlos Méndez",
-            guests: 30,
-            package: "Paquete Essentials",
-            status: "confirmada"
-        },
-        {
-            id: 104,
-            name: "Cumpleaños adulto",
-            date: "2026-10-17",
-            time: "16:00",
-            client: "Jimena Pérez Baltodano",
-            guests: 30,
-            package: "Paquete Premium",
-            status: "confirmada"
-        },
-        {
-            id: 105,
-            name: "Cumpleaños infantil",
-            date: "2026-10-18",
-            time: "10:00",
-            client: "Laura Soto",
-            guests: 40,
-            package: "Paquete Essentials",
-            status: "pendiente"
-        },
-        {
-            id: 106,
-            name: "Mantenimiento",
-            date: "2026-10-22",
-            time: "08:00",
-            client: "Villa Peñas",
-            guests: 0,
-            package: "—",
-            status: "bloqueada"
-        }
-    ],
+    events: [],
 
     // RESEÑAS
-    reviews: [
-        {
-            id: 201,
-            name: "Carla Méndez",
-            date: "12 oct 2026",
-            rating: 5,
-            comment: "Un lugar hermoso, muy recomendado para familias.",
-            status: "pendiente"
-        },
-        {
-            id: 202,
-            name: "José Ramírez",
-            date: "8 oct 2026",
-            rating: 4,
-            comment: "Excelente atención, la piscina estaba impecable.",
-            status: "pendiente"
-        },
-        {
-            id: 203,
-            name: "Laura Soto",
-            date: "5 oct 2026",
-            rating: 5,
-            comment: "Celebramos el cumpleaños de mi hija y todo fue precioso.",
-            status: "pendiente"
-        },
-        {
-            id: 204,
-            name: "Andrea Ruiz",
-            date: "28 sep 2026",
-            rating: 5,
-            comment: "Un espacio precioso para compartir con la familia.",
-            status: "publicada"
-        },
-        {
-            id: 205,
-            name: "Pedro Solís",
-            date: "21 sep 2026",
-            rating: 4,
-            comment: "Muy buena atención y ambiente tranquilo.",
-            status: "publicada"
-        },
-        {
-            id: 206,
-            name: "Comentario de prueba",
-            date: "19 sep 2026",
-            rating: 2,
-            comment: "Este comentario de demostración fue rechazado.",
-            status: "rechazada"
-        }
-    ],
+    reviews: [],
 
     // SOLICITUDES
     requests: [
@@ -193,7 +83,17 @@ let view = "calendario";
 
 let reviewStatus = "pendiente";
 
-let currentDate = new Date(2026, 9, 1);
+const mesGuardado = sessionStorage.getItem("calendarioMes");
+
+let currentDate;
+
+if (/^\d{4}-(0[1-9]|1[0-2])$/.test(mesGuardado || "")) {
+    const [anio, mes] = mesGuardado.split("-").map(Number);
+    currentDate = new Date(anio, mes - 1, 1);
+} else {
+    const hoy = new Date();
+    currentDate = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+}
 
 let toastTimer;
 
@@ -209,18 +109,27 @@ const $$ = (selector) => [
 
 function loadData() {
 
-    try {
+    let datos;
 
+    try {
         const stored = localStorage.getItem(STORAGE_KEY);
 
-        return stored
+        datos = stored
             ? JSON.parse(stored)
             : structuredClone(initialData);
 
     } catch {
-
-        return structuredClone(initialData);
+        datos = structuredClone(initialData);
     }
+
+
+    // las reservaciones vienen de NestJS
+    datos.events = [];
+
+    // Las reseñas también vienen de NestJS
+    datos.reviews = [];
+
+return datos;
 }
 
 
@@ -273,44 +182,35 @@ function showToast(message) {
 
     toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-    }, 2800);
+    }, 5000);
 }
 
 // panel de estadisticas
 
 function updateStats() {
+
+    // mes que se está visualizando en el calendario
     const ym = `${currentDate.getFullYear()}-${String(
         currentDate.getMonth() + 1
     ).padStart(2, "0")}`;
 
+    // cantidad de reservaciones del mes
     $("#statEvents").textContent = data.events.filter(
         e => e.date.startsWith(ym) &&
              e.status !== "bloqueada"
     ).length;
 
+    // cantidad de fechas ocupadas
     $("#statOccupied").textContent = new Set(
         data.events
-            .filter(e => e.date.startsWith(ym))
+            .filter(e =>
+                e.date.startsWith(ym) &&
+                (e.status === "confirmada" || e.status === "bloqueada")
+            )
             .map(e => e.date)
     ).size;
-
-    $("#tabPending").textContent = data.reviews.filter(
-        r => r.status === "pendiente"
-    ).length;
-
-    $("#tabPublished").textContent = data.reviews.filter(
-        r => r.status === "publicada"
-    ).length;
-
-    $("#tabRejected").textContent = data.reviews.filter(
-        r => r.status === "rechazada"
-    ).length;
-
-    $("#reviewsPill").textContent =
-        `${data.reviews.filter(
-            r => r.status === "pendiente"
-        ).length} pendientes`;
 }
+
 
 async function actualizarContadoresResenas() {
     try {
@@ -472,13 +372,66 @@ $("#resetDemo").addEventListener("click", () => {
     }
 });
 
-// calendario
+// consula de reservaciones desde NestJS
+
+async function cargarReservas() {
+
+    try {
+
+        const respuesta = await fetch(
+            `${API_BASE}/reservas`
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudieron consultar las reservaciones."
+            );
+        }
+
+        const reservas = await respuesta.json();
+
+        if (!Array.isArray(reservas)) {
+            throw new Error(
+                "La API no devolvió una lista de reservaciones."
+            );
+        }
+
+        // actualizar las reservas del calendario
+        data.events = reservas;
+
+        // mostrar los datos obtenidos
+        renderCalendar();
+
+        console.log(
+            "Reservaciones cargadas desde NestJS:",
+            reservas
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar las reservaciones:",
+            error
+        );
+
+        showToast(
+            "No se pudieron cargar las reservaciones."
+        );
+    }
+}
+
+// calendario renderizado
 
 function renderCalendar() {
 
     const year = currentDate.getFullYear();
 
     const month = currentDate.getMonth();
+    // Recordar el mes que está viendo el administrador
+        sessionStorage.setItem(
+        "calendarioMes",
+        `${year}-${String(month + 1).padStart(2, "0")}`
+    );
 
     $("#monthLabel").textContent =
         new Intl.DateTimeFormat("es-CR", {
@@ -628,7 +581,7 @@ function renderCalendar() {
 
         grid.appendChild(cell);
     }
-
+    renderSeleccionReservas();
     updateStats();
 }
 
@@ -704,6 +657,9 @@ if (addEventButton) {
 }
 
 
+let modoSeleccionReservas = false;
+const reservasSeleccionadas = new Set();
+
 // formulario de reservaciones
 
 const eventDialog = $("#eventDialog");
@@ -727,10 +683,13 @@ function fillPackageOptions(selected) {
     }
 }
 
+// abrir formulario de reservación o bloqueo
 
 function openEventDialog(id = null, date = null, blocked = false) {
 
     const ev = data.events.find(e => e.id === id);
+
+    $("#btnEliminarReserva").hidden = !ev;
 
     $("#eventForm").reset();
 
@@ -748,12 +707,20 @@ function openEventDialog(id = null, date = null, blocked = false) {
     $("#eventDate").value =
         ev?.date || date || new Date().toISOString().slice(0, 10);
 
-    $("#eventTime").value = ev?.time || "16:00";
+    $("#eventTime").value = ev?.time || "08:00";
+
+    actualizarHoraSalidaEvento();
+    const mensaje = document.getElementById("mensajeEvento");
+
+if (mensaje) {
+    mensaje.hidden = true;
+    mensaje.textContent = "";
+}
 
     $("#eventClient").value =
         ev?.client || (blocked ? "Villa Peñas" : "");
 
-    $("#eventGuests").value = ev?.guests || 30;
+    $("#eventGuests").value = ev?.guests ?? 30;
 
     $("#eventStatus").value =
         ev?.status || (blocked ? "bloqueada" : "confirmada");
@@ -763,50 +730,419 @@ function openEventDialog(id = null, date = null, blocked = false) {
     eventDialog.showModal();
 }
 
+// actualizar la hora de salida automáticamente al cambiar la hora de entrada
 
-$("#eventForm").addEventListener("submit", event => {
+function actualizarHoraSalidaEvento() {
+    const entrada = document.getElementById("eventTime");
+    const salida = document.getElementById("eventEndTime");
+
+    if (!entrada || !salida) return;
+
+    if (!entrada.value) {
+        salida.value = "";
+        return;
+    }
+
+    const [horas, minutos] = entrada.value.split(":").map(Number);
+    const total = horas * 60 + minutos + 8 * 60;
+
+    salida.value =
+        String(Math.floor(total / 60) % 24).padStart(2, "0") +
+        ":" +
+        String(total % 60).padStart(2, "0");
+}
+
+document.getElementById("eventTime")
+    .addEventListener("input", actualizarHoraSalidaEvento);
+
+// al guardar una reservación, se envía a NestJS
+
+$("#eventForm").addEventListener("submit", async event => {
 
     event.preventDefault();
 
-    const id = Number($("#eventId").value) || Date.now();
+    const formulario = $("#eventForm");
+    const botonGuardar = formulario.querySelector(
+        'button[type="submit"]'
+    );
 
-    const ev = {
+    // ID vacío significa crear una nueva reservación
+    const id = $("#eventId").value;
 
-        id: id,
-
+    const reserva = {
         name: $("#eventName").value.trim(),
-
         date: $("#eventDate").value,
-
         time: $("#eventTime").value,
-
         client: $("#eventClient").value.trim(),
-
         guests: Number($("#eventGuests").value),
-
         package: $("#eventPackage").value || "—",
-
         status: $("#eventStatus").value
     };
 
-    const existing = data.events.findIndex(
-        x => x.id === id
-    );
+    // validar horario antes de enviarlo
+    const [horas, minutos] = reserva.time.split(":").map(Number);
+    const inicio = horas * 60 + minutos;
+    const final = inicio + 8 * 60;
 
-    if (existing >= 0) {
-        data.events[existing] = ev;
-    } else {
-        data.events.push(ev);
+    if (
+        !Number.isFinite(inicio) ||
+        inicio < 6 * 60 ||
+        final > 18 * 60
+    ) {
+        mostrarMensajeEvento(
+        "Horario no permitido. La entrada debe ser entre las 6:00 a. m. y las 10:00 a. m. para completar las 8 horas."
+    );
+        return;
     }
 
-    saveData();
+    // crear o actualizar según exista un ID
+    const esEdicion = Boolean(id);
 
-    eventDialog.close();
+    const url = esEdicion
+        ? `${API_BASE}/reservas/${encodeURIComponent(id)}`
+        : `${API_BASE}/reservas`;
 
-    renderCalendar();
+    const metodo = esEdicion ? "PATCH" : "POST";
 
-    showToast("Evento guardado en este navegador");
+    botonGuardar.disabled = true;
+    botonGuardar.textContent = "Guardando...";
+
+    try {
+
+        const respuesta = await fetch(url, {
+            method: metodo,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(reserva)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            const mensaje = Array.isArray(resultado.message)
+                ? resultado.message.join(", ")
+                : resultado.message;
+
+            throw new Error(
+                mensaje || "No se pudo guardar la reservación."
+            );
+        }
+
+        // Mostrar el mes correspondiente a la reservación
+        const [anio, mes] = reserva.date.split("-").map(Number);
+
+            currentDate = new Date(anio, mes - 1, 1);
+
+        // Actualizar el calendario desde NestJS
+            await cargarReservas();
+
+        eventDialog.close();
+
+        mostrarResultado(
+         esEdicion
+            ? "La reservación se actualizó correctamente."
+            : "La reservación se registró correctamente."
+);
+
+    } catch (error) {
+
+        console.error(
+            "Error al guardar reservación:",
+            error
+        );
+
+        mostrarMensajeEvento(error.message, "error");
+
+    } finally {
+
+        botonGuardar.disabled = false;
+        botonGuardar.textContent = "Guardar en calendario";
+    }
 });
+
+// eliminar desde el calendario
+
+$("#btnEliminarReserva").addEventListener("click", async () => {
+
+    const id = $("#eventId").value;
+
+    if (!id) return;
+
+    const modal = $("#modalEliminarReserva");
+
+    // Mostrar ventana de confirmación
+    modal.returnValue = "";
+    modal.showModal();
+
+    // Esperar la decisión del administrador
+    const confirmado = await new Promise(resolve => {
+
+        modal.addEventListener("close", () => {
+            resolve(modal.returnValue === "eliminar");
+        }, { once: true });
+
+    });
+
+    if (!confirmado) return;
+
+    const boton = $("#btnEliminarReserva");
+
+    boton.disabled = true;
+    boton.textContent = "Eliminando...";
+
+    try {
+
+        const respuesta = await fetch(
+            `${API_BASE}/reservas/${encodeURIComponent(id)}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            const error = await respuesta.json().catch(() => ({}));
+
+            const mensaje = Array.isArray(error.message)
+                ? error.message.join(", ")
+                : error.message;
+
+            throw new Error(
+                mensaje || "No se pudo eliminar la reservación."
+            );
+        }
+
+        // Actualizar calendario desde NestJS
+        await cargarReservas();
+
+        // Cerrar formulario de edición
+        eventDialog.close();
+
+        // Mostrar resultado personalizado
+        mostrarResultado(
+            "La reservación se eliminó correctamente."
+        );
+
+    } catch (error) {
+
+        console.error("Error al eliminar reservación:", error);
+
+        mostrarMensajeEvento(error.message, "error");
+
+    } finally {
+
+        boton.disabled = false;
+        boton.textContent = "Eliminar reservación";
+
+    }
+
+});
+
+// seleccionar reservaciones para eliminar varias a la vez
+
+function renderSeleccionReservas() {
+    const panel = $("#panelSeleccionReservas");
+    const lista = $("#listaSeleccionReservas");
+    const boton = $("#btnEliminarReservasInexistente"); // No se utiliza
+
+    panel.hidden = !modoSeleccionReservas;
+
+    if (!modoSeleccionReservas) return;
+
+    const anio = currentDate.getFullYear();
+    const mes = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const prefijo = `${anio}-${mes}`;
+
+    const reservasMes = data.events
+        .filter(reserva => reserva.date.startsWith(prefijo))
+        .sort((a, b) =>
+            a.date.localeCompare(b.date) ||
+            a.time.localeCompare(b.time)
+        );
+
+    // conservar únicamente IDs que todavía existen en el mes
+    const idsValidos = new Set(reservasMes.map(r => String(r.id)));
+
+    for (const id of reservasSeleccionadas) {
+        if (!idsValidos.has(id)) reservasSeleccionadas.delete(id);
+    }
+
+    lista.innerHTML = "";
+
+    if (reservasMes.length === 0) {
+        lista.innerHTML =
+            '<p>No hay reservaciones registradas en este mes.</p>';
+    }
+
+    reservasMes.forEach(reserva => {
+        const etiqueta = document.createElement("label");
+        etiqueta.className = "reserva-seleccionable";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = String(reserva.id);
+        checkbox.checked = reservasSeleccionadas.has(String(reserva.id));
+
+        checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+                reservasSeleccionadas.add(String(reserva.id));
+            } else {
+                reservasSeleccionadas.delete(String(reserva.id));
+            }
+
+            actualizarControlesSeleccion(reservasMes);
+        });
+
+        const informacion = document.createElement("span");
+
+        informacion.textContent =
+            `${reserva.date} | ${reserva.name} | ` +
+            `${reserva.status === "bloqueada" ? "Fecha bloqueada" : reserva.time} | ` +
+            `${reserva.status}`;
+
+        etiqueta.appendChild(checkbox);
+        etiqueta.appendChild(informacion);
+        lista.appendChild(etiqueta);
+    });
+
+    actualizarControlesSeleccion(reservasMes);
+}
+
+function actualizarControlesSeleccion(reservasMes) {
+    const cantidad = reservasSeleccionadas.size;
+    const botonEliminar = $("#eliminarReservasSeleccionadas");
+    const seleccionarTodas = $("#seleccionarTodasReservas");
+
+    botonEliminar.disabled = cantidad === 0;
+    botonEliminar.textContent = `Eliminar seleccionadas (${cantidad})`;
+
+    seleccionarTodas.checked =
+        reservasMes.length > 0 && cantidad === reservasMes.length;
+
+    seleccionarTodas.indeterminate =
+        cantidad > 0 && cantidad < reservasMes.length;
+}
+
+// activar o desactivar selección
+$("#btnSeleccionarReservas").addEventListener("click", () => {
+    modoSeleccionReservas = !modoSeleccionReservas;
+    reservasSeleccionadas.clear();
+
+    $("#btnSeleccionarReservas").textContent = modoSeleccionReservas
+        ? "Cerrar selección"
+        : "Seleccionar reservaciones para eliminar";
+
+    renderSeleccionReservas();
+});
+
+// cancelar
+$("#cancelarSeleccionReservas").addEventListener("click", () => {
+    modoSeleccionReservas = false;
+    reservasSeleccionadas.clear();
+
+    $("#btnSeleccionarReservas").textContent =
+        "Seleccionar reservaciones para eliminar";
+
+    renderSeleccionReservas();
+});
+
+// seleccionar todas las del mes visible
+$("#seleccionarTodasReservas").addEventListener("change", event => {
+    const prefijo =
+        `${currentDate.getFullYear()}-` +
+        `${String(currentDate.getMonth() + 1).padStart(2, "0")}`;
+
+    const reservasMes = data.events.filter(r => r.date.startsWith(prefijo));
+
+    reservasSeleccionadas.clear();
+
+    if (event.target.checked) {
+        reservasMes.forEach(r => reservasSeleccionadas.add(String(r.id)));
+    }
+
+    renderSeleccionReservas();
+});
+
+// eliminar las seleccionadas
+$("#eliminarReservasSeleccionadas").addEventListener("click", async () => {
+    const ids = [...reservasSeleccionadas];
+
+    if (ids.length === 0) return;
+
+    const modal = $("#modalEliminarVariasReservas");
+
+    $("#mensajeEliminarVariasReservas").textContent =
+        `¿Estás seguro de eliminar ${ids.length} reservación(es)? ` +
+        "Esta acción no se puede deshacer.";
+
+    modal.returnValue = "";
+    modal.showModal();
+
+    const confirmado = await new Promise(resolve => {
+        modal.addEventListener("close", () => {
+            resolve(modal.returnValue === "eliminar");
+        }, { once: true });
+    });
+
+    if (!confirmado) return;
+
+    const boton = $("#eliminarReservasSeleccionadas");
+    boton.disabled = true;
+    boton.textContent = "Eliminando...";
+
+    let eliminadas = 0;
+    const errores = [];
+
+    for (const id of ids) {
+        try {
+            const respuesta = await fetch(
+                `${API_BASE}/reservas/${encodeURIComponent(id)}`,
+                { method: "DELETE" }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error(`No se pudo eliminar la reservación ${id}`);
+            }
+
+            eliminadas++;
+            reservasSeleccionadas.delete(id);
+
+        } catch (error) {
+            errores.push(error.message);
+            console.error(error);
+        }
+    }
+
+    await cargarReservas();
+
+    if (errores.length > 0) {
+        mostrarResultado(
+            `Se eliminaron ${eliminadas} de ${ids.length} reservaciones. ` +
+            errores.join(". "),
+            "error"
+        );
+    } else {
+        mostrarResultado(
+            `Se eliminaron correctamente ${eliminadas} reservación(es).`
+        );
+    }
+});
+
+// mostrar mensaje de error o éxito en el formulario de reservación
+
+function mostrarMensajeEvento(mensaje, tipo = "error") {
+    const elemento = document.getElementById("mensajeEvento");
+
+    if (!elemento) {
+        console.error("No existe el elemento #mensajeEvento");
+        return;
+    }
+
+    elemento.textContent = mensaje;
+    elemento.className = `mensaje-evento ${tipo}`;
+    elemento.hidden = false;
+}
 
 // administración de paquetes
 
@@ -2195,6 +2531,8 @@ async function renderGallery() {
     }
 }
 
+
+
 // galeria ventana emergente
 
 const photoDialog = document.getElementById("photoDialog");
@@ -2536,10 +2874,12 @@ formEditarFoto.addEventListener("submit", async (e) => {
 
     await renderGallery();
 
-    alert("Fotografía actualizada correctamente.");
+    mostrarResultado(
+    "La fotografía se actualizó correctamente."
+);
 
   } catch (error) {
-    alert(error.message);
+   mostrarResultado(error.message, "error");
 
   } finally {
     guardarEditarFoto.disabled = false;
@@ -2558,36 +2898,96 @@ modalEditarFoto.addEventListener("close", () => {
 });
 
 // Eliminar fotografía
+
 async function eliminarFotoAdmin(id) {
-  const confirmar = confirm(
-    "¿Seguro que querés eliminar esta fotografía? Esta acción no se puede deshacer."
-  );
 
-  if (!confirmar) return;
+    // Mostrar ventana personalizada
+    const confirmado = await confirmarEliminacion();
 
-  try {
-    const respuesta = await fetch(
-      `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(id)}`,
-      {
-        method: "DELETE",
-      }
-    );
+    if (!confirmado) return;
 
-    if (!respuesta.ok) {
-      const error = await respuesta.json().catch(() => ({}));
+    try {
+        const respuesta = await fetch(
+            `${API_BASE}/galeria/${encodeURIComponent(id)}`,
+            {
+                method: "DELETE",
+            }
+        );
 
-      throw new Error(
-        error.message || "No se pudo eliminar la fotografía"
-      );
+        if (!respuesta.ok) {
+            const error = await respuesta.json().catch(() => ({}));
+
+            const mensaje = Array.isArray(error.message)
+                ? error.message.join(", ")
+                : error.message;
+
+            throw new Error(
+                mensaje || "No se pudo eliminar la fotografía."
+            );
+        }
+
+        await renderGallery();
+
+        mostrarResultado(
+            "La fotografía se eliminó correctamente."
+        );
+
+    } catch (error) {
+        mostrarResultado(error.message, "error");
     }
+}
 
-    await renderGallery();
 
-    alert("Fotografía eliminada correctamente.");
+// Mostrar mensaje de éxito o error
+function mostrarResultado(mensaje, tipo = "exito") {
+    const modal = document.getElementById("modalResultado");
+    const titulo = document.getElementById("tituloResultado");
+    const texto = document.getElementById("mensajeResultado");
+    const icono = document.getElementById("iconoResultado");
 
-  } catch (error) {
-    alert(error.message);
-  }
+    titulo.textContent = tipo === "exito"
+        ? "¡Operación completada!"
+        : "Ocurrió un problema";
+
+    texto.textContent = mensaje;
+
+    icono.className = `modal-admin-icono ${tipo}`;
+    icono.textContent = tipo === "exito" ? "✓" : "×";
+
+    modal.showModal();
+}
+
+document.getElementById("cerrarResultado")
+    .addEventListener("click", () => {
+        document.getElementById("modalResultado").close();
+    });
+
+// Confirmación personalizada: devuelve true o false
+function confirmarEliminacion() {
+    return new Promise((resolve) => {
+        const modal = document.getElementById("modalConfirmacion");
+        const aceptar = document.getElementById("aceptarConfirmacion");
+        const cancelar = document.getElementById("cancelarConfirmacion");
+
+        function finalizar(confirmado) {
+            modal.removeEventListener("close", cerrarSinConfirmar);
+            modal.close();
+            resolve(confirmado);
+        }
+
+        function cerrarSinConfirmar() {
+            resolve(false);
+        }
+
+        aceptar.onclick = () => finalizar(true);
+        cancelar.onclick = () => finalizar(false);
+
+        modal.addEventListener("close", cerrarSinConfirmar, {
+            once: true
+        });
+
+        modal.showModal();
+    });
 }
 
 // escuchar botones Editar y eliminar.
@@ -2608,6 +3008,7 @@ document.addEventListener("click", (e) => {
 // iniciar todas las secciones
 
 renderAll();
+cargarReservas();
 
 obtenerPaquetes();
 obtenerAdicionales();
