@@ -16,6 +16,7 @@ export declare class Reserva {
     client: string;
     guests: number;
     package: string;
+    packagePrice?: number;
     status: EstadoReserva;
     phone?: string;
     email?: string;

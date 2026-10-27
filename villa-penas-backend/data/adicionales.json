@@ -91,8 +91,8 @@
       {
         "id": 1,
         "nombre": "Paquete #1",
-        "cantidad": "20 porciones adicionales",
-        "detalle": "Se aplica cuando la cantidad de asistentes supera las porciones incluidas en el paquete contratado.",
+        "cantidad": "20 personas adicionales",
+        "detalle": "Permite agregar 20 personas adicionales a la capacidad incluida en el paquete principal.",
         "precio": 20000
       }
     ]

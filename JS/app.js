@@ -62,7 +62,18 @@ formulario.addEventListener("submit", async function(event) {
         return;
     }
 
-    // Recopilar datos del formulario
+    //buscar el paquete elegido en el arreglo de paquetes
+    const paqueteElegido = paquetes.find(function(paquete) {
+    return paquete.nombre === seleccionarPaquete.value &&
+           paquete.activo !== false;
+    });
+
+    if (!paqueteElegido) {
+        mostrarMensaje("Seleccioná un paquete válido.", "error");
+        return;
+    }
+
+    // recopilar datos del formulario
     const solicitud = {
         name: "Solicitud de reservación",
         client: campoNombre.value,
@@ -72,6 +83,7 @@ formulario.addEventListener("submit", async function(event) {
         time: horaInicio.value,
         guests: Number(campoPersonas.value),
         package: seleccionarPaquete.value,
+        packagePrice: Number(paqueteElegido.precio),
         adicionales: obtenerAdicionalesSeleccionados().map(a => ({
             categoria: String(a.categoria),
             paquete: String(a.paquete),
@@ -128,15 +140,43 @@ formulario.addEventListener("submit", async function(event) {
             );
         }
 
-        mostrarMensaje(
-            "¡Cotización solicitada correctamente! Villa Peñas revisará los datos y se comunicará con vos para confirmar la disponibilidad.",
-            "success"
-        );
+        
+console.log("Solicitud registrada en NestJS:", resultado);
 
-        console.log("Solicitud registrada:", resultado);
+// Preparar el mensaje con los datos de la cotización
+const mensajeWhatsApp = crearMensajeSolicitud(solicitud);
 
-        // No abrimos WhatsApp.
-        // La solicitud ya quedó registrada en NestJS.
+const numeroWhatsApp = WHATSAPP_NUMBER.replace(/\D/g, "");
+
+if (!/^[1-9]\d{7,14}$/.test(numeroWhatsApp)) {
+    mostrarMensaje(
+        "La cotización quedó registrada, pero el número de WhatsApp de Villa Peñas no está configurado correctamente.",
+        "warning"
+    );
+} else {
+    const urlWhatsApp =
+        "https://wa.me/" +
+        numeroWhatsApp +
+        "?text=" +
+        encodeURIComponent(mensajeWhatsApp);
+
+    mostrarMensaje(
+        "¡Cotización registrada! Abrí WhatsApp y presioná Enviar para completar tu solicitud.",
+        "success"
+    );
+
+    // enlace de respaldo por si el navegador bloquea la pestaña
+    const enlace = document.createElement("a");
+    enlace.href = urlWhatsApp;
+    enlace.target = "_blank";
+    enlace.rel = "noopener noreferrer";
+    enlace.className = "whatsapp-fallback";
+    enlace.textContent = "Abrir WhatsApp";
+    mostrarAviso.appendChild(document.createTextNode(" "));
+    mostrarAviso.appendChild(enlace);
+
+    window.open(urlWhatsApp, "_blank", "noopener,noreferrer");
+}
 
     } catch (error) {
         console.error("Error al enviar solicitud:", error);
@@ -224,6 +264,54 @@ function mostrarOpcionesPaquetes() {
         seleccionarPaquete.appendChild(opcion);
     });
 }
+
+
+/* limite de personas por paquete */
+
+function actualizarLimitePersonas(restablecer = false) {
+
+    const nombrePaquete = seleccionarPaquete.value;
+
+    const esPaqueteLimitado =
+        nombrePaquete === "Paquete Essentials" ||
+        nombrePaquete === "Paquete Premium";
+
+    if (!esPaqueteLimitado) {
+        campoPersonas.removeAttribute("max");
+        campoPersonas.setCustomValidity("");
+        return;
+    }
+
+    // Verificar si seleccionó el adicional de 20 personas
+    const tienePersonasAdicionales =
+        obtenerAdicionalesSeleccionados().some(adicional =>
+            adicional.categoria === "Adicional por personas" &&
+            adicional.paquete === "Paquete #1"
+        );
+
+    const maximo = tienePersonasAdicionales ? 50 : 30;
+
+    campoPersonas.max = String(maximo);
+
+    // Al seleccionar el paquete, colocar la capacidad correspondiente
+    if (restablecer) {
+        campoPersonas.value = String(maximo);
+    } else {
+        // Ajustar automáticamente al máximo cuando se agrega
+        // o se elimina el adicional de personas
+        campoPersonas.value = String(maximo);
+    }
+
+    campoPersonas.setCustomValidity("");
+}
+
+
+
+// al cambiar el paquete, actualizar la cantidad de personas.
+seleccionarPaquete.addEventListener("change", function() {
+    actualizarLimitePersonas(true);
+});
+
 
 function mostrarAdicionales(){
       contenedorAdicionales.innerHTML = "";
@@ -365,6 +453,8 @@ function mostrarAdicionalesSeleccionados() {
 
     opcionesAdicionales.innerHTML = "";
 
+    actualizarResumenCotizacion();
+    actualizarLimitePersonas();
 
     if (adicionalesSeleccionados.length === 0) {
 
@@ -892,10 +982,20 @@ function validarCampo(campo) {
             campo.setCustomValidity("Elegí la fecha de hoy o una fecha futura.");
         }
     } else if (campo.id === "personas" && valor !== "") {
-        const cantidad = Number(valor);
-        if (Number.isSafeInteger(cantidad) === false || cantidad < 1) {
-            campo.setCustomValidity("Ingresá una cantidad entera de personas mayor que cero.");
-        }
+    const cantidad = Number(valor);
+
+    if (!Number.isSafeInteger(cantidad) || cantidad < 1) {
+        campo.setCustomValidity(
+            "Ingresá una cantidad entera de personas mayor que cero."
+        );
+    } else if (
+        campo.max &&
+        cantidad > Number(campo.max)
+    ) {
+        campo.setCustomValidity(
+            `Este paquete permite un máximo de ${campo.max} personas.`
+        );
+    }
     } else if (campo.id === "paquete" && valor !== "") {
         if (existePaquete(valor) === false) {
             campo.setCustomValidity("Seleccioná un paquete disponible.");
@@ -980,51 +1080,142 @@ function obtenerAdicionalesSeleccionados() {
 
 
     return seleccionados;
+    
 }
+
+seleccionarPaquete.addEventListener(
+    "change",
+    actualizarResumenCotizacion
+);
+/* resumen de cotización */
+
+function actualizarResumenCotizacion() {
+
+    const nombrePaquete = document.querySelector("#nombrePaqueteResumen");
+    const precioPaquete = document.querySelector("#precioPaqueteResumen");
+    const listaAdicionales = document.querySelector("#adicionalesResumen");
+    const totalCotizacion = document.querySelector("#totalCotizacionResumen");
+
+    // Buscar el paquete principal seleccionado
+    const paquete = paquetes.find(function(p) {
+        return p.nombre === seleccionarPaquete.value &&
+               p.activo !== false;
+    });
+
+    const precioPrincipal = Number(paquete?.precio || 0);
+
+    nombrePaquete.textContent = paquete?.nombre || "Seleccioná un paquete";
+    precioPaquete.textContent = "₡" + precioPrincipal.toLocaleString("es-CR");
+
+    // Obtener los adicionales seleccionados
+    const seleccionados = obtenerAdicionalesSeleccionados();
+
+    listaAdicionales.innerHTML = "";
+
+    let totalAdicionales = 0;
+
+    if (seleccionados.length === 0) {
+        listaAdicionales.textContent = "No has seleccionado adicionales.";
+    } else {
+
+        seleccionados.forEach(function(adicional) {
+
+            const precio = Number(adicional.precio || 0);
+            totalAdicionales += precio;
+
+            const fila = document.createElement("div");
+            fila.className = "flex justify-between gap-4 py-2";
+
+            const nombre = document.createElement("span");
+            nombre.textContent =
+                adicional.categoria + " — " + adicional.paquete;
+
+            const monto = document.createElement("strong");
+            monto.textContent = "₡" + precio.toLocaleString("es-CR");
+
+            fila.appendChild(nombre);
+            fila.appendChild(monto);
+
+            listaAdicionales.appendChild(fila);
+        });
+    }
+
+    // Calcular total estimado
+    const total = precioPrincipal + totalAdicionales;
+
+    totalCotizacion.textContent =
+        "₡" + total.toLocaleString("es-CR");
+}
+
+// crear el mensaje de solicitud para WhatsApp.
 
 function crearMensajeSolicitud(solicitud) {
-    const fechaBonita = new Date(solicitud.fecha + "T12:00:00").toLocaleDateString("es-CR");
+
+    const fecha = new Date(
+        solicitud.date + "T12:00:00"
+    ).toLocaleDateString("es-CR");
+
+    const formatoPrecio = precio =>
+        "₡" + Number(precio || 0).toLocaleString("es-CR");
+
+    const adicionales = solicitud.adicionales || [];
+
+    const totalAdicionales = adicionales.reduce(
+        (total, adicional) =>
+            total + Number(adicional.precio || 0),
+        0
+    );
+
+    const total =
+        Number(solicitud.packagePrice || 0) +
+        totalAdicionales;
+
     let texto = "Hola, Villa Peñas.\n\n";
-    texto += "Me gustaría solicitar información sobre un evento.\n\n";
-    texto += "*Datos del cliente*\n";
-    texto += "Nombre: " + solicitud.nombre + "\n";
-    texto += "Teléfono: " + solicitud.telefono + "\n";
-    texto += "Correo: " + solicitud.correo + "\n\n";
-    texto += "*Datos del evento*\n";
-    texto += "Fecha: " + fechaBonita + "\n";
-    texto += "Hora de Inicio: " + solicitud.horaInicio + "\n";
-    texto += "Hora Final: " + solicitud.horaFinal + "\n";
-    texto += "Cantidad de personas: " + solicitud.personas + "\n";
-    texto += "Paquete: " + solicitud.paquete + "\n\n";
-    texto += "*Adicionales*\n";
+    texto += "Me gustaría solicitar una cotización para un evento.\n\n";
 
-   if (solicitud.adicionales.length === 0) {
+    texto += "*DATOS DEL CLIENTE*\n";
+    texto += "Nombre: " + solicitud.client + "\n";
+    texto += "Teléfono: " + solicitud.phone + "\n";
+    texto += "Correo: " + solicitud.email + "\n\n";
 
-    texto += "Ninguno seleccionado\n";
+    texto += "*DATOS DEL EVENTO*\n";
+    texto += "Fecha: " + fecha + "\n";
+    texto += "Hora de entrada: " + solicitud.time + "\n";
+    texto += "Cantidad de personas: " + solicitud.guests + "\n\n";
 
-} else {
+    texto += "*PAQUETE PRINCIPAL*\n";
+    texto += solicitud.package + "\n";
+    texto += "Precio: " +
+        formatoPrecio(solicitud.packagePrice) + "\n\n";
 
-    solicitud.adicionales.forEach(function(adicional) {
+    texto += "*PAQUETES ADICIONALES*\n";
 
-        texto +=
-            "• " +
-            adicional.categoria +
-            " - " +
-            adicional.paquete +
-            " - ₡" +
-            adicional.precio.toLocaleString("es-CR") +
-            "\n";
-
-    });
-}
-    texto += "\n*Mensaje*\n";
-    if (solicitud.mensaje === "") {
-        texto += "Sin mensaje adicional.\n\n";
+    if (adicionales.length === 0) {
+        texto += "Ninguno seleccionado.\n";
     } else {
-        texto += solicitud.mensaje + "\n\n";
+        adicionales.forEach(adicional => {
+            texto +=
+                "- " + adicional.categoria +
+                " / " + adicional.paquete + "\n";
+
+            texto +=
+                "  " + adicional.cantidad + "\n";
+
+            texto +=
+                "  Precio: " +
+                formatoPrecio(adicional.precio) + "\n";
+        });
     }
-    texto += "Indicaciones sobre la reserva: El cliente confirma haberlas leído.\n";
-    texto += "Quedo atento/a a la información y disponibilidad.";
+
+    texto += "\n*TOTAL ESTIMADO*\n";
+    texto += formatoPrecio(total) + "\n\n";
+
+    texto += "*OBSERVACIONES*\n";
+    texto += solicitud.message ||
+        "Sin observaciones adicionales.";
+
+    texto += "\n\nQuedo atento a la disponibilidad y confirmación del precio final.";
+
     return texto;
 }
 
@@ -1117,6 +1308,7 @@ async function cargarDatosBackend() {
     mostrarOpcionesPaquetes();
     mostrarAdicionales();
     mostrarOpcionesAdicionales();
+    actualizarResumenCotizacion();
 
     // Configuración adicional de la página.
     campoFecha.min = fechaLocalHoy();

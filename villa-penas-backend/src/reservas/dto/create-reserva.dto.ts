@@ -1,4 +1,3 @@
-
 import {
   IsArray,
   IsEmail,
@@ -60,6 +59,11 @@ export class CreateReservaDto {
   @IsString()
   @IsNotEmpty()
   package!: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  packagePrice?: number;
 
   @IsIn(['pendiente', 'confirmada', 'bloqueada'])
   status!: 'pendiente' | 'confirmada' | 'bloqueada';

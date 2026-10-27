@@ -11,6 +11,7 @@ class Reserva {
     client;
     guests;
     package;
+    packagePrice;
     status;
     phone;
     email;

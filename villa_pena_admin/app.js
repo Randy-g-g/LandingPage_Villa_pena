@@ -682,6 +682,81 @@ function fillPackageOptions(selected) {
         select.value = selected;
     }
 }
+// sumar los precios de la reservación y mostrar un resumen
+function mostrarResumenCotizacion(ev) {
+
+    const nombrePaquete = $("#resumenNombrePaquete");
+    const precioPaquete = $("#resumenPrecioPaquete");
+    const listaAdicionales = $("#resumenAdicionales");
+    const totalCotizacion = $("#resumenTotal");
+
+    // Obtener precio guardado en la reservación
+    const paqueteActual = data.packages.find(
+        p => p.name === (ev?.package || $("#eventPackage").value)
+    );
+
+    const precioPrincipal = ev?.packagePrice != null
+        ? Number(ev.packagePrice)
+        : Number(paqueteActual?.price || 0);
+
+    const adicionales = Array.isArray(ev?.adicionales)
+        ? ev.adicionales
+        : [];
+
+    const totalAdicionales = adicionales.reduce(
+        (total, adicional) => total + Number(adicional.precio || 0),
+        0
+    );
+
+    // Mostrar paquete principal
+    nombrePaquete.textContent =
+        ev?.package || $("#eventPackage").value || "Sin paquete";
+
+    precioPaquete.textContent = money(precioPrincipal);
+
+    // Mostrar adicionales
+    listaAdicionales.innerHTML = "";
+
+    if (adicionales.length === 0) {
+        listaAdicionales.textContent =
+            "No hay adicionales seleccionados.";
+    } else {
+        adicionales.forEach(adicional => {
+
+            const fila = document.createElement("div");
+            fila.className = "resumen-adicional";
+
+            const informacion = document.createElement("div");
+            informacion.className = "resumen-adicional-info";
+
+            const nombre = document.createElement("strong");
+            nombre.textContent =
+                `${adicional.categoria} — ${adicional.paquete}`;
+
+            const cantidad = document.createElement("small");
+            cantidad.textContent = adicional.cantidad || "";
+
+            const detalle = document.createElement("small");
+            detalle.textContent = adicional.detalle || "";
+
+            const precio = document.createElement("strong");
+            precio.textContent = money(Number(adicional.precio || 0));
+
+            informacion.appendChild(nombre);
+            informacion.appendChild(cantidad);
+            informacion.appendChild(detalle);
+
+            fila.appendChild(informacion);
+            fila.appendChild(precio);
+
+            listaAdicionales.appendChild(fila);
+        });
+    }
+
+    // Calcular total estimado
+    totalCotizacion.textContent =
+        money(precioPrincipal + totalAdicionales);
+}
 
 // abrir formulario de reservación o bloqueo
 
@@ -720,6 +795,32 @@ if (mensaje) {
     $("#eventClient").value =
         ev?.client || (blocked ? "Villa Peñas" : "");
 
+    // datos de contacto de la reservación
+    console.log("Reservación seleccionada:", ev);
+    console.log("Teléfono:", ev?.phone);
+    console.log("Correo:", ev?.email);
+    console.log("Observaciones:", ev?.message);
+
+    $("#eventPhone").value = ev?.phone || "";
+    $("#eventEmail").value = ev?.email || "";
+    $("#eventMessage").value = ev?.message || "";
+
+    // enlace de contacto por WhatsApp
+    const enlaceWhatsApp = $("#eventWhatsApp");
+    const telefono = String(event?.phone || "").replace(/\D/g, "");
+
+    if (telefono.length >= 8 && telefono.length <= 15) {
+        const numeroWhatsApp = telefono.length === 8
+            ? "506" + telefono
+            : telefono;
+
+        enlaceWhatsApp.href = "https://wa.me/" + numeroWhatsApp;
+        enlaceWhatsApp.hidden = false;
+    } else {
+        enlaceWhatsApp.removeAttribute("href");
+        enlaceWhatsApp.hidden = true;
+    }
+
     $("#eventGuests").value = ev?.guests ?? 30;
 
     $("#eventStatus").value =
@@ -727,8 +828,30 @@ if (mensaje) {
 
     fillPackageOptions(ev?.package);
 
+    mostrarResumenCotizacion(ev);
+
     eventDialog.showModal();
 }
+// para que al cambiar el paquete se actualice el resumen de cotización
+$("#eventPackage").addEventListener("change", function() {
+
+    const id = Number($("#eventId").value);
+
+    const ev = data.events.find(
+        reserva => reserva.id === id
+    );
+
+    // Al cambiar el paquete se utiliza el precio del catálogo.
+    mostrarResumenCotizacion(
+        ev
+            ? {
+                ...ev,
+                package: $("#eventPackage").value,
+                packagePrice: null
+            }
+            : null
+    );
+});
 
 // actualizar la hora de salida automáticamente al cambiar la hora de entrada
 
@@ -766,8 +889,31 @@ $("#eventForm").addEventListener("submit", async event => {
         'button[type="submit"]'
     );
 
+   
     // ID vacío significa crear una nueva reservación
     const id = $("#eventId").value;
+
+    // Buscar la reservación original para conservar sus datos
+    const reservaOriginal = data.events.find(
+        ev => String(ev.id) === String(id)
+    );
+
+    const nombrePaquete = $("#eventPackage").value || "—";
+
+    // Buscar el precio actual en el catálogo
+    const paqueteCatalogo = data.packages.find(
+        paquete => paquete.name === nombrePaquete
+    );
+
+    // Si no cambió el paquete, conservar el precio original.
+    // Si cambió, utilizar el precio del nuevo paquete.
+    const mismoPaquete =
+        reservaOriginal?.package === nombrePaquete;
+
+    const precioPaquete = mismoPaquete &&
+        reservaOriginal?.packagePrice != null
+            ? Number(reservaOriginal.packagePrice)
+            : Number(paqueteCatalogo?.price ?? 0);
 
     const reserva = {
         name: $("#eventName").value.trim(),
@@ -775,9 +921,19 @@ $("#eventForm").addEventListener("submit", async event => {
         time: $("#eventTime").value,
         client: $("#eventClient").value.trim(),
         guests: Number($("#eventGuests").value),
-        package: $("#eventPackage").value || "—",
-        status: $("#eventStatus").value
+        package: nombrePaquete,
+        packagePrice: precioPaquete,
+        status: $("#eventStatus").value,
+
+        // Conservar los datos de contacto
+        phone: reservaOriginal?.phone || "",
+        email: reservaOriginal?.email || undefined,
+        message: reservaOriginal?.message || "",
+
+        // Conservar los adicionales originales
+        adicionales: reservaOriginal?.adicionales || []
     };
+
 
     // validar horario antes de enviarlo
     const [horas, minutos] = reserva.time.split(":").map(Number);

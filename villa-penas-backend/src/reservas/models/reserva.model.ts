@@ -21,6 +21,7 @@ export class Reserva {
     client!: string;
     guests!: number;
     package!: string;
+    packagePrice?: number;
     status!: EstadoReserva;
 
     // Información del cliente y su solicitud

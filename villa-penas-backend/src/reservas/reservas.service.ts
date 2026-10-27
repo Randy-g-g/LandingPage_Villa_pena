@@ -297,6 +297,7 @@ export class ReservasService {
     client: dto.client,
     guests: dto.guests,
     package: dto.package,
+    packagePrice: dto.packagePrice,
     status: dto.status,
 
     // Información adicional del cliente

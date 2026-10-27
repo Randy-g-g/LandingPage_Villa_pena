@@ -512,6 +512,39 @@
               <legend class="form-label">Adicionales que te interesan</legend>
               <div id="checksAdicionales" class="grid gap-2 sm:grid-cols-2"></div>
             </fieldset>
+            
+<!-- Resumen de la cotización -->
+<div id="resumenCotizacion"
+     class="mt-6 rounded-2xl border border-vp-beige bg-vp-white p-5">
+
+    <h3 class="text-lg font-bold text-vp-text mb-4">
+        Resumen de tu cotización
+    </h3>
+
+    <div class="flex justify-between gap-4 mb-3">
+        <span id="nombrePaqueteResumen">
+            Seleccioná un paquete
+        </span>
+        <strong id="precioPaqueteResumen">₡0</strong>
+    </div>
+
+    <div id="adicionalesResumen"
+         class="space-y-2 text-sm">
+        <p>No has seleccionado adicionales.</p>
+    </div>
+
+    <div class="flex justify-between gap-4 border-t border-vp-beige pt-4 mt-4">
+        <strong>Total estimado</strong>
+        <strong id="totalCotizacionResumen"
+                class="text-xl text-vp-brown">
+            ₡0
+        </strong>
+    </div>
+
+    <p class="text-xs mt-3 text-vp-text/70">
+        El monto final se confirma directamente con Villa Peñas.
+    </p>
+</div>
 
             <div class="mt-5">
               <label for="mensaje" class="form-label">Contanos sobre tu evento</label>
