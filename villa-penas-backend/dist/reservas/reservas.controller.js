@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const reservas_service_1 = require("./reservas.service");
 const create_reserva_dto_1 = require("./dto/create-reserva.dto");
 const update_reserva_dto_1 = require("./dto/update-reserva.dto");
+const create_solicitud_reserva_dto_1 = require("./dto/create-solicitud-reserva.dto");
 let ReservasController = class ReservasController {
     reservasService;
     constructor(reservasService) {
@@ -36,6 +37,12 @@ let ReservasController = class ReservasController {
     }
     remove(id) {
         return this.reservasService.remove(id);
+    }
+    crearSolicitud(dto) {
+        return this.reservasService.create({
+            ...dto,
+            status: 'pendiente',
+        });
     }
 };
 exports.ReservasController = ReservasController;
@@ -74,6 +81,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ReservasController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('solicitudes'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_solicitud_reserva_dto_1.CreateSolicitudReservaDto]),
+    __metadata("design:returntype", void 0)
+], ReservasController.prototype, "crearSolicitud", null);
 exports.ReservasController = ReservasController = __decorate([
     (0, common_1.Controller)('reservas'),
     __metadata("design:paramtypes", [reservas_service_1.ReservasService])

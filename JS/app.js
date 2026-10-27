@@ -40,45 +40,116 @@ let adicionalesSeleccionados = [];
 // se conserva pendiente hasta confirmar el WhatsApp oficial, este numero de momento es de prueba.
 const WHATSAPP_NUMBER = "50660121469";
 
-// escuchamos el formulario.
-formulario.addEventListener("submit", function(event) {
-    // evitar recarga de página.
+/* enviar solicitud */
+
+formulario.addEventListener("submit", async function(event) {
     event.preventDefault();
+
     campoFecha.min = fechaLocalHoy();
     campoNombre.value = campoNombre.value.trim();
     campoTelefono.value = campoTelefono.value.trim();
     campoCorreo.value = campoCorreo.value.trim();
 
-    if (validarFormulario() === false) {
+    if (!validarFormulario()) {
         return;
     }
 
-    // toma los valores y hacemos la conversión numérica.
-    const nombre = campoNombre.value;
-    const telefono = campoTelefono.value;
-    const correo = campoCorreo.value;
-    const fecha = campoFecha.value;
-    const personas = Number(campoPersonas.value);
-    const paquete = seleccionarPaquete.value;
-    const mensaje = campoMensaje.value.trim();
-    const seleccionados = obtenerAdicionalesSeleccionados();
+    if (!acepta.checked) {
+        mostrarMensaje(
+            "Debés aceptar las indicaciones de la reserva.",
+            "error"
+        );
+        return;
+    }
 
-    // crea un objeto, como el objeto producto del ejemplo de clase.
+    // Recopilar datos del formulario
     const solicitud = {
-        nombre: nombre,
-        telefono: telefono,
-        correo: correo,
-        fecha: fecha,
-        horaInicio: horaInicio.value,
-        horaFinal: horaFinal.value,
-        personas: personas,
-        paquete: paquete,
-        adicionales: seleccionados,
-        mensaje: mensaje,
-        acepta: acepta.checked
+        name: "Solicitud de reservación",
+        client: campoNombre.value,
+        phone: campoTelefono.value,
+        email: campoCorreo.value,
+        date: campoFecha.value,
+        time: horaInicio.value,
+        guests: Number(campoPersonas.value),
+        package: seleccionarPaquete.value,
+        adicionales: obtenerAdicionalesSeleccionados().map(a => ({
+            categoria: String(a.categoria),
+            paquete: String(a.paquete),
+            cantidad: String(a.cantidad),
+            detalle: String(a.detalle),
+            precio: Number(a.precio)
+        })),
+        message: campoMensaje.value.trim()
     };
 
-    abrirWhatsApp(solicitud);
+    // Validar las 8 horas dentro del horario permitido
+    const [horas, minutos] = solicitud.time.split(":").map(Number);
+    const inicio = horas * 60 + minutos;
+    const salida = inicio + 8 * 60;
+
+    if (
+        !Number.isFinite(inicio) ||
+        inicio < 6 * 60 ||
+        salida > 18 * 60
+    ) {
+        mostrarMensaje(
+            "La hora de entrada debe estar entre las 6:00 a. m. y las 10:00 a. m.",
+            "error"
+        );
+        return;
+    }
+
+    const botonEnviar = formulario.querySelector('button[type="submit"]');
+
+    botonEnviar.disabled = true;
+    botonEnviar.textContent = "Enviando solicitud...";
+
+    try {
+        const respuesta = await fetch(
+            "http://localhost:3000/reservas/solicitudes",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(solicitud)
+            }
+        );
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            const mensaje = Array.isArray(resultado.message)
+                ? resultado.message.join(", ")
+                : resultado.message;
+
+            throw new Error(
+                mensaje || "No se pudo registrar la solicitud."
+            );
+        }
+
+        mostrarMensaje(
+            "¡Cotización solicitada correctamente! Villa Peñas revisará los datos y se comunicará con vos para confirmar la disponibilidad.",
+            "success"
+        );
+
+        console.log("Solicitud registrada:", resultado);
+
+        // No abrimos WhatsApp.
+        // La solicitud ya quedó registrada en NestJS.
+
+    } catch (error) {
+        console.error("Error al enviar solicitud:", error);
+
+        mostrarMensaje(
+            error.message || "No se pudo enviar la solicitud. Intentá nuevamente.",
+            "error"
+        );
+
+    } finally {
+        botonEnviar.disabled = false;
+        botonEnviar.textContent = "Cotizar";
+    }
 });
 
 // muestra los paquetes que están en el arreglo de datos.js.

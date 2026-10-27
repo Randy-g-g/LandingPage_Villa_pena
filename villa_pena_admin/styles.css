@@ -696,6 +696,52 @@ textarea:focus-visible {
     margin-right: 5px;
 }
 
+/* hora salida */
+
+.hora-salida-evento {
+    margin-top: 12px;
+}
+
+.hora-salida-evento label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #77695c;
+}
+
+.hora-salida-evento input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e5d7c7;
+    border-radius: 9px;
+    background: #f5efe8;
+    color: #362314;
+}
+
+.mensaje-evento {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.mensaje-evento[hidden] {
+    display: none;
+}
+
+.mensaje-evento.error {
+    background: #fde8e7;
+    border: 1px solid #efb8b4;
+    color: #a12424;
+}
+
+.mensaje-evento.exito {
+    background: #e6f4e9;
+    border: 1px solid #b7dfc0;
+    color: #247341;
+}
+
 /* vistas y avisos */
 
 .view-panel {
@@ -1337,7 +1383,7 @@ tbody tr:last-child td {
     }
 }
 
-/* EDICIÓN DE FOTOGRAFÍAS */
+/* edición de fotografías */
 
 .modal-editar-foto {
   width: min(480px, 94vw);
@@ -1430,4 +1476,242 @@ tbody tr:last-child td {
 .acciones-editar button:disabled {
   opacity: 0.55;
   cursor: wait;
+}
+
+
+/* aceptar o no el eliminar */
+
+.modal-admin {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(420px, 92vw);
+    max-height: 90vh;
+    padding: 0;
+    border: none;
+    border-radius: 16px;
+    background: #fffaf4;
+    color: #362314;
+    box-shadow: 0 20px 65px rgba(0, 0, 0, 0.25);
+    overflow: auto;
+}
+
+.modal-admin::backdrop {
+    background: rgba(20, 12, 7, 0.65);
+    backdrop-filter: blur(5px);
+}
+
+.modal-admin-contenido {
+    padding: 30px 26px;
+    text-align: center;
+}
+
+.modal-admin-contenido h2 {
+    font-size: 1.45rem;
+    margin: 14px 0 10px;
+    color: #362314;
+}
+
+.modal-admin-contenido p {
+    line-height: 1.6;
+    color: #77695c;
+    margin: 0;
+}
+
+.modal-admin-icono {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.modal-admin-icono.exito {
+    background: #e4f4e7;
+    color: #287c44;
+}
+
+.modal-admin-icono.advertencia {
+    background: #fff0d7;
+    color: #ad6b14;
+}
+
+.modal-admin-icono.error {
+    background: #ffe5e5;
+    color: #b42323;
+}
+
+.modal-admin-acciones {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+}
+
+.modal-admin-acciones button {
+    min-width: 120px;
+    padding: 12px 17px;
+    border: none;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.modal-admin-acciones button:hover {
+    filter: brightness(0.93);
+    transform: translateY(-1px);
+}
+
+.modal-btn-secundario {
+    background: #ece6df;
+    color: #473526;
+}
+
+.modal-btn-peligro {
+    background: #bd3030;
+    color: white;
+}
+
+.modal-btn-principal {
+    background: #362314;
+    color: white;
+}
+
+.modal-admin-acciones button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+/* reserva */
+
+/* Botón eliminar reservación */
+
+.btn-danger {
+    background: #b93434;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #922626;
+}
+
+#btnEliminarReserva[hidden] {
+    display: none;
+}
+
+#btnEliminarReserva:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+
+/* seleccion multiple */
+
+.reservas-multiples {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e8dbce;
+}
+
+#panelSeleccionReservas {
+    margin-top: 18px;
+    padding: 20px;
+    background: #fcfaf7;
+    border: 1px solid #e8dbce;
+    border-radius: 12px;
+}
+
+#panelSeleccionReservas[hidden] {
+    display: none;
+}
+
+#panelSeleccionReservas h3 {
+    margin: 0 0 8px;
+    color: #321d0e;
+}
+
+#listaSeleccionReservas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.reserva-seleccionable,
+.seleccionar-todas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e8dbce;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.reserva-seleccionable:hover {
+    background-color: #f4ece3;
+}
+
+.reserva-seleccionable input,
+.seleccionar-todas input {
+    accent-color: #321d0e;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.reserva-seleccionable span {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+#eliminarReservasSeleccionadas:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* botones alineados al pie del calendario */
+
+.calendar-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.calendar-footer-actions .btn {
+    white-space: nowrap;
+}
+
+.reservas-multiples {
+    margin-top: 0;
+}
+
+/* adaptación para pantallas pequeñas */
+@media (max-width: 600px) {
+    .calendar-footer-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calendar-footer-actions .btn {
+        width: 100%;
+    }
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: none;
 }
