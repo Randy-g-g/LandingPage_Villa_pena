@@ -71,10 +71,13 @@ export class CreateReservaDto {
   // Datos de contacto del cliente
   @IsOptional()
   @IsString()
+  @Matches(/^(?:\+506)?[2-8]\d{7}$/, {
+  message: 'El teléfono debe tener 8 dígitos de Costa Rica, con +506 opcional.',})
   phone?: string;
 
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, {
+  message: 'Ingresá un correo electrónico válido, por ejemplo: cliente@gmail.com.',})
   email?: string;
 
   @IsOptional()

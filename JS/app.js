@@ -44,6 +44,34 @@ const WHATSAPP_NUMBER = "50660121469";
 
 formulario.addEventListener("submit", async function(event) {
     event.preventDefault();
+    
+    // validar la cantidad de personas antes de enviar la solicitud
+    const cantidadSolicitada = Number(campoPersonas.value);
+
+    if (
+        !Number.isSafeInteger(cantidadSolicitada) ||
+        cantidadSolicitada < 1 ||
+        cantidadSolicitada > 50
+    ) {
+        mostrarMensaje(
+            "La cantidad permitida es de 1 a 50 personas.",
+            "error"
+        );
+        return;
+    }
+
+    // Asegurar que el adicional esté seleccionado antes
+    // de construir la solicitud enviada a NestJS.
+    sincronizarAdicionalPersonas();
+
+    if (!campoPersonas.validity.valid) {
+        mostrarMensaje(
+            campoPersonas.validationMessage,
+            "error"
+        );
+        return;
+    }
+
 
     campoFecha.min = fechaLocalHoy();
     campoNombre.value = campoNombre.value.trim();
@@ -77,7 +105,7 @@ formulario.addEventListener("submit", async function(event) {
     const solicitud = {
         name: "Solicitud de reservación",
         client: campoNombre.value,
-        phone: campoTelefono.value,
+        phone: campoTelefono.value.replace(/[\s()-]/g, ""),
         email: campoCorreo.value,
         date: campoFecha.value,
         time: horaInicio.value,
@@ -265,7 +293,6 @@ function mostrarOpcionesPaquetes() {
     });
 }
 
-
 /* limite de personas por paquete */
 
 function actualizarLimitePersonas(restablecer = false) {
@@ -278,34 +305,98 @@ function actualizarLimitePersonas(restablecer = false) {
 
     if (!esPaqueteLimitado) {
         campoPersonas.removeAttribute("max");
-        campoPersonas.setCustomValidity("");
         return;
     }
 
-    // Verificar si seleccionó el adicional de 20 personas
-    const tienePersonasAdicionales =
-        obtenerAdicionalesSeleccionados().some(adicional =>
-            adicional.categoria === "Adicional por personas" &&
-            adicional.paquete === "Paquete #1"
-        );
+    // capacidad máxima incluyendo el adicional
+    campoPersonas.max = "50";
+    campoPersonas.min = "1";
 
-    const maximo = tienePersonasAdicionales ? 50 : 30;
-
-    campoPersonas.max = String(maximo);
-
-    // Al seleccionar el paquete, colocar la capacidad correspondiente
-    if (restablecer) {
-        campoPersonas.value = String(maximo);
-    } else {
-        // Ajustar automáticamente al máximo cuando se agrega
-        // o se elimina el adicional de personas
-        campoPersonas.value = String(maximo);
+    // al seleccionar un paquete, iniciar en 30 personas
+    if (restablecer || !campoPersonas.value) {
+        campoPersonas.value = "30";
     }
-
-    campoPersonas.setCustomValidity("");
 }
 
+//sincronizar adicional de personas según la cantidad ingresada.
+function sincronizarAdicionalPersonas() {
 
+    const cantidad = Number(campoPersonas.value);
+
+    const adicional = adicionales.find(a =>
+        a.categoria === "Adicional por personas"
+    );
+
+    const paquete = adicional?.paquetes.find(p =>
+        p.nombre === "Paquete #1"
+    );
+
+    if (!adicional || !paquete) {
+        if (cantidad > 30) {
+            campoPersonas.setCustomValidity(
+                "El adicional de 20 personas no está disponible."
+            );
+            campoPersonas.reportValidity();
+        }
+        return;
+    }
+
+    const indice = adicionalesSeleccionados.findIndex(a =>
+        a.adicionalId === adicional.id &&
+        a.paqueteId === paquete.id
+    );
+
+    let cambio = false;
+
+    if (cantidad > 30 && cantidad <= 50 && indice === -1) {
+
+        // agregar automáticamente el adicional de ₡20.000
+        adicionalesSeleccionados.push({
+            adicionalId: adicional.id,
+            paqueteId: paquete.id
+        });
+
+        cambio = true;
+
+    } else if (cantidad <= 30 && indice !== -1) {
+
+        // retirar el adicional si ya no es necesario
+        adicionalesSeleccionados.splice(indice, 1);
+
+        cambio = true;
+    }
+
+    if (cambio) {
+        mostrarAdicionalesSeleccionados();
+        actualizarBotonAdicional(adicional.id, paquete.id);
+    }
+
+    actualizarResumenCotizacion();
+}
+// cuando se ingresa la cantidad de personas, validar el máximo y mínimo permitido.
+campoPersonas.addEventListener("input", function() {
+
+    const cantidad = Number(campoPersonas.value);
+
+    campoPersonas.setCustomValidity("");
+
+    if (campoPersonas.value !== "" && cantidad > 50) {
+        campoPersonas.setCustomValidity(
+            "La cantidad máxima permitida es de 50 personas."
+        );
+        campoPersonas.reportValidity();
+        return;
+    }
+
+    if (campoPersonas.value !== "" && cantidad < 1) {
+        campoPersonas.setCustomValidity(
+            "Ingresá al menos una persona."
+        );
+        return;
+    }
+
+    sincronizarAdicionalPersonas();
+});
 
 // al cambiar el paquete, actualizar la cantidad de personas.
 seleccionarPaquete.addEventListener("change", function() {
@@ -965,16 +1056,24 @@ function validarCampo(campo) {
     if (campo.required && valor === "") {
         campo.setCustomValidity("Completá este campo obligatorio.");
     } else if (campo.id === "telefono" && valor !== "") {
-        // contar dígitos sin espacios, paréntesis ni guiones.
-        const digitos = valor.replace(/\D/g, "");
-        const formatoValido = /^\+?[\d\s()-]+$/.test(valor);
-        if (formatoValido === false || digitos.length < 8 || digitos.length > 15) {
-            campo.setCustomValidity("Ingresá un teléfono válido de 8 a 15 dígitos.");
+          const telefonoLimpio = valor.replace(/[\s()-]/g, "");
+
+    const telefonoValido =
+        /^(?:\+506)?[2-8]\d{7}$/.test(telefonoLimpio);
+
+    if (!telefonoValido) {
+        campo.setCustomValidity(
+            "Ingresá un teléfono válido de Costa Rica de 8 dígitos."
+        );
         }
     } else if (campo.id === "correo" && valor !== "") {
-        const formatoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
-        if (formatoValido === false) {
-            campo.setCustomValidity("Ingresá un correo electrónico válido.");
+        const correoValido =
+        /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor);
+
+    if (!correoValido) {
+        campo.setCustomValidity(
+            "Ingresá un correo válido, por ejemplo: cliente@gmail.com."
+        );
         }
     } else if (campo.id === "fecha" && valor !== "") {
         const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(valor);
@@ -983,17 +1082,18 @@ function validarCampo(campo) {
         }
     } else if (campo.id === "personas" && valor !== "") {
     const cantidad = Number(valor);
+    const maximo = Number(campo.max);
 
     if (!Number.isSafeInteger(cantidad) || cantidad < 1) {
         campo.setCustomValidity(
             "Ingresá una cantidad entera de personas mayor que cero."
         );
     } else if (
-        campo.max &&
-        cantidad > Number(campo.max)
+        campo.max !== "" &&
+        cantidad > maximo
     ) {
         campo.setCustomValidity(
-            `Este paquete permite un máximo de ${campo.max} personas.`
+            `Este paquete permite un máximo de ${maximo} personas.`
         );
     }
     } else if (campo.id === "paquete" && valor !== "") {
@@ -1217,31 +1317,6 @@ function crearMensajeSolicitud(solicitud) {
     texto += "\n\nQuedo atento a la disponibilidad y confirmación del precio final.";
 
     return texto;
-}
-
-function abrirWhatsApp(solicitud) {
-    const texto = crearMensajeSolicitud(solicitud);
-    if (/^[1-9]\d{7,14}$/.test(WHATSAPP_NUMBER) === false) {
-        mostrarMensaje(
-            "La solicitud está preparada, pero el envío por WhatsApp aún no está disponible. Podés comunicarte mediante los teléfonos de la sección Contactanos.",
-            "warning"
-        );
-        return;
-    }
-
-    const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(texto);
-    mostrarMensaje("Solicitud preparada. Confirmá el envío en WhatsApp.", "success");
-
-    // mostrar un enlace por si el navegador bloquea la nueva pestaña.
-    const enlace = document.createElement("a");
-    enlace.href = url;
-    enlace.target = "_blank";
-    enlace.rel = "noopener noreferrer";
-    enlace.className = "whatsapp-fallback";
-    enlace.textContent = "Abrir WhatsApp";
-    mostrarAviso.appendChild(document.createTextNode(" "));
-    mostrarAviso.appendChild(enlace);
-    window.open(url, "_blank", "noopener,noreferrer");
 }
 
 // mantener la animación al desplazarse, con contenido visible como respaldo.
