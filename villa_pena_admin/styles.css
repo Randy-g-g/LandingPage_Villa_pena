@@ -1809,3 +1809,15 @@ tbody tr:last-child td {
 #eventDialog {
     padding-right: 28px;
 }
+
+/* Cursor visible en los formularios administrativos */
+
+input,
+textarea {
+    cursor: text;
+    caret-color: #321d0e;
+}
+
+select {
+    cursor: pointer;
+}

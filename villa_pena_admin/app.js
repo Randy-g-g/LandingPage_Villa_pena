@@ -2,82 +2,24 @@
    VILLA PEÑAS - PANEL ADMINISTRATIVO
    ==========================================*/
 
-// configuracion general aun sin aprobar
+// base de la API de NestJS
 
 const API_BASE = "http://localhost:3000";
-
-const STORAGE_KEY = "villaPenasAdminDemoV1";
 
 let packageItems = [];
 
 // datos de demostración
 
 const initialData = {
-
-    // PAQUETES
-    packages: [
-        {
-            id: 1,
-            name: "Paquete Essentials",
-            description: "Ideal para eventos íntimos.",
-            price: 150000,
-            active: true
-        },
-        {
-            id: 2,
-            name: "Paquete Premium",
-            description: "Nuestra opción más completa.",
-            price: 250000,
-            active: true
-        },
-        {
-            id: 3,
-            name: "Paquete Bodas",
-            description: "Todo para un día especial.",
-            price: 350000,
-            active: true
-        }
-    ],
-
-    // RESERVACIONES
+    packages: [],
     events: [],
-
-    // RESEÑAS
     reviews: [],
-
-    // SOLICITUDES
-    requests: [
-        {
-            id: 301,
-            name: "Daniela Vargas",
-            date: "2026-11-14",
-            time: "15:00",
-            guests: 35,
-            package: "Paquete Premium",
-            phone: "8888-1234",
-            status: "Nueva",
-            message: "Celebración familiar; consulta por disponibilidad."
-        },
-        {
-            id: 302,
-            name: "Andrés López",
-            date: "2026-11-21",
-            time: "12:00",
-            guests: 50,
-            package: "Paquete Bodas",
-            phone: "8777-5678",
-            status: "Nueva",
-            message: "Consulta para una actividad de un día."
-        }
-    ]
+    requests: []
 };
 
+//variables y funciones auxiliares
 
-// ==========================================
-// 3. VARIABLES GLOBALES
-// ==========================================
-
-let data = loadData();
+let data = structuredClone(initialData);
 
 let view = "calendario";
 
@@ -104,44 +46,6 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [
     ...document.querySelectorAll(selector)
 ];
-
-// almacenamiento local sin persistencia en el backend
-
-function loadData() {
-
-    let datos;
-
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-
-        datos = stored
-            ? JSON.parse(stored)
-            : structuredClone(initialData);
-
-    } catch {
-        datos = structuredClone(initialData);
-    }
-
-
-    // las reservaciones vienen de NestJS
-    datos.events = [];
-
-    // Las reseñas también vienen de NestJS
-    datos.reviews = [];
-
-return datos;
-}
-
-
-function saveData() {
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
-
-    updateStats();
-}
 
 // funciones auxiliares
 
@@ -335,8 +239,6 @@ function setView(next) {
 
     if (next === "resenas") renderReviews();
 
-    if (next === "solicitudes") renderRequests();
-
     if (next === "calendario") renderCalendar();
 }
 
@@ -353,23 +255,6 @@ $$(".nav-link").forEach(boton => {
 $("#mobileMenu").addEventListener("click", () => {
 
     $("#sidebar").classList.toggle("open");
-});
-
-
-$("#resetDemo").addEventListener("click", () => {
-
-    if (confirm(
-        "¿Restaurar los datos de demostración? Se perderán los cambios locales."
-    )) {
-
-        data = structuredClone(initialData);
-
-        saveData();
-
-        renderAll();
-
-        showToast("Datos de demostración restaurados");
-    }
 });
 
 // consula de reservaciones desde NestJS
@@ -1398,6 +1283,7 @@ $("#btnAgregarServicio").addEventListener("click", () => {
 $("#btnAgregarDetalle").addEventListener("click", () => {
   agregarCampoDetalle();
 });
+
 async function obtenerPaquetes() {
 
     const body = $("#packageRows");
@@ -2298,6 +2184,12 @@ async function renderReviews() {
                             Volver a publicar
                         </button>
                     ` : ""}
+                        <button
+                            type="button"
+                            class="btn-small btn-reject"
+                            data-delete-review="${r.id}">
+                            Eliminar
+                        </button>
                 </div>
             </article>
         `).join("") || `
@@ -2349,7 +2241,55 @@ async function renderReviews() {
                     }
                 });
             });
+            // Eliminar reseña definitivamente
+        lista.querySelectorAll("[data-delete-review]")
+            .forEach(boton => {
 
+                boton.addEventListener("click", async () => {
+
+                const id = Number(boton.dataset.deleteReview);
+
+                const confirmado = await confirmarEliminacion(
+                    "Eliminar reseña",
+                    "¿Estás seguro de eliminar esta reseña definitivamente? Esta acción no se puede deshacer."
+                );
+
+                    if (!confirmado) return;
+
+                        boton.disabled = true;
+
+                    try {
+                        const respuesta = await fetch(
+                            `${API_BASE}/resenas/${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+                    if (!respuesta.ok) {
+                        throw new Error(
+                            "No se pudo eliminar la reseña."
+                        );
+                    }
+
+                    await renderReviews();
+
+                    mostrarResultado(
+                        "La reseña se eliminó correctamente."
+                    );
+
+                } catch (error) {
+                    console.error(error);
+
+                    mostrarResultado(
+                        error.message,
+                        "error"
+                    );
+
+                    boton.disabled = false;
+                }
+            });
+    });
     } catch (error) {
         console.error("Error al cargar las reseñas:", error);
 
@@ -2433,112 +2373,6 @@ $("#reviewTabs")
         });
     });
 
-// solicitudes de reservaciones
-
-function renderRequests() {
-
-    const requestList = $("#requestList");
-
-    if (!requestList) return;
-
-    requestList.innerHTML = data.requests.map(r => `
-
-        <article class="request-item">
-
-            <div class="avatar avatar-light">
-
-                ${escapeHTML(
-                    r.name
-                        .split(" ")
-                        .map(s => s[0])
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()
-                )}
-
-            </div>
-
-            <div class="request-main">
-
-                <strong>
-
-                    ${escapeHTML(r.name)}
-
-                    <span class="pill ${
-                        r.status === "Nueva"
-                            ? "pill-pending"
-                            : "pill-active"
-                    }">
-                        ${escapeHTML(r.status)}
-                    </span>
-
-                </strong>
-
-                <div class="request-date">
-
-                    ${escapeHTML(r.date)} ·
-                    ${escapeHTML(formatTime(r.time))} ·
-                    ${r.guests} personas
-
-                </div>
-
-                <div class="request-detail">
-
-                    ${escapeHTML(r.package)} ·
-                    ${escapeHTML(r.message)} ·
-                    Tel. ${escapeHTML(r.phone)}
-
-                </div>
-
-            </div>
-
-            <div class="review-actions">
-
-                <button
-                    class="btn-small btn-approve"
-                    data-confirm-request="${r.id}">
-
-                    Marcar revisada
-
-                </button>
-
-            </div>
-
-        </article>
-
-    `).join("") ||
-    '<div class="empty-state">No hay solicitudes nuevas.</div>';
-
-    requestList
-    .querySelectorAll("[data-confirm-request]")
-        .forEach(boton => {
-
-            boton.addEventListener("click", () => {
-
-                const req = data.requests.find(
-                    r => r.id === Number(
-                        boton.dataset.confirmRequest
-                    )
-                );
-
-                if (req) {
-
-                    req.status = "Revisada";
-
-                    saveData();
-
-                    renderRequests();
-
-                    showToast(
-                        "Solicitud marcada como revisada"
-                    );
-                }
-            });
-        });
-
-    updateStats();
-}
-
 // cerrar ventanas emergentes
 
 $$(".close-dialog").forEach(boton => {
@@ -2570,8 +2404,6 @@ function renderAll() {
     renderPackages();
 
     renderReviews();
-
-    renderRequests();
 
     updateStats();
 }
@@ -3119,11 +2951,18 @@ document.getElementById("cerrarResultado")
     });
 
 // Confirmación personalizada: devuelve true o false
-function confirmarEliminacion() {
+function confirmarEliminacion(
+    titulo = "Eliminar fotografía",
+    mensaje = "¿Estás seguro de eliminar esta fotografía?"
+) {
     return new Promise((resolve) => {
         const modal = document.getElementById("modalConfirmacion");
         const aceptar = document.getElementById("aceptarConfirmacion");
         const cancelar = document.getElementById("cancelarConfirmacion");
+
+        // Personalizar el mensaje según lo que se elimina
+        document.getElementById("tituloConfirmacion").textContent = titulo;
+        document.getElementById("mensajeConfirmacion").textContent = mensaje;
 
         function finalizar(confirmado) {
             modal.removeEventListener("close", cerrarSinConfirmar);

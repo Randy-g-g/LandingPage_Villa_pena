@@ -567,3 +567,17 @@ textarea.form-input { resize: vertical; }
     width: 100%;
     object-fit: cover;
 }
+
+/* Cursor visible en los campos del formulario */
+
+input,
+textarea,
+select {
+    cursor: default;
+    caret-color: #321d0e;
+}
+
+input:focus,
+textarea:focus {
+    caret-color: #321d0e;
+}
