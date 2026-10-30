@@ -116,16 +116,21 @@ function updateStats() {
 }
 
 
+
 async function actualizarContadoresResenas() {
     try {
+        const opciones = {
+            credentials: "include"
+        };
+
         const [
             respuestaPendientes,
             respuestaPublicadas,
             respuestaRechazadas
         ] = await Promise.all([
-            fetch(`${API_BASE}/resenas/pendientes`),
-            fetch(`${API_BASE}/resenas`),
-            fetch(`${API_BASE}/resenas/rechazadas`)
+            fetch(`${API_BASE}/resenas/pendientes`, opciones),
+            fetch(`${API_BASE}/resenas`, opciones),
+            fetch(`${API_BASE}/resenas/rechazadas`, opciones)
         ]);
 
         if (
@@ -150,12 +155,10 @@ async function actualizarContadoresResenas() {
             `${pendientes.length} pendientes`;
 
     } catch (error) {
-        console.error(
-            "Error al actualizar los contadores:",
-            error
-        );
+        console.error("Error al actualizar los contadores:", error);
     }
 }
+
 
 // navegación del panel
 
@@ -2104,7 +2107,9 @@ async function renderReviews() {
     }
 
     try {
-        const respuesta = await fetch(endpoint);
+        const respuesta = await fetch(endpoint, {
+    credentials: "include"
+});
 
         if (!respuesta.ok) {
             throw new Error("No se pudieron consultar las reseñas.");
@@ -2271,6 +2276,7 @@ async function setReviewStatus(id, status) {
             `${API_BASE}/resenas/${id}/estado`,
             {
                 method: "PATCH",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json"
                 },

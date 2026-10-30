@@ -12,6 +12,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  UseGuards
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,18 +24,22 @@ import { UpdateFotoDto } from './dto/update-foto.dto';
 import type { Foto } from './models/foto.model';
 import type { Express } from 'express';
 
+import { AuthGuard } from '../auth/auth.guard';
+
 @Controller('galeria')
 export class GaleriaController {
   constructor(
     private readonly galeriaService: GaleriaService,
   ) {}
 
+  
   // GET /galeria
   @Get()
   obtenerTodas(): Promise<Foto[]> {
     return this.galeriaService.obtenerTodas();
   }
 
+  
   // GET /galeria/:id
   @Get(':id')
   obtenerUna(
@@ -43,6 +48,7 @@ export class GaleriaController {
     return this.galeriaService.obtenerUna(id);
   }
 
+  @UseGuards(AuthGuard)
   // POST /galeria
   @Post()
   @UseInterceptors(
@@ -74,7 +80,7 @@ export class GaleriaController {
       datos.descripcion.trim(),
     );
   }
-
+  @UseGuards(AuthGuard)
   // PATCH /galeria/:id
   @Patch(':id')
   @UseInterceptors(
@@ -122,7 +128,7 @@ export class GaleriaController {
       archivo,
     );
   }
-
+  @UseGuards(AuthGuard)
   // DELETE /galeria/:id
   @Delete(':id')
   eliminarFoto(
