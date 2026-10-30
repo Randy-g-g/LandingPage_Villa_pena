@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'node:path';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 
@@ -12,6 +13,7 @@ async function bootstrap() {
     AppModule,
   );
 
+  app.use(cookieParser());
   // Validación global de datos
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,7 +34,9 @@ async function bootstrap() {
       'http://127.0.0.1:5500',
       'http://localhost:5500',
     ],
-     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+     credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Iniciar servidor

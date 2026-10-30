@@ -590,6 +590,8 @@ textarea:focus-visible {
     background: #fffdf9;
     position: relative;
     transition: background .15s;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .day-cell:hover {
