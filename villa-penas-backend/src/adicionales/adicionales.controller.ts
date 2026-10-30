@@ -12,6 +12,7 @@ import {
 import { AdicionalesService } from './adicionales.service';
 import { CreateAdicionalDto } from './dto/create-adicional.dto';
 import { UpdateAdicionalDto } from './dto/update-adicional.dto';
+import { Adicional } from './models/adicional.model';
 
 @Controller('adicionales')
 export class AdicionalesController {
@@ -20,9 +21,9 @@ export class AdicionalesController {
   ) {}
 
   @Get()
-  obtenerTodos() {
-    return this.adicionalesService.obtenerTodos();
-  }
+  obtenerTodos(): Promise<Adicional[]> {
+  return this.adicionalesService.obtenerTodos();
+}
 
   @Get(':id')
   obtenerUno(@Param('id', ParseIntPipe) id: number) {

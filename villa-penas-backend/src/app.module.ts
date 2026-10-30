@@ -1,5 +1,7 @@
+import { PrismaModule } from './prisma/prisma.module';
 import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
+
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -12,6 +14,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
   imports: [
+    PrismaModule,
     PaquetesModule,
     AdicionalesModule,
     GaleriaModule,

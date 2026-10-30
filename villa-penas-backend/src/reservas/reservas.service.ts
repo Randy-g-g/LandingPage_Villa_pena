@@ -1,3 +1,4 @@
+
 import {
   BadRequestException,
   ConflictException,
@@ -5,111 +6,48 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
-
+import { PrismaService } from '../prisma/prisma.service';
 import { Reserva } from './models/reserva.model';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 
+// Tipo de resultado de PostgreSQL con sus adicionales
+type ReservaPrisma = {
+  id: number;
+  name: string;
+  fecha: Date;
+  hora: Date;
+  fecha_fin: Date | null;
+  hora_fin: Date | null;
+  cliente: string;
+  cantidad_invitados: number;
+  nombre_paquete: string;
+  precio_paquete: { toString(): string };
+  estado: string;
+  telefono: string | null;
+  email: string | null;
+  mensaje: string | null;
+  reserva_adicionales: {
+    categoria: string;
+    nombre_paquete: string;
+    cantidad: string | null;
+    detalle: string | null;
+    precio: { toString(): string };
+  }[];
+};
+
 @Injectable()
 export class ReservasService {
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  // configuracion del json
-
-  private readonly archivo = join(
-    process.cwd(),
-    'data',
-    'reservas.json',
-  );
-
-  // duración de cada actividad: 8 horas
   private readonly DURACION = 8 * 60;
-
-  // horario de atención: 6:00 AM a 6:00 PM
   private readonly APERTURA = 6 * 60;
   private readonly CIERRE = 18 * 60;
 
-  // evitar operaciones simultáneas sobre el JSON
-  private cola: Promise<void> = Promise.resolve();
-
-  private ejecutarEnOrden<T>(
-    operacion: () => Promise<T>,
-  ): Promise<T> {
-
-    const resultado = this.cola.then(operacion);
-
-    this.cola = resultado.then(
-      () => undefined,
-      () => undefined,
-    );
-
-    return resultado;
-  }
-
-  // leer las reservas
-
-  private async leerReservas(): Promise<Reserva[]> {
-
-    try {
-      const contenido = await fs.readFile(
-        this.archivo,
-        'utf8',
-      );
-
-      const reservas: unknown = JSON.parse(contenido);
-
-      if (!Array.isArray(reservas)) {
-        throw new Error(
-          'El archivo reservas.json debe contener un arreglo',
-        );
-      }
-
-      return reservas as Reserva[];
-
-    } catch (error) {
-
-      if (
-        error instanceof Error &&
-        'code' in error &&
-        error.code === 'ENOENT'
-      ) {
-        return [];
-      }
-
-      throw error;
-    }
-  }
-
-  // guardar las reservas
-
-  private async guardarReservas(
-    reservas: Reserva[],
-  ): Promise<void> {
-
-    await fs.mkdir(
-      join(process.cwd(), 'data'),
-      { recursive: true },
-    );
-
-    const archivoTemporal = `${this.archivo}.tmp`;
-
-    await fs.writeFile(
-      archivoTemporal,
-      JSON.stringify(reservas, null, 2),
-      'utf8',
-    );
-
-    await fs.rename(
-      archivoTemporal,
-      this.archivo,
-    );
-  }
-
-  // horas y minutos totales
-
+  // Convertir HH:mm a minutos
   private convertirAMinutos(hora: string): number {
-
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora)) {
       throw new BadRequestException(
         'La hora debe tener el formato HH:mm',
@@ -117,28 +55,23 @@ export class ReservasService {
     }
 
     const [horas, minutos] = hora.split(':').map(Number);
-
     return horas * 60 + minutos;
   }
 
-  // convertir minutos a hora en formato HH:mm
-
+  // Convertir minutos a HH:mm
   private convertirAHora(minutos: number): string {
-
     const horas = Math.floor(minutos / 60) % 24;
-    const minutosRestantes = minutos % 60;
+    const restantes = minutos % 60;
 
     return (
       String(horas).padStart(2, '0') +
       ':' +
-      String(minutosRestantes).padStart(2, '0')
+      String(restantes).padStart(2, '0')
     );
   }
 
-  // validar fecha 
-
+  // Comprobar fecha real
   private validarFecha(fecha: string): void {
-
     if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
       throw new BadRequestException(
         'La fecha debe tener el formato YYYY-MM-DD',
@@ -162,24 +95,16 @@ export class ReservasService {
     }
   }
 
-  // calcular las 8 horas
-
+  // Horario fijo de ocho horas
   private calcularHorario(
     fecha: string,
     horaInicio: string,
-  ): {
-    endTime: string;
-    endDate: string;
-  } {
-
+  ): { endTime: string; endDate: string } {
     this.validarFecha(fecha);
 
     const inicio = this.convertirAMinutos(horaInicio);
-
-    // sumar automáticamente las 8 horas
     const final = inicio + this.DURACION;
 
-    // validar horario de atención
     if (
       inicio < this.APERTURA ||
       final > this.CIERRE
@@ -195,66 +120,113 @@ export class ReservasService {
     };
   }
 
-  // una por dia
+  // Convertir YYYY-MM-DD a PostgreSQL DATE
+  private convertirFecha(fecha: string): Date {
+    this.validarFecha(fecha);
 
-  private comprobarDisponibilidad(
-    reservas: Reserva[],
-    nuevaReserva: Reserva,
-  ): void {
+    return new Date(`${fecha}T00:00:00.000Z`);
+  }
 
-    // las solicitudes pendientes no bloquean
-    // definitivamente una fecha
-    if (nuevaReserva.status === 'pendiente') {
-      return;
-    }
+  // Convertir HH:mm a PostgreSQL TIME
+  private convertirHora(hora: string): Date {
+    this.convertirAMinutos(hora);
 
-    const conflicto = reservas.some((reserva) => {
+    return new Date(`1970-01-01T${hora}:00.000Z`);
+  }
 
-      // ignorar la misma reserva durante una edición
-      if (reserva.id === nuevaReserva.id) {
-        return false;
-      }
+  // Recuperar fecha sin desfases de zona horaria
+  private formatearFecha(fecha: Date): string {
+    return fecha.toISOString().slice(0, 10);
+  }
 
-      // las fechas diferentes no generan conflicto
-      if (reserva.date !== nuevaReserva.date) {
-        return false;
-      }
+  // Recuperar hora en formato HH:mm
+  private formatearHora(hora: Date): string {
+    return hora.toISOString().slice(11, 16);
+  }
 
-      // una solicitud pendiente no ocupa el día
-      if (reserva.status === 'pendiente') {
-        return false;
-      }
+  // Convertir los datos de Neon al formato del frontend
+  private convertirReserva(
+    reserva: ReservaPrisma,
+  ): Reserva {
+    return {
+      id: reserva.id,
+      name: reserva.name,
+      date: this.formatearFecha(reserva.fecha),
+      time: this.formatearHora(reserva.hora),
 
-      // confirmada o bloqueada ocupa todo el día
-      return (
-        reserva.status === 'confirmada' ||
-        reserva.status === 'bloqueada'
-      );
-    });
+      endDate: this.formatearFecha(
+        reserva.fecha_fin ?? reserva.fecha,
+      ),
 
-    if (conflicto) {
+      endTime: reserva.hora_fin
+        ? this.formatearHora(reserva.hora_fin)
+        : '',
+
+      client: reserva.cliente,
+      guests: reserva.cantidad_invitados,
+      package: reserva.nombre_paquete,
+      packagePrice: Number(reserva.precio_paquete),
+
+      status: reserva.estado as Reserva['status'],
+
+      phone: reserva.telefono ?? undefined,
+      email: reserva.email ?? undefined,
+      message: reserva.mensaje ?? undefined,
+
+      adicionales: reserva.reserva_adicionales.map(
+        adicional => ({
+          categoria: adicional.categoria,
+          paquete: adicional.nombre_paquete,
+          cantidad: adicional.cantidad ?? '',
+          detalle: adicional.detalle ?? '',
+          precio: Number(adicional.precio),
+        }),
+      ),
+    };
+  }
+
+  // Traducir conflictos de PostgreSQL a HTTP 409
+  private manejarError(error: unknown): never {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
       throw new ConflictException(
         'La fecha seleccionada ya tiene una actividad confirmada o se encuentra bloqueada.',
       );
     }
+
+    throw error;
   }
 
-  // GET all reservas
-
+  // GET /reservas
   async findAll(): Promise<Reserva[]> {
+    const reservas = await this.prisma.reservas.findMany({
+      include: {
+        reserva_adicionales: {
+          orderBy: { id: 'asc' },
+        },
+      },
+      orderBy: { id: 'asc' },
+    });
 
-    return this.leerReservas();
+      return reservas.map((reserva: ReservaPrisma) =>
+    this.convertirReserva(reserva),
+  );
   }
 
-  // GET by id reservas
-
+  // GET /reservas/:id
   async findOne(id: number): Promise<Reserva> {
-
-    const reservas = await this.leerReservas();
-
-    const reserva = reservas.find(
-      (item) => item.id === id,
-    );
+    const reserva = await this.prisma.reservas.findUnique({
+      where: { id },
+      include: {
+        reserva_adicionales: {
+          orderBy: { id: 'asc' },
+        },
+      },
+    });
 
     if (!reserva) {
       throw new NotFoundException(
@@ -262,146 +234,258 @@ export class ReservasService {
       );
     }
 
-    return reserva;
+    return this.convertirReserva(reserva);
   }
 
-  // create reservas
+  // POST /reservas
 
-  async create(
-    dto: CreateReservaDto,
-  ): Promise<Reserva> {
+async create(dto: CreateReservaDto): Promise<Reserva> {
+  const horario = this.calcularHorario(
+    dto.date,
+    dto.time,
+  );
 
-    return this.ejecutarEnOrden(async () => {
+  // Buscar el paquete principal en Neon
+  const paquete = await this.prisma.paquetes.findFirst({
+    where: {
+      nombre: dto.package,
+    },
+  });
 
-      const reservas = await this.leerReservas();
+  // Los bloqueos administrativos pueden no tener paquete
+  const esBloqueo = dto.status === 'bloqueada';
 
-      // calcular hora de salida automáticamente
-      const horario = this.calcularHorario(
-        dto.date,
-        dto.time,
-      );
+  if (!paquete && !esBloqueo) {
+    throw new BadRequestException(
+      'El paquete seleccionado no existe.',
+    );
+  }
 
-      // generar ID automáticamente
-      const siguienteId = Math.max(
-        0,
-        ...reservas.map((reserva) => reserva.id),
-      ) + 1;
+  // Precio oficial del paquete principal
+  const precioPaquete = paquete
+    ? Number(paquete.precio)
+    : 0;
 
-      const nuevaReserva: Reserva = {
-    id: siguienteId,
-    name: dto.name,
-    date: dto.date,
-    time: dto.time,
-    endTime: horario.endTime,
-    endDate: horario.endDate,
-    client: dto.client,
-    guests: dto.guests,
-    package: dto.package,
-    packagePrice: dto.packagePrice,
-    status: dto.status,
-
-    // Información adicional del cliente
-    phone: dto.phone,
-    email: dto.email,
-    message: dto.message,
-    adicionales: dto.adicionales ?? [],
-};
-
-      // comprobar disponibilidad
-      this.comprobarDisponibilidad(
-        reservas,
-        nuevaReserva,
-      );
-
-      // agregar al arreglo
-      reservas.push(nuevaReserva);
-
-      // guardar en JSON
-      await this.guardarReservas(reservas);
-
-      return nuevaReserva;
+  // Consultar las categorías y paquetes adicionales
+  const catalogoAdicionales =
+    await this.prisma.adicionales.findMany({
+      include: {
+        paquetes_adicionales: true,
+      },
     });
-  }
 
-  // update reservas
+  // Construir los adicionales con precios oficiales
+  const adicionalesValidados = (dto.adicionales ?? []).map(
+    (adicional) => {
 
-  async update(
-    id: number,
-    dto: UpdateReservaDto,
-  ): Promise<Reserva> {
-
-    return this.ejecutarEnOrden(async () => {
-
-      const reservas = await this.leerReservas();
-
-      const indice = reservas.findIndex(
-        (reserva) => reserva.id === id,
+      const categoria = catalogoAdicionales.find(
+        (item) => item.categoria === adicional.categoria,
       );
 
-      if (indice === -1) {
-        throw new NotFoundException(
-          `No se encontró la reservación con ID ${id}`,
+      if (!categoria) {
+        throw new BadRequestException(
+          `No existe el adicional: ${adicional.categoria}`,
         );
       }
 
-      // copiar datos existentes y aplicar cambios
-      const reservaActualizada: Reserva = {
-        ...reservas[indice],
-        ...dto,
+      const paqueteAdicional =
+        categoria.paquetes_adicionales.find(
+          (item) => item.nombre === adicional.paquete,
+        );
+
+      if (!paqueteAdicional) {
+        throw new BadRequestException(
+          `No existe el paquete adicional: ${adicional.paquete}`,
+        );
+      }
+
+      return {
+        categoria: categoria.categoria,
+        nombre_paquete: paqueteAdicional.nombre,
+        cantidad: paqueteAdicional.cantidad,
+        detalle: paqueteAdicional.detalle,
+
+        // Precio obtenido directamente desde Neon
+        precio: Number(paqueteAdicional.precio),
       };
+    },
+  );
 
-      // recalcular las 8 horas si cambia la entrada
-      const horario = this.calcularHorario(
-        reservaActualizada.date,
-        reservaActualizada.time,
-      );
+  try {
+    const nuevaReserva = await this.prisma.reservas.create({
+      data: {
+        name: dto.name,
+        fecha: this.convertirFecha(dto.date),
+        hora: this.convertirHora(dto.time),
 
-      reservaActualizada.endTime = horario.endTime;
-      reservaActualizada.endDate = horario.endDate;
+        fecha_fin: this.convertirFecha(horario.endDate),
+        hora_fin: this.convertirHora(horario.endTime),
 
-      // evitar confirmar dos actividades el mismo día
-      this.comprobarDisponibilidad(
-        reservas,
-        reservaActualizada,
-      );
+        cliente: dto.client,
+        cantidad_invitados: dto.guests,
 
-      // reemplazar registro en el arreglo
-      reservas[indice] = reservaActualizada;
+        paquete_id: paquete?.id ?? null,
+        nombre_paquete: dto.package,
 
-      // guardar los cambios
-      await this.guardarReservas(reservas);
+        // Precio oficial del paquete
+        precio_paquete: precioPaquete,
 
-      return reservaActualizada;
+        estado: dto.status,
+
+        telefono: dto.phone ?? null,
+        email: dto.email ?? null,
+        mensaje: dto.message ?? null,
+
+        reserva_adicionales: {
+          create: adicionalesValidados,
+        },
+      },
     });
+
+    return this.findOne(nuevaReserva.id);
+
+  } catch (error) {
+    this.manejarError(error);
+  }
+}
+
+  // PATCH /reservas/:id
+
+async update(
+  id: number,
+  dto: UpdateReservaDto,
+): Promise<Reserva> {
+  const actual = await this.findOne(id);
+
+  const fecha = dto.date ?? actual.date;
+  const hora = dto.time ?? actual.time;
+
+  const horario = this.calcularHorario(fecha, hora);
+
+  const nombrePaquete = dto.package ?? actual.package;
+  const estado = dto.status ?? actual.status;
+
+  // Consultar el paquete principal en Neon
+  const paquete = await this.prisma.paquetes.findFirst({
+    where: { nombre: nombrePaquete },
+  });
+
+  const esBloqueo = estado === 'bloqueada';
+
+  if (!paquete && !esBloqueo) {
+    throw new BadRequestException(
+      'El paquete seleccionado no existe.',
+    );
   }
 
-  // delete reservas
+  const precioPaquete = paquete
+    ? Number(paquete.precio)
+    : 0;
 
-  async remove(id: number): Promise<Reserva> {
+  // Solo validar adicionales cuando se envían en la edición
+  let adicionalesValidados;
 
-    return this.ejecutarEnOrden(async () => {
+  if (dto.adicionales !== undefined) {
+    const catalogoAdicionales =
+      await this.prisma.adicionales.findMany({
+        include: {
+          paquetes_adicionales: true,
+        },
+      });
 
-      const reservas = await this.leerReservas();
-
-      const reserva = reservas.find(
-        (item) => item.id === id,
+    adicionalesValidados = dto.adicionales.map((adicional) => {
+      const categoria = catalogoAdicionales.find(
+        (item) => item.categoria === adicional.categoria,
       );
 
-      if (!reserva) {
-        throw new NotFoundException(
-          `No se encontró la reservación con ID ${id}`,
+      if (!categoria) {
+        throw new BadRequestException(
+          `No existe el adicional: ${adicional.categoria}`,
         );
       }
 
-      // eliminar del arreglo
-      const reservasActualizadas = reservas.filter(
-        (item) => item.id !== id,
-      );
+      const paqueteAdicional =
+        categoria.paquetes_adicionales.find(
+          (item) => item.nombre === adicional.paquete,
+        );
 
-      // guardar arreglo actualizado
-      await this.guardarReservas(reservasActualizadas);
+      if (!paqueteAdicional) {
+        throw new BadRequestException(
+          `No existe el paquete adicional: ${adicional.paquete}`,
+        );
+      }
 
-      return reserva;
+      return {
+        categoria: categoria.categoria,
+        nombre_paquete: paqueteAdicional.nombre,
+        cantidad: paqueteAdicional.cantidad,
+        detalle: paqueteAdicional.detalle,
+        precio: Number(paqueteAdicional.precio),
+      };
     });
+  }
+
+  try {
+    await this.prisma.reservas.update({
+      where: { id },
+
+      data: {
+        name: dto.name ?? actual.name,
+        fecha: this.convertirFecha(fecha),
+        hora: this.convertirHora(hora),
+
+        fecha_fin: this.convertirFecha(horario.endDate),
+        hora_fin: this.convertirHora(horario.endTime),
+
+        cliente: dto.client ?? actual.client,
+        cantidad_invitados: dto.guests ?? actual.guests,
+
+        paquete_id: paquete?.id ?? null,
+        nombre_paquete: nombrePaquete,
+        precio_paquete:
+        dto.package !== undefined
+        ? precioPaquete
+        : actual.packagePrice ?? 0,
+
+        estado,
+
+        ...(dto.phone !== undefined && {
+          telefono: dto.phone,
+        }),
+
+        ...(dto.email !== undefined && {
+          email: dto.email,
+        }),
+
+        ...(dto.message !== undefined && {
+          mensaje: dto.message,
+        }),
+
+        ...(adicionalesValidados !== undefined && {
+          reserva_adicionales: {
+            deleteMany: {},
+            create: adicionalesValidados,
+          },
+        }),
+      },
+    });
+
+    return this.findOne(id);
+
+  } catch (error) {
+    this.manejarError(error);
+  }
+}
+
+
+  // DELETE /reservas/:id
+  async remove(id: number): Promise<Reserva> {
+    const reserva = await this.findOne(id);
+
+    await this.prisma.reservas.delete({
+      where: { id },
+    });
+
+    return reserva;
   }
 }

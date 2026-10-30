@@ -12,6 +12,7 @@ import {
 import { PaquetesService } from './paquetes.service';
 import { CreatePaqueteDto } from './dto/create-paquete.dto';
 import { UpdatePaqueteDto } from './dto/update-paquete.dto';
+import { Paquete } from './models/paquete.model';
 
 @Controller('paquetes')
 export class PaquetesController {
@@ -21,9 +22,9 @@ export class PaquetesController {
   ) {}
 
   @Get()
-  obtenerTodos() {
-    return this.paquetesService.obtenerTodos();
-  }
+  obtenerTodos(): Promise<Paquete[]> {
+  return this.paquetesService.obtenerTodos();
+}
 
   @Get(':id')
   obtenerUno(

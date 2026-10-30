@@ -1,110 +1,193 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
 
-import { Paquete } from './models/paquete.model';
-import { CreatePaqueteDto } from './dto/create-paquete.dto';
-import { UpdatePaqueteDto } from './dto/update-paquete.dto';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { PrismaService } from '../prisma/prisma.service';
+
+
+import {
+  Paquete,
+} from './models/paquete.model';
+
+import {
+  CreatePaqueteDto,
+} from './dto/create-paquete.dto';
+
+import {
+  UpdatePaqueteDto,
+} from './dto/update-paquete.dto';
+
+type PaquetePrisma = {
+  id: number;
+  nombre: string;
+  descripcion: string | null;
+  precio: { toString(): string };
+  activo: boolean;
+
+  servicios_paquete: {
+    nombre: string;
+  }[];
+
+  detalles_paquete: {
+    nombre: string;
+    descripcion: string | null;
+  }[];
+};
 
 @Injectable()
 export class PaquetesService {
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  private readonly rutaArchivo = join(
-    process.cwd(),
-    'data',
-    'paquetes.json'
-  );
-
-  constructor() {
-    if (!existsSync(this.rutaArchivo)) {
-      writeFileSync(this.rutaArchivo, '[]', 'utf8');
-    }
+  // Convertir el resultado de PostgreSQL al formato del frontend
+  private convertirPaquete(paquete: PaquetePrisma): Paquete {
+    return {
+      id: paquete.id,
+      nombre: paquete.nombre,
+      descripcion: paquete.descripcion ?? '',
+      precio: Number(paquete.precio),
+      activo: paquete.activo,
+      servicios: paquete.servicios_paquete.map(
+        (servicio: { nombre: string }) => servicio.nombre,
+      ),
+      detalles: paquete.detalles_paquete.map(
+        (detalle: {
+          nombre: string;
+          descripcion: string | null;
+        }) => ({
+          nombre: detalle.nombre,
+          descripcion: detalle.descripcion ?? '',
+        }),
+      ),
+    };
   }
 
-  private leerPaquetes(): Paquete[] {
-    const contenido = readFileSync(this.rutaArchivo, 'utf8');
-    return JSON.parse(contenido) as Paquete[];
+  // Obtener todos los paquetes
+  async obtenerTodos(): Promise<Paquete[]> {
+    const paquetes = await this.prisma.paquetes.findMany({
+      include: {
+        servicios_paquete: {
+          orderBy: { id: 'asc' },
+        },
+        detalles_paquete: {
+          orderBy: { id: 'asc' },
+        },
+      },
+      orderBy: { id: 'asc' },
+    });
+
+    return paquetes.map(
+  (paquete: PaquetePrisma) =>
+    this.convertirPaquete(paquete),
+);
   }
 
-  private guardarPaquetes(paquetes: Paquete[]): void {
-    writeFileSync(
-      this.rutaArchivo,
-      JSON.stringify(paquetes, null, 2),
-      'utf8'
-    );
-  }
-
-  obtenerTodos(): Paquete[] {
-    return this.leerPaquetes();
-  }
-
-  obtenerUno(id: number): Paquete {
-    const paquetes = this.leerPaquetes();
-    const paquete = paquetes.find(p => p.id === id);
+  // Obtener un paquete por ID
+  async obtenerUno(id: number): Promise<Paquete> {
+    const paquete = await this.prisma.paquetes.findUnique({
+      where: { id },
+      include: {
+        servicios_paquete: {
+          orderBy: { id: 'asc' },
+        },
+        detalles_paquete: {
+          orderBy: { id: 'asc' },
+        },
+      },
+    });
 
     if (!paquete) {
       throw new NotFoundException(
-        `No se encontró el paquete con ID ${id}`
+        `No se encontró el paquete con ID ${id}`,
       );
     }
+
+    return this.convertirPaquete(paquete);
+  }
+
+  // Crear un paquete
+  async crear(dto: CreatePaqueteDto): Promise<Paquete> {
+    const paquete = await this.prisma.paquetes.create({
+      data: {
+        nombre: dto.nombre,
+        descripcion: dto.descripcion,
+        precio: dto.precio,
+        activo: dto.activo,
+        servicios_paquete: {
+          create: dto.servicios.map(nombre => ({
+            nombre,
+          })),
+        },
+        detalles_paquete: {
+          create: dto.detalles.map(detalle => ({
+            nombre: detalle.nombre,
+            descripcion: detalle.descripcion,
+          })),
+        },
+      },
+    });
+
+    return this.obtenerUno(paquete.id);
+  }
+
+  // Actualizar un paquete
+  async actualizar(
+    id: number,
+    dto: UpdatePaqueteDto,
+  ): Promise<Paquete> {
+    await this.obtenerUno(id);
+
+    await this.prisma.paquetes.update({
+      where: { id },
+      data: {
+        ...(dto.nombre !== undefined && {
+          nombre: dto.nombre,
+        }),
+        ...(dto.descripcion !== undefined && {
+          descripcion: dto.descripcion,
+        }),
+        ...(dto.precio !== undefined && {
+          precio: dto.precio,
+        }),
+        ...(dto.activo !== undefined && {
+          activo: dto.activo,
+        }),
+
+        ...(dto.servicios !== undefined && {
+          servicios_paquete: {
+            deleteMany: {},
+            create: dto.servicios.map(nombre => ({
+              nombre,
+            })),
+          },
+        }),
+
+        ...(dto.detalles !== undefined && {
+          detalles_paquete: {
+            deleteMany: {},
+            create: dto.detalles.map(detalle => ({
+              nombre: detalle.nombre,
+              descripcion: detalle.descripcion,
+            })),
+          },
+        }),
+      },
+    });
+
+    return this.obtenerUno(id);
+  }
+
+  // Eliminar un paquete
+  async eliminar(id: number): Promise<Paquete> {
+    const paquete = await this.obtenerUno(id);
+
+    await this.prisma.paquetes.delete({
+      where: { id },
+    });
 
     return paquete;
-  }
-
-  crear(dto: CreatePaqueteDto): Paquete {
-    const paquetes = this.leerPaquetes();
-
-    const nuevoId = paquetes.length === 0
-      ? 1
-      : Math.max(...paquetes.map(p => p.id)) + 1;
-
-    const nuevoPaquete: Paquete = {
-      id: nuevoId,
-      ...dto
-    };
-
-    paquetes.push(nuevoPaquete);
-    this.guardarPaquetes(paquetes);
-
-    return nuevoPaquete;
-  }
-
-  actualizar(id: number, dto: UpdatePaqueteDto): Paquete {
-    const paquetes = this.leerPaquetes();
-    const indice = paquetes.findIndex(p => p.id === id);
-
-    if (indice === -1) {
-      throw new NotFoundException(
-        `No se encontró el paquete con ID ${id}`
-      );
-    }
-
-    paquetes[indice] = {
-      ...paquetes[indice],
-      ...dto,
-      id
-    };
-
-    this.guardarPaquetes(paquetes);
-
-    return paquetes[indice];
-  }
-
-  eliminar(id: number): Paquete {
-    const paquetes = this.leerPaquetes();
-    const indice = paquetes.findIndex(p => p.id === id);
-
-    if (indice === -1) {
-      throw new NotFoundException(
-        `No se encontró el paquete con ID ${id}`
-      );
-    }
-
-    const eliminado = paquetes[indice];
-
-    paquetes.splice(indice, 1);
-    this.guardarPaquetes(paquetes);
-
-    return eliminado;
   }
 }
