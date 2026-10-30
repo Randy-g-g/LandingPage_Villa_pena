@@ -96,29 +96,47 @@ export class ReservasService {
   }
 
   // Horario fijo de ocho horas
-  private calcularHorario(
-    fecha: string,
-    horaInicio: string,
-  ): { endTime: string; endDate: string } {
-    this.validarFecha(fecha);
 
-    const inicio = this.convertirAMinutos(horaInicio);
-    const final = inicio + this.DURACION;
+private calcularHorario(
+  fecha: string,
+  horaInicio: string,
+  horarioLibre = false,
+): { endTime: string; endDate: string } {
+  this.validarFecha(fecha);
 
-    if (
-      inicio < this.APERTURA ||
-      final > this.CIERRE
-    ) {
-      throw new BadRequestException(
-        'La actividad debe realizarse entre las 6:00 AM y las 6:00 PM, con una duración de 8 horas.',
-      );
-    }
+  const inicio = this.convertirAMinutos(horaInicio);
+  const final = inicio + this.DURACION;
 
-    return {
-      endTime: this.convertirAHora(final),
-      endDate: fecha,
-    };
+  // Mantener las restricciones para clientes del landing
+  if (
+    !horarioLibre &&
+    (inicio < this.APERTURA || final > this.CIERRE)
+  ) {
+    throw new BadRequestException(
+      'La actividad debe realizarse entre las 6:00 AM y las 6:00 PM, con una duración de 8 horas.',
+    );
   }
+
+  // Calcular la hora de salida, incluso después de medianoche
+  const minutosDia = 24 * 60;
+  const diasAdicionales = Math.floor(final / minutosDia);
+
+  const endTime = this.convertirAHora(final % minutosDia);
+
+  // Calcular la fecha final
+  const fechaFinal = new Date(`${fecha}T00:00:00.000Z`);
+  fechaFinal.setUTCDate(
+    fechaFinal.getUTCDate() + diasAdicionales
+  );
+
+  const endDate = fechaFinal.toISOString().slice(0, 10);
+
+  return {
+    endTime,
+    endDate,
+  };
+}
+
 
   // Convertir YYYY-MM-DD a PostgreSQL DATE
   private convertirFecha(fecha: string): Date {
@@ -239,10 +257,11 @@ export class ReservasService {
 
   // POST /reservas
 
-async create(dto: CreateReservaDto): Promise<Reserva> {
+  async create(dto: CreateReservaDto, horarioLibre = false,): Promise<Reserva> {
   const horario = this.calcularHorario(
     dto.date,
     dto.time,
+    horarioLibre,
   );
 
   // Buscar el paquete principal en Neon
@@ -360,7 +379,7 @@ async update(
   const fecha = dto.date ?? actual.date;
   const hora = dto.time ?? actual.time;
 
-  const horario = this.calcularHorario(fecha, hora);
+const horario = this.calcularHorario(fecha, hora, true);
 
   const nombrePaquete = dto.package ?? actual.package;
   const estado = dto.status ?? actual.status;

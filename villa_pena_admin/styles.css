@@ -1823,3 +1823,28 @@ textarea {
 select {
     cursor: pointer;
 }
+
+/*boton agregar y quitar*/
+
+.adicional-reserva-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.adicional-reserva-item select {
+    flex: 1;
+    min-width: 0;
+}
+
+.adicional-reserva-item .btn-quitar-adicional {
+    flex: 0 0 auto;
+    padding: 12px 18px;
+    min-width: 110px;
+    white-space: nowrap;
+}
+
+#btnAgregarAdicionalReserva {
+    margin-top: 8px;
+}

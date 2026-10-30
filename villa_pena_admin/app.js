@@ -5,6 +5,12 @@
 // base de la API de NestJS
 
 const API_BASE = "http://localhost:3000";
+function apiFetch(url, options = {}) {
+    return window.fetch(url, {
+        ...options,
+        credentials: "include"
+    });
+}
 
 let packageItems = [];
 
@@ -128,9 +134,9 @@ async function actualizarContadoresResenas() {
             respuestaPublicadas,
             respuestaRechazadas
         ] = await Promise.all([
-            fetch(`${API_BASE}/resenas/pendientes`, opciones),
-            fetch(`${API_BASE}/resenas`, opciones),
-            fetch(`${API_BASE}/resenas/rechazadas`, opciones)
+            apiFetch(`${API_BASE}/resenas/pendientes`, opciones),
+            apiFetch(`${API_BASE}/resenas`, opciones),
+            apiFetch(`${API_BASE}/resenas/rechazadas`, opciones)
         ]);
 
         if (
@@ -266,7 +272,7 @@ async function cargarReservas() {
 
     try {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/reservas`
         );
 
@@ -587,9 +593,7 @@ function mostrarResumenCotizacion(ev) {
         ? Number(ev.packagePrice)
         : Number(paqueteActual?.price || 0);
 
-    const adicionales = Array.isArray(ev?.adicionales)
-        ? ev.adicionales
-        : [];
+    const adicionales = obtenerAdicionalesReservaSeleccionados();
 
     const totalAdicionales = adicionales.reduce(
         (total, adicional) => total + Number(adicional.precio || 0),
@@ -646,6 +650,114 @@ function mostrarResumenCotizacion(ev) {
         money(precioPrincipal + totalAdicionales);
 }
 
+// obtener los adicionales seleccionados en el formulario de reservación
+function obtenerAdicionalesReservaSeleccionados() {
+    return [...document.querySelectorAll(
+        "#eventAdicionalesContainer .event-adicional-select"
+    )]
+        .filter(select => select.value !== "")
+        .map(select => {
+            const opcion = select._opciones[Number(select.value)];
+
+            return {
+                categoria: opcion.categoria,
+                paquete: opcion.nombre,
+                cantidad: opcion.cantidad,
+                detalle: opcion.detalle,
+                precio: opcion.precio
+            };
+        });
+}
+
+// actualizar automáticamente el adicional por personas según la cantidad de invitados
+function actualizarAdicionalPersonasReserva() {
+    const invitados = Number($("#eventGuests").value);
+    const contenedor = $("#eventAdicionalesContainer");
+
+    if (!contenedor) return;
+
+    const filas = [...contenedor.querySelectorAll(
+        ".adicional-reserva-item"
+    )];
+
+    const esAdicionalPersonas = selector => {
+        const opcion = selector._opciones?.[Number(selector.value)];
+
+        return opcion?.categoria === "Adicional por personas";
+    };
+
+    // Buscar el adicional de personas ya seleccionado
+    let filaPersonas = filas.find(fila => {
+        const selector = fila.querySelector(
+            ".event-adicional-select"
+        );
+
+        return selector && esAdicionalPersonas(selector);
+    });
+
+    // Si hay 30 personas o menos, quitar el cargo automático
+    if (invitados <= 30) {
+        if (filaPersonas?.dataset.automatico === "true") {
+            filaPersonas.remove();
+        }
+
+        mostrarResumenCotizacion();
+        return;
+    }
+
+    if (invitados > 50) {
+        mostrarResumenCotizacion();
+        return;
+    }
+
+    // Evitar duplicar el adicional
+    if (!filaPersonas) {
+        agregarAdicionalReserva();
+
+        filaPersonas = contenedor.lastElementChild;
+
+        const selector = filaPersonas.querySelector(
+            ".event-adicional-select"
+        );
+
+        const indice = selector._opciones.findIndex(
+            opcion =>
+                opcion.categoria === "Adicional por personas" &&
+                opcion.cantidad === "20 personas adicionales"
+        );
+
+        if (indice === -1) {
+            filaPersonas.remove();
+            console.warn(
+                "No se encontró el adicional por personas."
+            );
+            return;
+        }
+
+        selector.value = String(indice);
+        filaPersonas.dataset.automatico = "true";
+    }
+
+    // No permitir quitar accidentalmente el cargo automático
+    if (filaPersonas.dataset.automatico === "true") {
+        const botonQuitar = filaPersonas.querySelector(
+            ".btn-quitar-adicional"
+        );
+
+        if (botonQuitar) {
+            botonQuitar.disabled = true;
+            botonQuitar.textContent = "Automático";
+        }
+    }
+
+    mostrarResumenCotizacion();
+}
+
+// validar la cantidad de invitados y actualizar el adicional por personas
+$("#eventGuests").addEventListener("input", () => {
+    actualizarAdicionalPersonasReserva();
+});
+
 // abrir formulario de reservación o bloqueo
 
 function openEventDialog(id = null, date = null, blocked = false) {
@@ -655,6 +767,10 @@ function openEventDialog(id = null, date = null, blocked = false) {
     $("#btnEliminarReserva").hidden = !ev;
 
     $("#eventForm").reset();
+    $("#eventAdicionalesContainer").innerHTML = "";
+    (ev?.adicionales || []).forEach(adicional => {
+    agregarAdicionalReserva(adicional);
+});
 
     $("#eventId").value = ev?.id || "";
 
@@ -695,7 +811,7 @@ if (mensaje) {
 
     // enlace de contacto por WhatsApp
     const enlaceWhatsApp = $("#eventWhatsApp");
-    const telefono = String(event?.phone || "").replace(/\D/g, "");
+    const telefono = String(ev?.phone || "").replace(/\D/g, "");
 
     if (telefono.length >= 8 && telefono.length <= 15) {
         const numeroWhatsApp = telefono.length === 8
@@ -716,7 +832,7 @@ if (mensaje) {
 
     fillPackageOptions(ev?.package);
 
-    mostrarResumenCotizacion(ev);
+    actualizarAdicionalPersonasReserva();
 
     eventDialog.showModal();
 }
@@ -813,31 +929,14 @@ $("#eventForm").addEventListener("submit", async event => {
         packagePrice: precioPaquete,
         status: $("#eventStatus").value,
 
-        // Conservar los datos de contacto
-        phone: reservaOriginal?.phone || "",
-        email: reservaOriginal?.email || undefined,
-        message: reservaOriginal?.message || "",
+        // Obtener los datos actuales del formulario
+        phone: $("#eventPhone").value.trim(),
+        email: $("#eventEmail").value.trim(),
+        message: $("#eventMessage").value.trim(),
 
         // Conservar los adicionales originales
-        adicionales: reservaOriginal?.adicionales || []
+        adicionales: obtenerAdicionalesReservaSeleccionados()
     };
-
-
-    // validar horario antes de enviarlo
-    const [horas, minutos] = reserva.time.split(":").map(Number);
-    const inicio = horas * 60 + minutos;
-    const final = inicio + 8 * 60;
-
-    if (
-        !Number.isFinite(inicio) ||
-        inicio < 6 * 60 ||
-        final > 18 * 60
-    ) {
-        mostrarMensajeEvento(
-        "Horario no permitido. La entrada debe ser entre las 6:00 a. m. y las 10:00 a. m. para completar las 8 horas."
-    );
-        return;
-    }
 
     // crear o actualizar según exista un ID
     const esEdicion = Boolean(id);
@@ -853,7 +952,7 @@ $("#eventForm").addEventListener("submit", async event => {
 
     try {
 
-        const respuesta = await fetch(url, {
+        const respuesta = await apiFetch(url, {
             method: metodo,
             headers: {
                 "Content-Type": "application/json"
@@ -937,7 +1036,7 @@ $("#btnEliminarReserva").addEventListener("click", async () => {
 
     try {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/reservas/${encodeURIComponent(id)}`,
             {
                 method: "DELETE"
@@ -1140,7 +1239,7 @@ $("#eliminarReservasSeleccionadas").addEventListener("click", async () => {
 
     for (const id of ids) {
         try {
-            const respuesta = await fetch(
+            const respuesta = await apiFetch(
                 `${API_BASE}/reservas/${encodeURIComponent(id)}`,
                 { method: "DELETE" }
             );
@@ -1293,7 +1392,7 @@ async function obtenerPaquetes() {
 
     try {
 
-        const respuesta = await fetch(`${API_BASE}/paquetes`);
+        const respuesta = await apiFetch(`${API_BASE}/paquetes`);
 
         if (!respuesta.ok) {
             throw new Error("No se pudieron consultar los paquetes.");
@@ -1519,7 +1618,7 @@ $("#packageForm").addEventListener("submit", async event => {
   }
 
   try {
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
       esNuevo
         ? `${API_BASE}/paquetes`
         : `${API_BASE}/paquetes/${idActual}`,
@@ -1572,7 +1671,7 @@ async function deletePackage(id) {
 
     try {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/paquetes/${id}`,
             {
                 method: "DELETE"
@@ -1618,7 +1717,7 @@ async function obtenerAdicionales() {
 
     try {
 
-        const respuesta = await fetch(`${API_BASE}/adicionales`);
+        const respuesta = await apiFetch(`${API_BASE}/adicionales`);
 
         if (!respuesta.ok) {
             throw new Error("No se pudieron consultar los adicionales.");
@@ -1909,6 +2008,87 @@ function abrirFormularioAdicional(id = null) {
 
 }
 
+//agregar un adicional a la reservación desde el formulario de reservación
+function agregarAdicionalReserva(adicionalSeleccionado = null) {
+    const contenedor = $("#eventAdicionalesContainer");
+
+    if (!contenedor) return;
+
+    const fila = document.createElement("div");
+    fila.className = "adicional-reserva-item";
+
+    const opciones = additionalItems.flatMap(categoria =>
+        categoria.paquetes.map(paquete => ({
+            categoria: categoria.categoria,
+            nombre: paquete.nombre,
+            cantidad: paquete.cantidad,
+            detalle: paquete.detalle,
+            precio: Number(paquete.precio)
+        }))
+    );
+
+    fila.innerHTML = `
+        <select class="event-adicional-select">
+            <option value="">Seleccionar adicional</option>
+            ${opciones.map((opcion, indice) => `
+                <option value="${indice}">
+                    ${escapeHTML(opcion.categoria)} -
+                    ${escapeHTML(opcion.nombre)} -
+                    ₡${opcion.precio.toLocaleString("es-CR")}
+                </option>
+            `).join("")}
+        </select>
+
+        <button
+            type="button"
+            class="btn btn-outline btn-quitar-adicional">
+            Quitar
+        </button>
+    `;
+
+    const selector = fila.querySelector(".event-adicional-select");
+
+    // Mantener los datos del catálogo asociados al selector
+    selector._opciones = opciones;
+
+    if (adicionalSeleccionado) {
+        const indice = opciones.findIndex(opcion =>
+            opcion.categoria === adicionalSeleccionado.categoria &&
+            opcion.nombre === adicionalSeleccionado.paquete
+        );
+
+        if (indice !== -1) {
+            selector.value = String(indice);
+        }
+    }
+
+    fila.querySelector(".btn-quitar-adicional")
+        .addEventListener("click", () => {
+            fila.remove();
+        });
+
+    selector.addEventListener("change", () => {
+    mostrarResumenCotizacion();
+});
+
+    fila.querySelector(".btn-quitar-adicional")
+        .addEventListener("click", () => {
+            fila.remove();
+        mostrarResumenCotizacion();
+    });
+
+contenedor.appendChild(fila);
+}
+
+$("#btnAgregarAdicionalReserva").addEventListener("click", () => {
+    agregarAdicionalReserva();
+    mostrarResumenCotizacion();
+});
+
+// actualizar el resumen de la cotización cuando se cambia el paquete
+$("#eventPackage").addEventListener("change", () => {
+    mostrarResumenCotizacion();
+});
 
 // botón para crear un nuevo adicional
 $("#btnNuevoAdicional").addEventListener("click", () => {
@@ -1983,7 +2163,7 @@ $("#adicionalForm").addEventListener("submit", async event => {
 
     try {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
 
             esNuevo
                 ? `${API_BASE}/adicionales`
@@ -2059,7 +2239,7 @@ async function eliminarAdicional(id) {
 
     try {
 
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/adicionales/${id}`,
             {
                 method: "DELETE"
@@ -2107,7 +2287,7 @@ async function renderReviews() {
     }
 
     try {
-        const respuesta = await fetch(endpoint, {
+        const respuesta = await apiFetch(endpoint, {
     credentials: "include"
 });
 
@@ -2192,6 +2372,11 @@ async function renderReviews() {
                             Volver a publicar
                         </button>
                     ` : ""}
+                        <button
+                            class="btn-small btn-delete"
+                            data-delete-review="${r.id}">
+                            Eliminar
+                        </button>
                 </div>
             </article>
         `).join("") || `
@@ -2246,6 +2431,37 @@ async function renderReviews() {
     });
             // Eliminar reseña definitivamente
         
+lista.querySelectorAll("[data-delete-review]")
+    .forEach(boton => {
+        boton.addEventListener("click", async () => {
+            const id = Number(boton.dataset.deleteReview);
+
+            const confirmado = await confirmarEliminacion(
+                "¿Eliminar reseña definitivamente?",
+                "Esta acción eliminará la reseña de forma permanente y no se podrá recuperar."
+            );
+
+            if (!confirmado) return;
+
+            try {
+                const respuesta = await apiFetch(
+                    `${API_BASE}/resenas/${id}`,
+                    { method: "DELETE" }
+                );
+
+                if (!respuesta.ok) {
+                    throw new Error("No se pudo eliminar la reseña.");
+                }
+
+                await renderReviews();
+
+            } catch (error) {
+                console.error("Error al eliminar reseña:", error);
+                alert("No se pudo eliminar la reseña.");
+            }
+        });
+    });
+
     } catch (error) {
         console.error("Error al cargar las reseñas:", error);
 
@@ -2272,7 +2488,7 @@ async function setReviewStatus(id, status) {
     if (!estadoAPI) return;
 
     try {
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/resenas/${id}/estado`,
             {
                 method: "PATCH",
@@ -2378,7 +2594,7 @@ async function renderGallery() {
 
     try {
         // Obtener fotografías desde NestJS
-        const respuesta = await fetch(`${API_BASE}/galeria`);
+        const respuesta = await apiFetch(`${API_BASE}/galeria`);
 
         if (!respuesta.ok) {
             throw new Error("No se pudieron consultar las fotografías");
@@ -2617,7 +2833,7 @@ photoForm.addEventListener("submit", async function (event) {
 
     try {
         // Enviar fotografía al backend
-        const respuesta = await fetch(`${API_BASE}/galeria`, {
+        const respuesta = await apiFetch(`${API_BASE}/galeria`, {
             method: "POST",
             body: formData
         });
@@ -2693,7 +2909,7 @@ const cancelarEditarFoto =
 
 // Obtener una fotografía desde la API
 async function obtenerFotoAdmin(id) {
-  const respuesta = await fetch(
+  const respuesta = await apiFetch(
     `${API_FOTOS_ADMIN}/galeria`
   );
 
@@ -2794,7 +3010,7 @@ formEditarFoto.addEventListener("submit", async (e) => {
   guardarEditarFoto.textContent = "Guardando...";
 
   try {
-    const respuesta = await fetch(
+    const respuesta = await apiFetch(
       `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(fotoEnEdicion.id)}`,
       {
         method: "PATCH",
@@ -2852,7 +3068,7 @@ async function eliminarFotoAdmin(id) {
     if (!confirmado) return;
 
     try {
-        const respuesta = await fetch(
+        const respuesta = await apiFetch(
             `${API_BASE}/galeria/${encodeURIComponent(id)}`,
             {
                 method: "DELETE",
