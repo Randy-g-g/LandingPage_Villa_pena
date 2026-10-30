@@ -8,12 +8,14 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards
 } from '@nestjs/common';
 
 import { ResenasService } from './resenas.service';
 import { CreateResenaDto } from './dto/create-resena.dto';
 import { UpdateResenaDto } from './dto/update-resena.dto';
 import type { Resena } from './models/resena.model';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('resenas')
 export class ResenasController {
@@ -22,17 +24,21 @@ export class ResenasController {
   ) {}
 
   // Obtener reseñas publicadas
+
+  
   @Get()
   obtenerPublicadas(): Promise<Resena[]> {
     return this.resenasService.obtenerPublicadas();
   }
 
+  @UseGuards(AuthGuard)
   // Obtener reseñas pendientes
   @Get('pendientes')
   obtenerPendientes(): Promise<Resena[]> {
     return this.resenasService.obtenerPendientes();
   }
 
+  @UseGuards(AuthGuard)
   // Obtener reseñas rechazadas
   @Get('rechazadas')
   obtenerRechazadas(): Promise<Resena[]> {
@@ -56,6 +62,7 @@ export class ResenasController {
   }
 
   // Aprobar o rechazar reseña
+  @UseGuards(AuthGuard)
   @Patch(':id/estado')
   actualizarEstado(
     @Param('id', ParseIntPipe) id: number,
@@ -65,6 +72,7 @@ export class ResenasController {
   }
 
   // Eliminar reseña definitivamente
+  @UseGuards(AuthGuard)
   @Delete(':id')
   eliminar(
     @Param('id', ParseIntPipe) id: number,
