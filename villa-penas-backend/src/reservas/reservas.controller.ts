@@ -38,8 +38,8 @@ export class ReservasController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() dto: CreateReservaDto) {
-    return this.reservasService.create(dto);
-  }
+  return this.reservasService.create(dto, true);
+}
   
   @UseGuards(AuthGuard)
   @Patch(':id')

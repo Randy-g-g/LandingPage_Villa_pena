@@ -682,7 +682,6 @@
             type="tel"
             id="eventPhone"
             placeholder="Sin teléfono registrado"
-            readonly
         >
     </label>
 </div>
@@ -695,7 +694,6 @@
             type="email"
             id="eventEmail"
             placeholder="Sin correo registrado"
-            readonly
         >
     </label>
 </div>
@@ -708,7 +706,6 @@
             id="eventMessage"
             rows="3"
             placeholder="Sin observaciones"
-            readonly
         ></textarea>
     </label>
 </div>
@@ -724,7 +721,7 @@
     Contactar por WhatsApp
 </a>
         <label>Personas
-          <input id="eventGuests" type="number" min="1" max="1000" value="30" required>
+          <input id="eventGuests" type="number" min="1" max="1000" value="50" required>
         </label>
       </div>
       <div class="form-row">
@@ -746,6 +743,19 @@
     hidden>
 </div>
 
+<!-- Selección de adicionales de la reservación -->
+<div class="form-group">
+    <label>Paquetes adicionales</label>
+
+    <div id="eventAdicionalesContainer"></div>
+
+    <button
+        type="button"
+        class="btn btn-outline"
+        id="btnAgregarAdicionalReserva">
+        ＋ Agregar adicional
+    </button>
+</div>
 
 <!-- Resumen de la cotización -->
 <div class="resumen-cotizacion">
