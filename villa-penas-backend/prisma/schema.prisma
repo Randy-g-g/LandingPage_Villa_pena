@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model adicionales {
+  id                   Int                    @id @default(autoincrement())
+  categoria            String                 @db.VarChar(120)
+  descripcion          String?
+  paquetes_adicionales paquetes_adicionales[]
+}
+
+model detalles_paquete {
+  id          Int      @id @default(autoincrement())
+  paquete_id  Int
+  nombre      String   @db.VarChar(150)
+  descripcion String?
+  paquetes    paquetes @relation(fields: [paquete_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([paquete_id], map: "idx_detalles_paquete_paquete")
+}
+
+model galeria {
+  id          String  @id @db.Uuid
+  src         String
+  descripcion String?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model paquetes {
+  id                Int                 @id @default(autoincrement())
+  activo            Boolean             @default(true)
+  nombre            String              @db.VarChar(150)
+  descripcion       String?
+  precio            Decimal             @db.Decimal(12, 2)
+  detalles_paquete  detalles_paquete[]
+  reservas          reservas[]
+  servicios_paquete servicios_paquete[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model paquetes_adicionales {
+  id           Int         @id @default(autoincrement())
+  adicional_id Int
+  nombre       String      @db.VarChar(100)
+  cantidad     String?     @db.VarChar(150)
+  detalle      String?
+  precio       Decimal     @db.Decimal(12, 2)
+  id_local     Int
+  adicionales  adicionales @relation(fields: [adicional_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([adicional_id, id_local], map: "uq_paquete_adicional_id_local")
+  @@index([adicional_id], map: "idx_paquetes_adicionales_adicional")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model resenas {
+  id             Int      @id @default(autoincrement())
+  usuario        String   @db.VarChar(150)
+  comentario     String
+  calificacion   Int
+  estado         String   @default("PENDIENTE") @db.VarChar(20)
+  fecha_creacion DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([estado], map: "idx_resenas_estado")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reserva_adicionales {
+  id             Int      @id @default(autoincrement())
+  reserva_id     Int
+  categoria      String   @db.VarChar(120)
+  nombre_paquete String   @db.VarChar(100)
+  cantidad       String?  @db.VarChar(150)
+  detalle        String?
+  precio         Decimal  @db.Decimal(12, 2)
+  reservas       reservas @relation(fields: [reserva_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([reserva_id], map: "idx_reserva_adicionales_reserva")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reservas {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(200)
+  fecha               DateTime              @db.Date
+  hora                DateTime              @db.Time(6)
+  hora_fin            DateTime?             @db.Time(6)
+  fecha_fin           DateTime?             @db.Date
+  cliente             String                @db.VarChar(200)
+  cantidad_invitados  Int
+  paquete_id          Int?
+  nombre_paquete      String                @db.VarChar(150)
+  precio_paquete      Decimal               @db.Decimal(12, 2)
+  estado              String                @default("pendiente") @db.VarChar(30)
+  telefono            String?               @db.VarChar(30)
+  email               String?               @db.VarChar(254)
+  mensaje             String?
+  reserva_adicionales reserva_adicionales[]
+  paquetes            paquetes?             @relation(fields: [paquete_id], references: [id], onUpdate: NoAction)
+
+  @@index([estado], map: "idx_reservas_estado")
+  @@index([fecha], map: "idx_reservas_fecha")
+}
+
+model servicios_paquete {
+  id         Int      @id @default(autoincrement())
+  paquete_id Int
+  nombre     String   @db.VarChar(150)
+  paquetes   paquetes @relation(fields: [paquete_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([paquete_id], map: "idx_servicios_paquete_paquete")
+}

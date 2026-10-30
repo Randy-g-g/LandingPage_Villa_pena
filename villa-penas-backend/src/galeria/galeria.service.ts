@@ -10,96 +10,97 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 
+import { PrismaService } from '../prisma/prisma.service';
+
 import type { Express } from 'express';
 import type { Foto } from './models/foto.model';
 
 @Injectable()
 export class GaleriaService {
-  // carpeta donde se almacenan las imágenes WebP
-private readonly carpeta = join(
-  process.cwd(),
-  'uploads',
-  'galeria',
-);
 
-// carpeta donde se guardan los datos JSON
-private readonly carpetaDatos = join(
-  process.cwd(),
-  'data',
-);
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-// archivo que contiene la información de las fotografías
-private readonly archivoDatos = join(
-  this.carpetaDatos,
-  'galeria.json',
-);
+  // Carpeta donde se almacenan las imágenes WebP
+  private readonly carpeta = join(
+    process.cwd(),
+    'uploads',
+    'galeria',
+  );
 
-  // Leer fotografías
-private async leerFotos(): Promise<Foto[]> {
+  // Convertir registro de Neon al formato del frontend
+  private convertirFoto(foto: {
+    id: string;
+    src: string;
+    descripcion: string | null;
+  }): Foto {
+    return {
+      id: foto.id,
+      src: foto.src,
+      descripcion: foto.descripcion ?? '',
+    };
+  }
 
-  await fs.mkdir(this.carpetaDatos, {
-    recursive: true,
-  });
+  // Eliminar únicamente archivos administrados por la galería
+  private async eliminarArchivo(src: string): Promise<void> {
+    const patron = /^\/uploads\/galeria\/([0-9a-f-]{36})\.webp$/i;
+    const coincidencia = src.match(patron);
 
-  try {
-    const contenido = await fs.readFile(
-      this.archivoDatos,
-      'utf8',
-    );
-
-    return JSON.parse(contenido) as Foto[];
-
-  } catch (error) {
-
-    if (
-      (error as NodeJS.ErrnoException).code === 'ENOENT'
-    ) {
-      return [];
+    if (!coincidencia) {
+      return;
     }
 
-    throw error;
+    const nombre = `${coincidencia[1]}.webp`;
+
+    await fs.rm(
+      join(this.carpeta, nombre),
+      { force: true },
+    );
   }
-}
 
-  // Guardar información
-private async guardarFotos(
-  fotos: Foto[],
-): Promise<void> {
-
-  await fs.mkdir(this.carpetaDatos, {
-    recursive: true,
-  });
-
-  await fs.writeFile(
-    this.archivoDatos,
-    JSON.stringify(fotos, null, 2),
-    'utf8',
-  );
-}
-
-  // Obtener todas las fotografías
+  // GET /galeria
   async obtenerTodas(): Promise<Foto[]> {
-    return this.leerFotos();
+    const fotos = await this.prisma.galeria.findMany({
+      orderBy: { id: 'asc' },
+    });
+
+    return fotos.map(
+      (foto: { id: string; src: string; descripcion: string | null }) =>
+    this.convertirFoto(foto),
+    );
   }
 
-  // Obtener una fotografía
+  // GET /galeria/:id
   async obtenerUna(id: string): Promise<Foto> {
-    const fotos = await this.leerFotos();
-    const foto = fotos.find((f) => f.id === id);
+    const foto = await this.prisma.galeria.findUnique({
+      where: { id },
+    });
 
     if (!foto) {
-      throw new NotFoundException('Fotografía no encontrada');
+      throw new NotFoundException(
+        'Fotografía no encontrada',
+      );
     }
 
-    return foto;
+    return this.convertirFoto(foto);
   }
 
-  // Subir y optimizar fotografía
+  // POST /galeria
   async subirFoto(
     archivo: Express.Multer.File,
     descripcion: string,
   ): Promise<Foto> {
-    await fs.mkdir(this.carpeta, { recursive: true });
+
+    if (!archivo?.buffer) {
+      throw new BadRequestException(
+        'No se recibió correctamente la imagen',
+      );
+    }
+
+    await fs.mkdir(this.carpeta, {
+      recursive: true,
+    });
 
     const id = randomUUID();
     const nombre = `${id}.webp`;
@@ -114,42 +115,44 @@ private async guardarFotos(
         })
         .webp({ quality: 78 })
         .toFile(destino);
+
     } catch {
+      await fs.rm(destino, { force: true });
+
       throw new BadRequestException(
         'No se pudo procesar la imagen',
       );
     }
 
-    const nuevaFoto: Foto = {
-      id,
-      src: `/uploads/galeria/${nombre}`,
-      descripcion,
-    };
+    const src = `/uploads/galeria/${nombre}`;
 
+    // Guardar el registro en PostgreSQL
     try {
-      const fotos = await this.leerFotos();
-      fotos.push(nuevaFoto);
-      await this.guardarFotos(fotos);
+      const foto = await this.prisma.galeria.create({
+        data: {
+          id,
+          src,
+          descripcion: descripcion.trim(),
+        },
+      });
+
+      return this.convertirFoto(foto);
+
     } catch (error) {
+      // Si Neon falla, no dejar un archivo sin registrar
       await fs.rm(destino, { force: true });
       throw error;
     }
-
-    return nuevaFoto;
   }
 
-  // Actualizar descripción
- async actualizarFoto(
+  // PATCH /galeria/:id
+  async actualizarFoto(
     id: string,
     descripcion?: string,
     archivo?: Express.Multer.File,
   ): Promise<Foto> {
-    const fotos = await this.leerFotos();
-    const foto = fotos.find((f) => f.id === id);
 
-    if (!foto) {
-      throw new NotFoundException('Fotografía no encontrada');
-    }
+    const fotoActual = await this.obtenerUna(id);
 
     if (descripcion !== undefined) {
       if (descripcion.trim().length === 0) {
@@ -165,12 +168,9 @@ private async guardarFotos(
       );
     }
 
-    const descripcionAnterior = foto.descripcion;
-    const srcAnterior = foto.src;
+    let nuevaRuta: string | undefined;
 
-    let destinoNuevo: string | undefined;
-
-    // Procesar la fotografía nueva si existe
+    // Crear la imagen nueva antes de actualizar Neon
     if (archivo) {
       if (!archivo.buffer) {
         throw new BadRequestException(
@@ -178,10 +178,12 @@ private async guardarFotos(
         );
       }
 
-      await fs.mkdir(this.carpeta, { recursive: true });
+      await fs.mkdir(this.carpeta, {
+        recursive: true,
+      });
 
-      const nombreNuevo = `${randomUUID()}.webp`;
-      destinoNuevo = join(this.carpeta, nombreNuevo);
+      const nombre = `${randomUUID()}.webp`;
+      const destino = join(this.carpeta, nombre);
 
       try {
         await sharp(archivo.buffer)
@@ -191,92 +193,87 @@ private async guardarFotos(
             withoutEnlargement: true,
           })
           .webp({ quality: 78 })
-          .toFile(destinoNuevo);
+          .toFile(destino);
 
-        foto.src = `/uploads/galeria/${nombreNuevo}`;
+        nuevaRuta = `/uploads/galeria/${nombre}`;
+
       } catch {
-        await fs.rm(destinoNuevo, { force: true });
+        await fs.rm(destino, { force: true });
+
         throw new BadRequestException(
           'No se pudo procesar la nueva imagen',
         );
       }
     }
 
-    // Actualizar descripción si fue enviada
-    if (descripcion !== undefined) {
-      foto.descripcion = descripcion.trim();
-    }
+    // Actualizar la información en PostgreSQL
+    let fotoActualizada;
 
-    // Guardar cambios en galeria.json
     try {
-      await this.guardarFotos(fotos);
-    } catch (error) {
-      // Recuperar los datos anteriores
-      foto.src = srcAnterior;
-      foto.descripcion = descripcionAnterior;
+      fotoActualizada = await this.prisma.galeria.update({
+        where: { id },
+        data: {
+          ...(descripcion !== undefined && {
+            descripcion: descripcion.trim(),
+          }),
 
-      // Eliminar la imagen nueva si falló el guardado
-      if (destinoNuevo) {
-        await fs.rm(destinoNuevo, { force: true });
+          ...(nuevaRuta !== undefined && {
+            src: nuevaRuta,
+          }),
+        },
+      });
+
+    } catch (error) {
+      // Si Neon falla, conservar la fotografía anterior
+      if (nuevaRuta) {
+        try {
+          await this.eliminarArchivo(nuevaRuta);
+        } catch (limpiezaError) {
+          console.error(
+            'No se pudo limpiar la imagen nueva:',
+            limpiezaError,
+          );
+        }
       }
 
       throw error;
     }
 
-    // Eliminar imagen anterior solo después de guardar el JSON
-    if (destinoNuevo && srcAnterior.startsWith('/uploads/galeria/')) {
-      const nombreAnterior = srcAnterior.split('/').pop();
-
-      if (nombreAnterior) {
-        try {
-          await fs.rm(
-            join(this.carpeta, nombreAnterior),
-            { force: true },
-          );
-        } catch {
-          // El registro ya fue actualizado.
-          // Si falla la limpieza, conservamos la actualización.
-        }
+    // Eliminar la imagen anterior solo después de actualizar Neon
+    if (nuevaRuta && fotoActual.src !== nuevaRuta) {
+      try {
+        await this.eliminarArchivo(fotoActual.src);
+      } catch (error) {
+        console.error(
+          'No se pudo eliminar la imagen anterior:',
+          error,
+        );
       }
     }
 
-    return foto;
+    return this.convertirFoto(fotoActualizada);
   }
-  
-  // Eliminar fotografía
-   async eliminarFoto(id: string): Promise<{ mensaje: string }> {
-    const fotos = await this.leerFotos();
 
-    const foto = fotos.find((f) => f.id === id);
+  // DELETE /galeria/:id
+  async eliminarFoto(
+    id: string,
+  ): Promise<{ mensaje: string }> {
 
-    if (!foto) {
-      throw new NotFoundException('Fotografía no encontrada');
-    }
+    const foto = await this.obtenerUna(id);
 
-    // Obtener la lista sin la fotografía eliminada
-    const fotosActualizadas = fotos.filter((f) => f.id !== id);
+    // Primero eliminar el registro de PostgreSQL
+    await this.prisma.galeria.delete({
+      where: { id },
+    });
 
-    // Primero actualizamos galeria.json
-    await this.guardarFotos(fotosActualizadas);
-
-    // Después eliminamos el archivo físico, si pertenece
-    // al directorio administrado por el backend
-    if (foto.src.startsWith('/uploads/galeria/')) {
-      const nombreArchivo = foto.src.split('/').pop();
-
-      if (nombreArchivo) {
-        try {
-          await fs.rm(
-            join(this.carpeta, nombreArchivo),
-            { force: true },
-          );
-        } catch (error) {
-          console.error(
-            'No se pudo eliminar el archivo de imagen:',
-            error,
-          );
-        }
-      }
+    // Después eliminar la imagen física
+    try {
+      await this.eliminarArchivo(foto.src);
+    } catch (error) {
+      console.error(
+        'No se pudo eliminar el archivo de imagen:',
+        error,
+      );
     }
 
     return {

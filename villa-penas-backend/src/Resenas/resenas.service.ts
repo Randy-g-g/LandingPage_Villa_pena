@@ -4,82 +4,92 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'fs';
-
-import { join } from 'path';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { CreateResenaDto } from './dto/create-resena.dto';
 import { UpdateResenaDto } from './dto/update-resena.dto';
 import { Resena } from './models/resena.model';
 
+// Estructura de la reseña almacenada en Neon
+type ResenaPrisma = {
+  id: number;
+  usuario: string;
+  comentario: string;
+  calificacion: number;
+  estado: string;
+  fecha_creacion: Date;
+};
+
 @Injectable()
 export class ResenasService {
-  private readonly carpetaDatos = join(process.cwd(), 'data');
-  private readonly rutaArchivo = join(
-    this.carpetaDatos,
-    'resenas.json',
-  );
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  constructor() {
-    if (!existsSync(this.carpetaDatos)) {
-      mkdirSync(this.carpetaDatos, { recursive: true });
-    }
-
-    if (!existsSync(this.rutaArchivo)) {
-      writeFileSync(
-        this.rutaArchivo,
-        JSON.stringify([], null, 2),
-        'utf-8',
-      );
-    }
+  // Convertir datos de PostgreSQL al formato del frontend
+  private convertirResena(resena: ResenaPrisma): Resena {
+    return {
+      id: resena.id,
+      usuario: resena.usuario,
+      comentario: resena.comentario,
+      calificacion: resena.calificacion,
+      estado: resena.estado as Resena['estado'],
+      fechaCreacion: resena.fecha_creacion.toISOString(),
+    };
   }
 
-  private leerResenas(): Resena[] {
-    const contenido = readFileSync(this.rutaArchivo, 'utf-8');
-    return JSON.parse(contenido) as Resena[];
-  }
+  // Todas las reseñas, sin importar su estado
+  async obtenerTodas(): Promise<Resena[]> {
+    const resenas = await this.prisma.resenas.findMany({
+      orderBy: { id: 'asc' },
+    });
 
-  private guardarResenas(resenas: Resena[]): void {
-    writeFileSync(
-      this.rutaArchivo,
-      JSON.stringify(resenas, null, 2),
-      'utf-8',
+    return resenas.map((resena: ResenaPrisma) =>
+      this.convertirResena(resena),
     );
   }
 
-  obtenerTodas(): Resena[] {
-    return this.leerResenas();
-  }
+  // Solo las reseñas aprobadas (página pública)
+  async obtenerPublicadas(): Promise<Resena[]> {
+    const resenas = await this.prisma.resenas.findMany({
+      where: { estado: 'APROBADA' },
+      orderBy: { id: 'asc' },
+    });
 
-  obtenerPublicadas(): Resena[] {
-    return this.leerResenas().filter(
-      resena => resena.estado === 'APROBADA',
+    return resenas.map((resena: ResenaPrisma) =>
+      this.convertirResena(resena),
     );
   }
 
-  obtenerPendientes(): Resena[] {
-    return this.leerResenas().filter(
-      resena => resena.estado === 'PENDIENTE',
+  // Reseñas pendientes
+  async obtenerPendientes(): Promise<Resena[]> {
+    const resenas = await this.prisma.resenas.findMany({
+      where: { estado: 'PENDIENTE' },
+      orderBy: { id: 'asc' },
+    });
+
+    return resenas.map((resena: ResenaPrisma) =>
+      this.convertirResena(resena),
     );
   }
 
-  obtenerRechazadas(): Resena[] {
-    return this.leerResenas().filter(
-      resena => resena.estado === 'RECHAZADA',
+  // Reseñas rechazadas
+  async obtenerRechazadas(): Promise<Resena[]> {
+    const resenas = await this.prisma.resenas.findMany({
+      where: { estado: 'RECHAZADA' },
+      orderBy: { id: 'asc' },
+    });
+
+    return resenas.map((resena: ResenaPrisma) =>
+      this.convertirResena(resena),
     );
   }
 
-  obtenerPorId(id: number): Resena {
-    const resenas = this.leerResenas();
-
-    const resena = resenas.find(
-      elemento => elemento.id === id,
-    );
+  // Consultar una reseña por ID
+  async obtenerPorId(id: number): Promise<Resena> {
+    const resena = await this.prisma.resenas.findUnique({
+      where: { id },
+    });
 
     if (!resena) {
       throw new NotFoundException(
@@ -87,69 +97,47 @@ export class ResenasService {
       );
     }
 
-    return resena;
+    return this.convertirResena(resena);
   }
 
-  crear(dto: CreateResenaDto): Resena {
-    const resenas = this.leerResenas();
+  // Crear reseña con estado pendiente
+  async crear(dto: CreateResenaDto): Promise<Resena> {
+    const nuevaResena = await this.prisma.resenas.create({
+      data: {
+        usuario: dto.usuario.trim(),
+        comentario: dto.comentario.trim(),
+        calificacion: dto.calificacion,
+        estado: 'PENDIENTE',
+      },
+    });
 
-    const nuevoId = resenas.length > 0
-      ? Math.max(...resenas.map(resena => resena.id)) + 1
-      : 1;
-
-    const nuevaResena: Resena = {
-      id: nuevoId,
-      usuario: dto.usuario.trim(),
-      comentario: dto.comentario.trim(),
-      calificacion: dto.calificacion,
-      estado: 'PENDIENTE',
-      fechaCreacion: new Date().toISOString(),
-    };
-
-    resenas.push(nuevaResena);
-    this.guardarResenas(resenas);
-
-    return nuevaResena;
+    return this.convertirResena(nuevaResena);
   }
 
-  actualizarEstado(
+  // Aprobar o rechazar una reseña
+  async actualizarEstado(
     id: number,
     dto: UpdateResenaDto,
-  ): Resena {
-    const resenas = this.leerResenas();
+  ): Promise<Resena> {
+    await this.obtenerPorId(id);
 
-    const indice = resenas.findIndex(
-      elemento => elemento.id === id,
-    );
+    const resena = await this.prisma.resenas.update({
+      where: { id },
+      data: {
+        estado: dto.estado,
+      },
+    });
 
-    if (indice === -1) {
-      throw new NotFoundException(
-        `No existe una reseña con el ID ${id}.`,
-      );
-    }
-
-    resenas[indice].estado = dto.estado;
-
-    this.guardarResenas(resenas);
-
-    return resenas[indice];
+    return this.convertirResena(resena);
   }
 
-  eliminar(id: number): { mensaje: string } {
-    const resenas = this.leerResenas();
+  // Eliminar definitivamente una reseña
+  async eliminar(id: number): Promise<{ mensaje: string }> {
+    await this.obtenerPorId(id);
 
-    const indice = resenas.findIndex(
-      elemento => elemento.id === id,
-    );
-
-    if (indice === -1) {
-      throw new NotFoundException(
-        `No existe una reseña con el ID ${id}.`,
-      );
-    }
-
-    resenas.splice(indice, 1);
-    this.guardarResenas(resenas);
+    await this.prisma.resenas.delete({
+      where: { id },
+    });
 
     return {
       mensaje: `La reseña ${id} fue eliminada correctamente.`,
