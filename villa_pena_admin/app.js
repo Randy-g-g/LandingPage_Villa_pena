@@ -1550,19 +1550,22 @@ $("#packageForm").addEventListener("submit", async event => {
   }
 });
 
-// eliminar paquetes
 
+
+// Eliminar paquetes
 async function deletePackage(id) {
 
     const paquete = data.packages.find(p => p.id === id);
 
     if (!paquete) return;
 
-    if (!confirm(
-        `¿Deseas eliminar el paquete "${paquete.name}"?`
-    )) {
-        return;
-    }
+    // Mostrar la confirmación personalizada
+    const confirmado = await confirmarEliminacion(
+        "Eliminar paquete",
+        `¿Estás segura de que deseas eliminar el paquete "${paquete.name}"? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmado) return;
 
     try {
 
@@ -2034,6 +2037,7 @@ $("#adicionalForm").addEventListener("submit", async event => {
 
 
 // eliminar un adicional
+// Eliminar un adicional
 async function eliminarAdicional(id) {
 
     const adicional = additionalItems.find(
@@ -2042,13 +2046,13 @@ async function eliminarAdicional(id) {
 
     if (!adicional) return;
 
+    // Mostrar la confirmación personalizada
+    const confirmado = await confirmarEliminacion(
+        "Eliminar adicional",
+        `¿Estás segura de que deseas eliminar el adicional "${adicional.categoria}"? Esta acción no se puede deshacer.`
+    );
 
-    if (!confirm(
-        `¿Deseas eliminar el adicional "${adicional.categoria}"?`
-    )) {
-        return;
-    }
-
+    if (!confirmado) return;
 
     try {
 
@@ -2059,18 +2063,17 @@ async function eliminarAdicional(id) {
             }
         );
 
-
         if (!respuesta.ok) {
 
-            throw new Error("No se pudo eliminar el adicional.");
+            throw new Error(
+                "No se pudo eliminar el adicional."
+            );
 
         }
-
 
         await obtenerAdicionales();
 
         showToast("Adicional eliminado correctamente.");
-
 
     } catch (error) {
 
@@ -2184,12 +2187,6 @@ async function renderReviews() {
                             Volver a publicar
                         </button>
                     ` : ""}
-                        <button
-                            type="button"
-                            class="btn-small btn-reject"
-                            data-delete-review="${r.id}">
-                            Eliminar
-                        </button>
                 </div>
             </article>
         `).join("") || `
@@ -2227,69 +2224,23 @@ async function renderReviews() {
             });
 
         lista.querySelectorAll("[data-withdraw]")
-            .forEach(boton => {
-                boton.addEventListener("click", () => {
-                    const confirmar = confirm(
-                        "¿Deseas retirar esta reseña de la página principal?"
-                    );
+    .forEach(boton => {
+        boton.addEventListener("click", async () => {
 
-                    if (confirmar) {
-                        setReviewStatus(
-                            Number(boton.dataset.withdraw),
-                            "rechazada"
-                        );
-                    }
-                });
-            });
-            // Eliminar reseña definitivamente
-        lista.querySelectorAll("[data-delete-review]")
-            .forEach(boton => {
+            const id = Number(boton.dataset.withdraw);
 
-                boton.addEventListener("click", async () => {
+            const confirmado = await confirmarEliminacion(
+                "¿Retirar reseña?",
+                "¿Deseas retirar esta reseña de la página principal?"
+            );
 
-                const id = Number(boton.dataset.deleteReview);
-
-                const confirmado = await confirmarEliminacion(
-                    "Eliminar reseña",
-                    "¿Estás seguro de eliminar esta reseña definitivamente? Esta acción no se puede deshacer."
-                );
-
-                    if (!confirmado) return;
-
-                        boton.disabled = true;
-
-                    try {
-                        const respuesta = await fetch(
-                            `${API_BASE}/resenas/${id}`,
-                        {
-                            method: "DELETE"
-                        }
-                    );
-
-                    if (!respuesta.ok) {
-                        throw new Error(
-                            "No se pudo eliminar la reseña."
-                        );
-                    }
-
-                    await renderReviews();
-
-                    mostrarResultado(
-                        "La reseña se eliminó correctamente."
-                    );
-
-                } catch (error) {
-                    console.error(error);
-
-                    mostrarResultado(
-                        error.message,
-                        "error"
-                    );
-
-                    boton.disabled = false;
-                }
-            });
+            if (confirmado) {
+                setReviewStatus(id, "rechazada");
+            }
+        });
     });
+            // Eliminar reseña definitivamente
+        
     } catch (error) {
         console.error("Error al cargar las reseñas:", error);
 
