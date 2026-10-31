@@ -1,68 +1,72 @@
 <!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#321D0E"><title>
+  <meta name="theme-color" content="#321D0E">
+  <title>
     Administración | Villa Peñas
   </title>
   <link rel="stylesheet" href="styles.css">
 
-<!-- Lógica del panel administrativo -->
-<script src="app.js" defer></script>
+  <!-- Lógica del panel administrativo -->
+  <script src="app.js" defer></script>
 </head>
+
 <body>
   <aside class="sidebar" id="sidebar">
-    <a class="brand" href="#inicio" aria-label="Villa Peñas administración"><img src="assets/logo.png" alt="Villa Peñas"><span>
-      ADMINISTRACIÓN
-    </span>
+    <a class="brand" href="#inicio" aria-label="Villa Peñas administración"><img src="assets/logo.png"
+        alt="Villa Peñas"><span>
+        ADMINISTRACIÓN
+      </span>
     </a>
     <nav class="side-nav" aria-label="Menú de administración">
       <button class="nav-link active" data-view="calendario"><span class="nav-icon">
-        ▦</span>
+          ▦</span>
         Calendario
       </button>
       <button class="nav-link" data-view="paquetes"><span class="nav-icon">
-        ◇</span>
+          ◇</span>
         Paquetes
       </button>
       <!-- adicionales -->
-       <button class="nav-link" data-view="adicionales">
+      <button class="nav-link" data-view="adicionales">
         <span class="nav-icon">✧</span>
         Adicionales
-       </button>
+      </button>
       <!-- GALERÍA -->
       <button class="nav-link" data-view="galeria">
-      <span class="nav-icon">
-        ▧</span>
-         Galería
+        <span class="nav-icon">
+          ▧</span>
+        Galería
       </button>
       <button class="nav-link" data-view="resenas"><span class="nav-icon">
-        ☆
-      </span>
-      Reseñas
-      <span class="nav-count" id="pendingCount">0</span>
-    </button>
-      
+          ☆
+        </span>
+        Reseñas
+        <span class="nav-count" id="pendingCount">0</span>
+      </button>
+
     </nav>
     <div class="sidebar-bottom">
       <span class="online-dot">
-      </span> 
+      </span>
       Panel de administración
     </div>
   </aside>
   <div class="app-shell">
     <header class="topbar"><button class="icon-button mobile-menu" id="mobileMenu" aria-label="Abrir menú">
-      ☰
-    </button>
-    <div class="crumb">
-      <span class="crumb-dot">
-      </span>
-      Villa Peñas 
-      <span>/</span> 
-      <strong id="crumbTitle">
-        Calendario
-      </strong>
+        ☰
+      </button>
+      <div class="crumb">
+        <span class="crumb-dot">
+        </span>
+        Villa Peñas
+        <span>/</span>
+        <strong id="crumbTitle">
+          Calendario
+        </strong>
       </div>
       <div class="profile">
         <div class="avatar avatar-dark">
@@ -85,18 +89,18 @@
           <h1 id="pageTitle">Calendario de reservaciones</h1>
           <p class="subheading" id="pageDescription">Visualiza y administra las reservaciones y fechas bloqueadas.</p>
         </div>
-       <div class="welcome-actions" id="headerActions"></div>
+        <div class="welcome-actions" id="headerActions"></div>
       </div>
       <section class="stats-grid" aria-label="Resumen de actividad">
         <article class="stat-card">
           <span class="stat-icon icon-calendar">
-          ▦
-        </span>
-        <div>
-          <span>
-            Eventos este mes
+            ▦
           </span>
-          <strong id="statEvents">0</strong>
+          <div>
+            <span>
+              Eventos este mes
+            </span>
+            <strong id="statEvents">0</strong>
             <small>
               Reservaciones registradas
             </small>
@@ -105,16 +109,16 @@
         <article class="stat-card">
           <span class="stat-icon icon-pending">
             ◷</span>
-            <div>
-              <span>
-                Fechas ocupadas
-              </span>
-              <strong id="statOccupied">0</strong>
-              <small>
-                Eventos y bloqueos
-              </small>
-            </div>
-          </article>
+          <div>
+            <span>
+              Fechas ocupadas
+            </span>
+            <strong id="statOccupied">0</strong>
+            <small>
+              Eventos y bloqueos
+            </small>
+          </div>
+        </article>
         <article class="stat-card">
           <span class="stat-icon icon-review">
             ☆
@@ -184,73 +188,60 @@
               <button class="selected" data-mode="month">
                 Mes
               </button>
-              
+
             </div>
           </div>
           <div class="calendar-scroll">
             <div class="calendar-grid" id="calendarGrid">
             </div>
           </div>
-          
-<div class="calendar-footer">
 
-    <div class="calendar-footer-actions">
+          <div class="calendar-footer">
 
-        <button
-            type="button"
-            id="btnSeleccionarReservas"
-            class="btn btn-outline">
-            Seleccionar reservaciones para eliminar
-        </button>
+            <div class="calendar-footer-actions">
 
-        <button
-            type="button"
-            class="btn btn-primary"
-            id="addEventFromCalendar">
-            <span>＋</span> Agregar evento
-        </button>
+              <button type="button" id="btnSeleccionarReservas" class="btn btn-outline">
+                Seleccionar reservaciones para eliminar
+              </button>
 
-    </div>
+              <button type="button" class="btn btn-primary" id="addEventFromCalendar">
+                <span>＋</span> Agregar evento
+              </button>
 
-</div>
+            </div>
 
-<!-- Panel de selección múltiple -->
-<div class="reservas-multiples">
+          </div>
 
-    <div id="panelSeleccionReservas" hidden>
+          <!-- Panel de selección múltiple -->
+          <div class="reservas-multiples">
 
-        <h3>Seleccionar reservaciones</h3>
+            <div id="panelSeleccionReservas" hidden>
 
-        <p>
-            Marcá las reservaciones que querés eliminar del mes seleccionado.
-        </p>
+              <h3>Seleccionar reservaciones</h3>
 
-        <label class="seleccionar-todas">
-            <input type="checkbox" id="seleccionarTodasReservas">
-            Seleccionar todas las reservaciones del mes
-        </label>
+              <p>
+                Marcá las reservaciones que querés eliminar del mes seleccionado.
+              </p>
 
-        <div id="listaSeleccionReservas"></div>
+              <label class="seleccionar-todas">
+                <input type="checkbox" id="seleccionarTodasReservas">
+                Seleccionar todas las reservaciones del mes
+              </label>
 
-        <div class="modal-actions">
+              <div id="listaSeleccionReservas"></div>
 
-            <button
-                type="button"
-                id="cancelarSeleccionReservas"
-                class="btn btn-outline">
-                Cancelar
-            </button>
+              <div class="modal-actions">
 
-            <button
-                type="button"
-                id="eliminarReservasSeleccionadas"
-                class="btn btn-danger"
-                disabled>
-                Eliminar seleccionadas (0)
-            </button>
-        </div>
-    </div>
-</div>
+                <button type="button" id="cancelarSeleccionReservas" class="btn btn-outline">
+                  Cancelar
+                </button>
+
+                <button type="button" id="eliminarReservasSeleccionadas" class="btn btn-danger" disabled>
+                  Eliminar seleccionadas (0)
+                </button>
+              </div>
+            </div>
+          </div>
 
       </section>
       <section class="view-panel" id="view-paquetes">
@@ -271,7 +262,7 @@
               ＋ Nuevo paquete
             </button>
           </div>
-         
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -299,71 +290,65 @@
         </div>
       </section>
 
-<!-- Admin adicionales -->
-<section class="view-panel" id="view-adicionales">
-    <div class="panel">
-        <div class="panel-heading">
+      <!-- Admin adicionales -->
+      <section class="view-panel" id="view-adicionales">
+        <div class="panel">
+          <div class="panel-heading">
             <div>
-                <p class="eyebrow">CONTENIDO DEL SITIO</p>
-                <h2>Administración de adicionales</h2>
-                <p>
-                    Administra los servicios adicionales y sus paquetes.
-                </p>
+              <p class="eyebrow">CONTENIDO DEL SITIO</p>
+              <h2>Administración de adicionales</h2>
+              <p>
+                Administra los servicios adicionales y sus paquetes.
+              </p>
             </div>
 
-            <button
-                class="btn btn-primary"
-                type="button"
-                id="btnNuevoAdicional">
-                ＋ Nuevo adicional
+            <button class="btn btn-primary" type="button" id="btnNuevoAdicional">
+              ＋ Nuevo adicional
             </button>
-        </div>
+          </div>
 
-        <div class="table-wrap">
+          <div class="table-wrap">
             <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Categoría</th>
-                        <th>Descripción</th>
-                        <th>Cantidad de paquetes</th>
-                        <th class="right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="adicionalesTableBody">
-    
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
-<!--agregar foto-->
-<section class="view-panel" id="view-galeria">
-    <div class="panel">
-        <!-- Encabezado -->
-        <div class="panel-heading">
-            <div>
-                <p class="eyebrow">CONTENIDO DEL SITIO</p>
-                <h2>Galería de fotografías</h2>
-                <p>
-                    Administra las fotografías que se mostrarán
-                    en la página pública de Villa Peña.
-                </p>
-            </div>
-            <button
-                class="btn btn-primary"
-                id="addPhoto"
-                type="button">
-                ＋ Nueva fotografía
-            </button>
-        </div>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Categoría</th>
+                  <th>Descripción</th>
+                  <th>Cantidad de paquetes</th>
+                  <th class="right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="adicionalesTableBody">
 
-        <!-- Fotografías registradas -->
-        <div class="gallery-admin-grid" id="adminGallery">
-            <!-- Las fotografías se generarán desde app.js -->
+              </tbody>
+            </table>
+          </div>
         </div>
-    </div>
-  </section>
+      </section>
+      <!--agregar foto-->
+      <section class="view-panel" id="view-galeria">
+        <div class="panel">
+          <!-- Encabezado -->
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">CONTENIDO DEL SITIO</p>
+              <h2>Galería de fotografías</h2>
+              <p>
+                Administra las fotografías que se mostrarán
+                en la página pública de Villa Peña.
+              </p>
+            </div>
+            <button class="btn btn-primary" id="addPhoto" type="button">
+              ＋ Nueva fotografía
+            </button>
+          </div>
+
+          <!-- Fotografías registradas -->
+          <div class="gallery-admin-grid" id="adminGallery">
+            <!-- Las fotografías se generarán desde app.js -->
+          </div>
+        </div>
+      </section>
       <section class="view-panel" id="view-resenas">
         <div class="panel">
           <div class="panel-heading">
@@ -372,26 +357,27 @@
                 REPUTACIÓN
               </p>
               <h2>
-                Reseñas y testimonios</h2><p>Revisa cada comentario y decide si quieres publicarlo en la página principal.
-                </p>
-              </div>
-              <span class="pill pill-pending" id="reviewsPill">
-                0 pendientes
-              </span>
+                Reseñas y testimonios</h2>
+              <p>Revisa cada comentario y decide si quieres publicarlo en la página principal.
+              </p>
             </div>
+            <span class="pill pill-pending" id="reviewsPill">
+              0 pendientes
+            </span>
+          </div>
           <div class="tabs" id="reviewTabs">
             <button class="selected" data-status="pendiente">
-              Pendientes 
+              Pendientes
               <span id="tabPending">
                 0
               </span>
             </button>
             <button data-status="publicada">
-              Publicadas 
+              Publicadas
               <span id="tabPublished">0</span>
             </button>
             <button data-status="rechazada">
-              Rechazadas 
+              Rechazadas
               <span id="tabRejected">0</span>
             </button>
           </div>
@@ -410,216 +396,153 @@
   </div>
 
   <!--formulario emergente-->
-<dialog id="photoDialog" class="modal">
+  <dialog id="photoDialog" class="modal">
     <form id="photoForm">
-        <div class="modal-heading">
-            <div>
-                <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
-                <h2 id="photoDialogTitle">Nueva fotografía</h2>
-            </div>
-            <button
-                type="button"
-                class="icon-button close-dialog"
-                aria-label="Cerrar">
-                ×
-            </button>
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
+          <h2 id="photoDialogTitle">Nueva fotografía</h2>
         </div>
-        <!-- Seleccionar imagen -->
-        <label>
-            Seleccionar fotografía
-            <input
-                type="file"
-                id="photoFile"
-                accept="image/jpeg,image/png,image/webp"
-                required>
-        </label>
-        <!-- Descripción -->
-        <label>
-            Descripción
-            <textarea
-                id="photoDescription"
-                rows="3"
-                maxlength="200"
-                placeholder="Ej. Piscina principal de Villa Peña"
-                required></textarea>
-        </label>
-        <!-- Vista previa -->
-        <div id="photoPreviewContainer" hidden>
-            <img
-                id="photoPreview"
-                alt="Vista previa de la fotografía"
-                style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;">
-        </div>
-        <!-- Botones -->
-        <div class="modal-actions">
-            <button
-                type="button"
-                class="btn btn-outline close-dialog">
-                Cancelar
-            </button>
-            <button
-                type="submit"
-                class="btn btn-primary">
-                Guardar fotografía
-            </button>
-        </div>
+        <button type="button" class="icon-button close-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+      <!-- Seleccionar imagen -->
+      <label>
+        Seleccionar fotografía
+        <input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp" required>
+      </label>
+      <!-- Descripción -->
+      <label>
+        Descripción
+        <textarea id="photoDescription" rows="3" maxlength="200" placeholder="Ej. Piscina principal de Villa Peña"
+          required></textarea>
+      </label>
+      <!-- Vista previa -->
+      <div id="photoPreviewContainer" hidden>
+        <img id="photoPreview" alt="Vista previa de la fotografía"
+          style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;">
+      </div>
+      <!-- Botones -->
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline close-dialog">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Guardar fotografía
+        </button>
+      </div>
     </form>
-</dialog>
+  </dialog>
 
   <dialog id="packageDialog" class="modal">
-  <form id="packageForm" method="dialog">
+    <form id="packageForm" method="dialog">
 
-    <div class="modal-heading">
-      <h2 id="packageDialogTitle">Nuevo paquete</h2>
-      <button type="button" class="btn btn-outline close-dialog">
-        Cerrar
-      </button>
-    </div>
+      <div class="modal-heading">
+        <h2 id="packageDialogTitle">Nuevo paquete</h2>
+        <button type="button" class="btn btn-outline close-dialog">
+          Cerrar
+        </button>
+      </div>
 
-    <input type="hidden" id="packageId">
+      <input type="hidden" id="packageId">
 
-    <label for="packageName">Nombre del paquete</label>
-    <input
-      id="packageName"
-      type="text"
-      required
-      maxlength="70"
-      placeholder="Ej. Paquete Premium"
-    >
+      <label for="packageName">Nombre del paquete</label>
+      <input id="packageName" type="text" required maxlength="70" placeholder="Ej. Paquete Premium">
 
-    <label for="packageDescription">Descripción</label>
-    <textarea
-      id="packageDescription"
-      required
-      rows="3"
-      maxlength="220"
-      placeholder="Describe qué incluye el paquete"
-    ></textarea>
+      <label for="packageDescription">Descripción</label>
+      <textarea id="packageDescription" required rows="3" maxlength="220"
+        placeholder="Describe qué incluye el paquete"></textarea>
 
-    <div class="form-row">
-      <label for="packagePrice">
-        Precio en colones
-        <input
-          id="packagePrice"
-          required
-          type="number"
-          min="0"
-          step="500"
-          placeholder="60000"
-        >
-      </label>
+      <div class="form-row">
+        <label for="packagePrice">
+          Precio en colones
+          <input id="packagePrice" required type="number" min="0" step="500" placeholder="60000">
+        </label>
 
-      <label for="packageActive">
-        Estado
-        <select id="packageActive">
-          <option value="true">Activo</option>
-          <option value="false">Oculto</option>
-        </select>
-      </label>
-    </div>
+        <label for="packageActive">
+          Estado
+          <select id="packageActive">
+            <option value="true">Activo</option>
+            <option value="false">Oculto</option>
+          </select>
+        </label>
+      </div>
 
-    <!-- Servicios -->
-    <div class="form-group">
-      <label>Servicios incluidos</label>
-      <div id="packageServicesContainer"></div>
+      <!-- Servicios -->
+      <div class="form-group">
+        <label>Servicios incluidos</label>
+        <div id="packageServicesContainer"></div>
 
-      <button
-        type="button"
-        id="btnAgregarServicio"
-        class="btn btn-outline"
-      >
-        + Agregar servicio
-      </button>
-    </div>
+        <button type="button" id="btnAgregarServicio" class="btn btn-outline">
+          + Agregar servicio
+        </button>
+      </div>
 
-    <!-- Detalles -->
-    <div class="form-group">
-      <label>Detalles de los servicios</label>
-      <div id="packageDetailsContainer"></div>
+      <!-- Detalles -->
+      <div class="form-group">
+        <label>Detalles de los servicios</label>
+        <div id="packageDetailsContainer"></div>
 
-      <button
-        type="button"
-        id="btnAgregarDetalle"
-        class="btn btn-outline"
-      >
-        + Agregar detalle
-      </button>
-    </div>
+        <button type="button" id="btnAgregarDetalle" class="btn btn-outline">
+          + Agregar detalle
+        </button>
+      </div>
 
-    <div class="modal-actions">
-      <button
-        type="button"
-        class="btn btn-outline close-dialog"
-      >
-        Cancelar
-      </button>
-
-      <button type="submit" class="btn btn-primary">
-        Guardar paquete
-      </button>
-    </div>
-
-  </form>
-</dialog>
-
-<!-- Formulario emergente para administrar adicionales -->
-<dialog id="adicionalDialog" class="modal">
-    <form id="adicionalForm">
-        <div class="modal-heading">
-            <div>
-                <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
-                <h2 id="adicionalDialogTitle">Nuevo adicional</h2>
-            </div>
-
-            <button
-                type="button"
-                class="icon-button close-dialog"
-                aria-label="Cerrar">
-                ×
-            </button>
-        </div>
-
-        <input type="hidden" id="adicionalId">
-
-        <label for="adicionalCategoria">Categoría</label>
-        <input
-            type="text"
-            id="adicionalCategoria"
-            required
-            maxlength="100"
-            placeholder="Ej. Palomitas de maíz">
-
-        <label for="adicionalDescripcion">Descripción</label>
-        <textarea
-            id="adicionalDescripcion"
-            rows="3"
-            required
-            placeholder="Describe el servicio adicional"></textarea>
-
-        <h3>Paquetes del adicional</h3>
-
-        <div id="adicionalPaquetesContainer"></div>
-
-        <button
-            type="button"
-            class="btn btn-outline"
-            id="btnAgregarPaqueteAdicional">
-            ＋ Agregar paquete
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline close-dialog">
+          Cancelar
         </button>
 
-        <div class="modal-actions">
-            <button
-                type="button"
-                class="btn btn-outline close-dialog">
-                Cancelar
-            </button>
+        <button type="submit" class="btn btn-primary">
+          Guardar paquete
+        </button>
+      </div>
 
-            <button type="submit" class="btn btn-primary">
-                Guardar adicional
-            </button>
-        </div>
     </form>
-</dialog>
+  </dialog>
+
+  <!-- Formulario emergente para administrar adicionales -->
+  <dialog id="adicionalDialog" class="modal">
+    <form id="adicionalForm">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">GESTIÓN DE CONTENIDO</p>
+          <h2 id="adicionalDialogTitle">Nuevo adicional</h2>
+        </div>
+
+        <button type="button" class="icon-button close-dialog" aria-label="Cerrar">
+          ×
+        </button>
+      </div>
+
+      <input type="hidden" id="adicionalId">
+
+      <label for="adicionalCategoria">Categoría</label>
+      <input type="text" id="adicionalCategoria" required maxlength="100" placeholder="Ej. Palomitas de maíz">
+
+      <label for="adicionalDescripcion">Descripción</label>
+      <textarea id="adicionalDescripcion" rows="3" required placeholder="Describe el servicio adicional"></textarea>
+
+      <h3>Paquetes del adicional</h3>
+
+      <div id="adicionalPaquetesContainer"></div>
+
+      <button type="button" class="btn btn-outline" id="btnAgregarPaqueteAdicional">
+        ＋ Agregar paquete
+      </button>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline close-dialog">
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+          Guardar adicional
+        </button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="eventDialog" class="modal">
     <form id="eventForm">
@@ -640,89 +563,59 @@
       <label>Nombre del evento
         <input id="eventName" required placeholder="Ej. Cumpleaños familiar">
       </label>
-     
-<div class="form-row">
-    <label>Fecha
-        <input id="eventDate" type="date" required>
-    </label>
 
-    <label>Hora de entrada
-        <input
-            id="eventTime"
-            type="time"
-            value="08:00"
-            step="60"
-            required>
-    </label>
-</div>
-
-<div class="form-row">
-    <label>Hora de salida (automática)
-        <input
-            id="eventEndTime"
-            type="time"
-            readonly>
-    </label>
-</div>
-
-<!-- Cliente y teléfono -->
-<div class="form-row">
-    <label>
-        Cliente
-        <input
-            id="eventClient"
-            placeholder="Nombre del cliente"
-            required
-        >
-    </label>
-
-    <label>
-        Teléfono del cliente
-        <input
-            type="tel"
-            id="eventPhone"
-            placeholder="Sin teléfono registrado"
-        >
-    </label>
-</div>
-
-<!-- Correo electrónico -->
-<div class="form-row">
-    <label>
-        Correo electrónico
-        <input
-            type="email"
-            id="eventEmail"
-            placeholder="Sin correo registrado"
-        >
-    </label>
-</div>
-
-<!-- Observaciones -->
-<div class="form-row">
-    <label>
-        Observaciones del cliente
-        <textarea
-            id="eventMessage"
-            rows="3"
-            placeholder="Sin observaciones"
-        ></textarea>
-    </label>
-</div>
-
-<!-- Contacto por WhatsApp -->
-<a
-    id="eventWhatsApp"
-    href="#"
-    target="_blank"
-    rel="noopener noreferrer"
-    hidden
->
-    Contactar por WhatsApp
-</a>
-        <label>Personas
-          <input id="eventGuests" type="number" min="1" max="1000" value="50" required>
+      <div class="form-row">
+        <label>Fecha
+          <input id="eventDate" type="date" required>
         </label>
+
+        <label>Hora de entrada
+          <input id="eventTime" type="time" value="08:00" step="60" required>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>Hora de salida (automática)
+          <input id="eventEndTime" type="time" readonly>
+        </label>
+      </div>
+
+      <!-- Cliente y teléfono -->
+      <div class="form-row">
+        <label>
+          Cliente
+          <input id="eventClient" placeholder="Nombre del cliente" required>
+        </label>
+
+        <label>
+          Teléfono del cliente
+          <input type="tel" id="eventPhone" placeholder="Sin teléfono registrado">
+        </label>
+      </div>
+
+      <!-- Correo electrónico -->
+      <div class="form-row">
+        <label>
+          Correo electrónico
+          <input type="email" id="eventEmail" placeholder="Sin correo registrado">
+        </label>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="form-row">
+        <label>
+          Observaciones del cliente
+          <textarea id="eventMessage" rows="3" placeholder="Sin observaciones"></textarea>
+        </label>
+      </div>
+
+      <!-- Contacto por WhatsApp -->
+      <a id="eventWhatsApp" href="#" target="_blank" rel="noopener noreferrer" hidden>
+        Contactar por WhatsApp
+      </a>
+      <label>Personas
+        <input id="eventGuests" type="number" min="1" max="1000" value="50" required>
+      </label>
       </div>
       <div class="form-row">
         <label>Paquete
@@ -736,240 +629,194 @@
           </select>
         </label>
       </div>
-      <div
-    id="mensajeEvento"
-    class="mensaje-evento"
-    role="alert"
-    hidden>
-</div>
+      <div id="mensajeEvento" class="mensaje-evento" role="alert" hidden>
+      </div>
 
-<!-- Selección de adicionales de la reservación -->
-<div class="form-group">
-    <label>Paquetes adicionales</label>
+      <!-- Selección de adicionales de la reservación -->
+      <div class="form-group">
+        <label>Paquetes adicionales</label>
 
-    <div id="eventAdicionalesContainer"></div>
+        <div id="eventAdicionalesContainer"></div>
 
-    <button
-        type="button"
-        class="btn btn-outline"
-        id="btnAgregarAdicionalReserva">
-        ＋ Agregar adicional
-    </button>
-</div>
+        <button type="button" class="btn btn-outline" id="btnAgregarAdicionalReserva">
+          ＋ Agregar adicional
+        </button>
+      </div>
 
-<!-- Resumen de la cotización -->
-<div class="resumen-cotizacion">
-    <h3>Detalle de la cotización</h3>
+      <!-- Resumen de la cotización -->
+      <div class="resumen-cotizacion">
+        <h3>Detalle de la cotización</h3>
 
-    <div class="resumen-fila">
-        <span id="resumenNombrePaquete">
+        <div class="resumen-fila">
+          <span id="resumenNombrePaquete">
             Paquete principal
-        </span>
-        <strong id="resumenPrecioPaquete">
+          </span>
+          <strong id="resumenPrecioPaquete">
             ₡0
-        </strong>
-    </div>
+          </strong>
+        </div>
 
-    <h4>Paquetes adicionales</h4>
+        <h4>Paquetes adicionales</h4>
 
-    <div id="resumenAdicionales">
-        <p>No hay adicionales seleccionados.</p>
-    </div>
+        <div id="resumenAdicionales">
+          <p>No hay adicionales seleccionados.</p>
+        </div>
 
-    <div class="resumen-total">
-        <strong>Total estimado</strong>
-        <strong id="resumenTotal">₡0</strong>
-    </div>
+        <div class="resumen-total">
+          <strong>Total estimado</strong>
+          <strong id="resumenTotal">₡0</strong>
+        </div>
 
-    <p class="resumen-nota">
-        El precio final se confirma directamente
-        con la encargada de Villa Peñas.
-    </p>
-</div>
+        <p class="resumen-nota">
+          El precio final se confirma directamente
+          con la encargada de Villa Peñas.
+        </p>
+      </div>
 
-<div class="modal-actions">
-    <button
-        type="button"
-        id="btnEliminarReserva"
-        class="btn btn-danger"
-        hidden>
-        Eliminar reservación
-    </button>
+      <div class="modal-actions">
+        <button type="button" id="btnEliminarReserva" class="btn btn-danger" hidden>
+          Eliminar reservación
+        </button>
 
-    <button
-        type="button"
-        class="btn btn-outline close-dialog">
-        Cancelar
-    </button>
+        <button type="button" class="btn btn-outline close-dialog">
+          Cancelar
+        </button>
 
-    <button
-        type="submit"
-        class="btn btn-primary">
-        Guardar en calendario
-    </button>
-</div>
+        <button type="submit" class="btn btn-primary">
+          Guardar en calendario
+        </button>
+      </div>
     </form>
   </dialog>
 
-<!-- Confirmación para eliminar reservaciones -->
-<dialog id="modalEliminarReserva" class="modal-admin">
+  <!-- Confirmación para eliminar reservaciones -->
+  <dialog id="modalEliminarReserva" class="modal-admin">
 
     <form method="dialog" class="modal-admin-contenido">
 
-        <div class="modal-admin-icono advertencia">!</div>
+      <div class="modal-admin-icono advertencia">!</div>
 
-        <h2>¿Eliminar reservación?</h2>
+      <h2>¿Eliminar reservación?</h2>
 
-        <p>
-            Esta acción eliminará permanentemente la reservación
-            y liberará la fecha en el calendario.
-        </p>
+      <p>
+        Esta acción eliminará permanentemente la reservación
+        y liberará la fecha en el calendario.
+      </p>
 
-        <div class="modal-admin-acciones">
+      <div class="modal-admin-acciones">
 
-            <button
-                type="submit"
-                value="cancelar"
-                class="modal-btn-secundario">
-                Cancelar
-            </button>
+        <button type="submit" value="cancelar" class="modal-btn-secundario">
+          Cancelar
+        </button>
 
-            <button
-                type="submit"
-                value="eliminar"
-                class="modal-btn-peligro">
-                Sí, eliminar
-            </button>
-        </div>
+        <button type="submit" value="eliminar" class="modal-btn-peligro">
+          Sí, eliminar
+        </button>
+      </div>
     </form>
-</dialog>
+  </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <!-- editar galeria-->
-<dialog id="modalEditarFoto" class="modal-editar-foto">
-  <form id="formEditarFoto" class="form-editar-foto">
-    <h2>Editar fotografía</h2>
+  <dialog id="modalEditarFoto" class="modal-editar-foto">
+    <form id="formEditarFoto" class="form-editar-foto">
+      <h2>Editar fotografía</h2>
 
-    <img
-      id="previewEditarFoto"
-      class="preview-editar-foto"
-      alt="Vista previa de la fotografía"
-    >
+      <img id="previewEditarFoto" class="preview-editar-foto" alt="Vista previa de la fotografía">
 
-    <label for="descripcionEditarFoto">
-      Descripción
-    </label>
+      <label for="descripcionEditarFoto">
+        Descripción
+      </label>
 
-    <textarea
-      id="descripcionEditarFoto"
-      rows="3"
-      maxlength="200"
-      required
-    ></textarea>
+      <textarea id="descripcionEditarFoto" rows="3" maxlength="200" required></textarea>
 
-    <label for="archivoEditarFoto">
-      Reemplazar fotografía (opcional)
-    </label>
+      <label for="archivoEditarFoto">
+        Reemplazar fotografía (opcional)
+      </label>
 
-    <input
-      id="archivoEditarFoto"
-      type="file"
-      accept="image/jpeg,image/png,image/webp"
-    >
+      <input id="archivoEditarFoto" type="file" accept="image/jpeg,image/png,image/webp">
 
-    <small>
-      Si no seleccionás una nueva imagen,
-      se conservará la actual. Máximo 5 MB.
-    </small>
+      <small>
+        Si no seleccionás una nueva imagen,
+        se conservará la actual. Máximo 5 MB.
+      </small>
 
-    <div class="acciones-editar">
-      <button
-        type="button"
-        id="cancelarEditarFoto">
-        Cancelar
-      </button>
+      <div class="acciones-editar">
+        <button type="button" id="cancelarEditarFoto">
+          Cancelar
+        </button>
 
-      <button
-        type="submit"
-        id="guardarEditarFoto">
-        Guardar cambios
-      </button>
+        <button type="submit" id="guardarEditarFoto">
+          Guardar cambios
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!--desea eliminar-->
+  <dialog id="modalConfirmacion" class="modal-admin">
+    <div class="modal-admin-contenido">
+      <div class="modal-admin-icono advertencia">!</div>
+
+      <h2 id="tituloConfirmacion">Eliminar fotografía</h2>
+
+      <p id="mensajeConfirmacion">
+        ¿Estás seguro de que deseás eliminar esta fotografía?
+      </p>
+
+      <div class="modal-admin-acciones">
+        <button type="button" id="cancelarConfirmacion" class="modal-btn-secundario">
+          Cancelar
+        </button>
+
+        <button type="button" id="aceptarConfirmacion" class="modal-btn-peligro">
+          Sí, eliminar
+        </button>
+      </div>
     </div>
-  </form>
-</dialog>
+  </dialog>
 
-<!--desea eliminar-->
-<dialog id="modalConfirmacion" class="modal-admin">
-  <div class="modal-admin-contenido">
-    <div class="modal-admin-icono advertencia">!</div>
+  <!-- VENTANA DE RESULTADO -->
+  <dialog id="modalResultado" class="modal-admin">
+    <div class="modal-admin-contenido">
+      <div id="iconoResultado" class="modal-admin-icono exito">
+        ✓
+      </div>
 
-    <h2 id="tituloConfirmacion">Eliminar fotografía</h2>
+      <h2 id="tituloResultado">Operación completada</h2>
+      <p id="mensajeResultado"></p>
 
-    <p id="mensajeConfirmacion">
-      ¿Estás seguro de que deseás eliminar esta fotografía?
-    </p>
-
-    <div class="modal-admin-acciones">
-      <button type="button" id="cancelarConfirmacion"
-              class="modal-btn-secundario">
-        Cancelar
-      </button>
-
-      <button type="button" id="aceptarConfirmacion"
-              class="modal-btn-peligro">
-        Sí, eliminar
-      </button>
+      <div class="modal-admin-acciones">
+        <button type="button" id="cerrarResultado" class="modal-btn-principal">
+          Aceptar
+        </button>
+      </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
 
-<!-- VENTANA DE RESULTADO -->
-<dialog id="modalResultado" class="modal-admin">
-  <div class="modal-admin-contenido">
-    <div id="iconoResultado" class="modal-admin-icono exito">
-      ✓
-    </div>
-
-    <h2 id="tituloResultado">Operación completada</h2>
-    <p id="mensajeResultado"></p>
-
-    <div class="modal-admin-acciones">
-      <button type="button" id="cerrarResultado"
-              class="modal-btn-principal">
-        Aceptar
-      </button>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="modalEliminarVariasReservas" class="modal-admin">
+  <dialog id="modalEliminarVariasReservas" class="modal-admin">
     <form method="dialog" class="modal-admin-contenido">
 
-        <div class="modal-admin-icono advertencia">!</div>
+      <div class="modal-admin-icono advertencia">!</div>
 
-        <h2>Eliminar reservaciones seleccionadas</h2>
+      <h2>Eliminar reservaciones seleccionadas</h2>
 
-        <p id="mensajeEliminarVariasReservas"></p>
+      <p id="mensajeEliminarVariasReservas"></p>
 
-        <div class="modal-admin-acciones">
-            <button
-                type="submit"
-                value="cancelar"
-                class="modal-btn-secundario">
-                Cancelar
-            </button>
+      <div class="modal-admin-acciones">
+        <button type="submit" value="cancelar" class="modal-btn-secundario">
+          Cancelar
+        </button>
 
-            <button
-                type="submit"
-                value="eliminar"
-                class="modal-btn-peligro">
-                Sí, eliminar
-            </button>
-        </div>
+        <button type="submit" value="eliminar" class="modal-btn-peligro">
+          Sí, eliminar
+        </button>
+      </div>
 
     </form>
-</dialog>
+  </dialog>
 
 </body>
+
 </html>

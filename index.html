@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Villa Peñas, Santa Cruz. Rancho para eventos, paquetes, servicios adicionales y solicitudes de información.">
+  <meta name="description"
+    content="Villa Peñas, Santa Cruz. Rancho para eventos, paquetes, servicios adicionales y solicitudes de información.">
   <meta name="theme-color" content="#321D0E">
   <title>Villa Peñas | Santa Cruz</title>
 
@@ -17,7 +19,7 @@
             vp: {
               white: "#FFFFFF",
               brown: "#2B190D",
-              coffee:"#8B7463",
+              coffee: "#8B7463",
               gold: "#B77A20",
               beige: "#EADBC6",
               cream: "#F7F0E5",
@@ -39,9 +41,7 @@
   <!--TRANSICIÓN DE ENTRADA-->
   <div id="pageLoader" class="page-loader" aria-hidden="true">
     <div class="page-loader-inner">
-      <img
-        src="assets/optimizadas/villa-penas-logo-transparent.webp"
-        alt="Villa Peñas — Alquiler para eventos"
+      <img src="assets/optimizadas/villa-penas-logo-transparent.webp" alt="Villa Peñas — Alquiler para eventos"
         class="loader-logo-image">
       <span class="loader-line"></span>
     </div>
@@ -53,17 +53,12 @@
 
       <a href="#inicio" class="flex items-center gap-2 text-white" aria-label="Villa Peñas inicio">
         <img src="assets/optimizadas/logo-villa-penas-principal.png.webp" alt="Logo Villa Peñas"
-         class="nav-logo h-14 w-14 rounded-full object-cover">
+          class="nav-logo h-14 w-14 rounded-full object-cover">
         <span class="font-display text-xl">Villa Peñas</span>
       </a>
 
-      <button
-        id="menuButton"
-        type="button"
-        class="rounded-lg border border-white/30 p-2 text-white lg:hidden"
-        aria-label="Abrir menú"
-        aria-expanded="false"
-        aria-controls="menu">
+      <button id="menuButton" type="button" class="rounded-lg border border-white/30 p-2 text-white lg:hidden"
+        aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
         <span class="block h-0.5 w-6 bg-white"></span>
         <span class="my-1.5 block h-0.5 w-6 bg-white"></span>
         <span class="block h-0.5 w-6 bg-white"></span>
@@ -71,23 +66,18 @@
 
       <div id="menu" class="absolute left-3 right-3 top-[68px] hidden rounded-xl bg-vp-brown p-4 shadow-2xl lg:bg-transparent
        lg:static lg:flex lg:items-center lg:gap-6 lg:p-0 lg:shadow-none">
-       <span id="menuIndicator" class="menu-indicator" aria-hidden="true"></span>
+        <span id="menuIndicator" class="menu-indicator" aria-hidden="true"></span>
         <a class="menu-link hover:text-vp-beige" href="#inicio">Inicio</a>
         <a class="menu-link" href="#nosotros">Villa Peñas</a>
         <a class="menu-link" href="#paquetes">Paquetes</a>
         <a class="menu-link" href="#adicionales">Adicionales</a>
         <a class="menu-link" href="#galeria">Galería</a>
         <a class="menu-link" href="#testimonios">Experiencias</a>
-        <a class="menu-link" href="#contacto">Contacto</a>
+        <a class="menu-link" href="#contacto">Cotizar</a>
 
         <div class="header-socials" aria-label="Redes sociales">
-          <a
-            href="https://www.instagram.com/eventos_villapena/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="header-social-link"
-            aria-label="Instagram de Villa Peñas"
-            title="Instagram">
+          <a href="https://www.instagram.com/eventos_villapena/" target="_blank" rel="noopener noreferrer"
+            class="header-social-link" aria-label="Instagram de Villa Peñas" title="Instagram">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"></rect>
               <circle cx="12" cy="12" r="4"></circle>
@@ -95,28 +85,23 @@
             </svg>
           </a>
 
-          <a
-            id="headerWhatsapp"
-            href="https://wa.me/50685048785"
-            class="header-social-link"
-            aria-label="WhatsApp de Villa Peñas"
-            title="WhatsApp">
+          <a id="headerWhatsapp" href="https://wa.me/50685048785" class="header-social-link"
+            aria-label="WhatsApp de Villa Peñas" title="WhatsApp">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M20.5 11.6a8.4 8.4 0 0 1-12.5 7.3L3.5 20.5l1.7-4.4A8.4 8.4 0 1 1 20.5 11.6Z"></path>
-              <path d="M8.8 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .5-.2.7l-.5.5c.6 1.1 1.5 2 2.6 2.6l.5-.5c.2-.2.5-.3.7-.2l1.7.7c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.2.4-1.8.2-1.1-.3-2.5-1.2-3.8-2.5s-2.2-2.7-2.5-3.8c-.2-.6-.1-1.3.2-1.8Z"></path>
+              <path
+                d="M8.8 8.2c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .5-.2.7l-.5.5c.6 1.1 1.5 2 2.6 2.6l.5-.5c.2-.2.5-.3.7-.2l1.7.7c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.5.3-1.2.4-1.8.2-1.1-.3-2.5-1.2-3.8-2.5s-2.2-2.7-2.5-3.8c-.2-.6-.1-1.3.2-1.8Z">
+              </path>
             </svg>
           </a>
           <!--Icono de login para acceder al adm-->
-          <a
-            href="login.html"
-            class="header-social-link"
-            aria-label="Acceso administrativo"
+          <a href="login.html" class="header-social-link" aria-label="Acceso administrativo"
             title="Acceso administrativo">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="8" r="4"></circle>
-            <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"></path>
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"></path>
             </svg>
-            </a>
+          </a>
         </div>
       </div>
     </nav>
@@ -126,12 +111,8 @@
 
     <!--HERO-->
     <section id="inicio" class="relative flex min-h-[88vh] items-end overflow-hidden">
-      <img
-        src="assets/optimizadas/villa.penas.webp"
-        alt="Espacio para celebrar eventos"
-        fetchpriority="high"
-        decoding="async"
-        class="absolute inset-0 h-full w-full object-cover">
+      <img src="assets/optimizadas/villa.penas.webp" alt="Espacio para celebrar eventos" fetchpriority="high"
+        decoding="async" class="absolute inset-0 h-full w-full object-cover">
 
       <div class="absolute inset-0 bg-vp-brown/45"></div>
       <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-vp-brown/90 to-transparent"></div>
@@ -153,10 +134,12 @@
           </p>
 
           <div class="reveal mt-7 flex flex-col gap-3 sm:flex-row">
-            <a href="#paquetes" class="rounded-full bg-vp-gold px-7 py-3 text-center font-bold text-white hover:-translate-y-0.5">
+            <a href="#paquetes"
+              class="rounded-full bg-vp-gold px-7 py-3 text-center font-bold text-white hover:-translate-y-0.5">
               Ver paquetes
             </a>
-            <a href="#contacto" class="rounded-full border border-white/70 bg-white/10 px-7 py-3 text-center font-bold text-white backdrop-blur hover:bg-white hover:text-vp-brown">
+            <a href="#contacto"
+              class="rounded-full border border-white/70 bg-white/10 px-7 py-3 text-center font-bold text-white backdrop-blur hover:bg-white hover:text-vp-brown">
               Solicitar información
             </a>
           </div>
@@ -183,45 +166,33 @@
 
             <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div class="feature-box">
-               
+
                 <strong>Piscina</strong>
               </div>
               <div class="feature-box">
-               
+
                 <strong>Cocina</strong>
               </div>
               <div class="feature-box">
-                
+
                 <strong>Playground</strong>
               </div>
               <div class="feature-box">
-                
+
                 <strong>Salón</strong>
               </div>
             </div>
           </div>
 
           <div class="reveal grid grid-cols-2 gap-3">
-            <img class="h-64 w-full rounded-2xl object-cover sm:h-72"
-              src="assets/optimizadas/Piscina.Villa.penas.webp"
-              alt="Piscina de Villa Peñas"
-              loading="lazy"
-              decoding="async">
+            <img class="h-64 w-full rounded-2xl object-cover sm:h-72" src="assets/optimizadas/Piscina.Villa.penas.webp"
+              alt="Piscina de Villa Peñas" loading="lazy" decoding="async">
             <img class="mt-8 h-64 w-full rounded-2xl object-cover sm:h-72"
-              src="assets/optimizadas/Parrilla.villa.penas.webp"
-              alt="Cocina equipada"
-              loading="lazy"
-              decoding="async">
+              src="assets/optimizadas/Parrilla.villa.penas.webp" alt="Cocina equipada" loading="lazy" decoding="async">
             <img class="h-48 w-full rounded-2xl object-cover sm:h-56"
-              src="assets/optimizadas/Playground.villa.penas.webp"
-                   alt="Área exterior"
-                   loading="lazy"
-                   decoding="async">
+              src="assets/optimizadas/Playground.villa.penas.webp" alt="Área exterior" loading="lazy" decoding="async">
             <img class="mt-8 h-48 w-full rounded-2xl object-cover sm:h-56"
-              src="assets/optimizadas/Salón.Villa.Penas.webp"
-              alt="Celebración"
-              loading="lazy"
-              decoding="async">
+              src="assets/optimizadas/Salón.Villa.Penas.webp" alt="Celebración" loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -238,15 +209,13 @@
             <p class="mt-4 text-sm leading-6">
               1 Km Sur de la entrada a Moya en • Chirco, 57-07, Santa Cruz, Costa Rica.
             </p>
-           
+
           </div>
 
           <div class="overflow-hidden rounded-2xl border-4 border-white shadow-xl reveal">
-            <iframe
-              title="Mapa de Villa Peñas"
+            <iframe title="Mapa de Villa Peñas"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.980537504071!2d-85.6370782244265!3d10.26315148985612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f9e35005aa3dd83%3A0x3820817c0ea3a659!2sVilla%20Pe%C3%B1as!5e0!3m2!1ses-419!2sus!4v1790813754946!5m2!1ses-419!2sus"
-              class="h-[340px] w-full border-0"
-              loading="lazy">
+              class="h-[340px] w-full border-0" loading="lazy">
             </iframe>
           </div>
 
@@ -260,7 +229,8 @@
 
         <div class="reveal max-w-3xl">
           <p class="text-vp-gold font-bold text-2xl">Todo en un solo lugar</p>
-          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Todo lo que necesitás en un solo lugar.</h2>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Todo lo que necesitás en un solo
+            lugar.</h2>
           <p class="mt-4 leading-7">
             Villa Peñas cuenta con diferentes servicios para que puedas organizar
             tu evento de una forma cómoda y personalizada.
@@ -315,7 +285,8 @@
 
         <div class="reveal">
           <p class="text-vp-gold font-bold text-2xl">Diversión y sabor</p>
-          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Servicios adicionales para tu evento</h2>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">Servicios adicionales para tu evento
+          </h2>
           <p class="mt-3 max-w-3xl leading-6">
             Queremos que en tus celebraciones no falte la diversión ni los antojos.
             Estas opciones pueden complementar tu evento.
@@ -327,7 +298,7 @@
       </div>
     </section>
 
-                <!--GALERÍA-->
+    <!--GALERÍA-->
     <section id="galeria" class="bg-vp-cream py-16">
       <div class="mx-auto max-w-6xl px-5">
 
@@ -345,54 +316,32 @@
         <!--galería-->
         <div class="reveal mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           <!--vista-->
-          <button type="button" class="gallery-item col-span-2 row-span-2"
-                  data-src="assets/optimizadas/Vista.webp"
-                  aria-label="Abrir imagen">
-            <img src="assets/optimizadas/Vista.webp"
-            alt="Espacio de evento"
-            decoding="async"
-            class="h-full min-h-[390px] w-full object-cover">
+          <button type="button" class="gallery-item col-span-2 row-span-2" data-src="assets/optimizadas/Vista.webp"
+            aria-label="Abrir imagen">
+            <img src="assets/optimizadas/Vista.webp" alt="Espacio de evento" decoding="async"
+              class="h-full min-h-[390px] w-full object-cover">
           </button>
-          <button type="button" class="gallery-item"
-                  data-src="assets/optimizadas/Silla.webp"
-                  aria-label="Abrir imagen">
-            <img src="assets/optimizadas/Silla.webp" 
-            alt="Silla"
-            decoding="async"
-            class="h-48 w-full object-cover">
+          <button type="button" class="gallery-item" data-src="assets/optimizadas/Silla.webp" aria-label="Abrir imagen">
+            <img src="assets/optimizadas/Silla.webp" alt="Silla" decoding="async" class="h-48 w-full object-cover">
           </button>
-          <button type="button" class="gallery-item"
-                  data-src="assets/optimizadas/Piscina.webp"
-                  aria-label="Abrir imagen">
-            <img src="assets/optimizadas/Piscina.webp" 
-            alt="Piscina"
-            decoding="async"
-            class="h-48 w-full object-cover">
+          <button type="button" class="gallery-item" data-src="assets/optimizadas/Piscina.webp"
+            aria-label="Abrir imagen">
+            <img src="assets/optimizadas/Piscina.webp" alt="Piscina" decoding="async" class="h-48 w-full object-cover">
           </button>
-          <button type="button" class="gallery-item"
-                  data-src="assets/optimizadas/Parrilla.webp"
-                  aria-label="Abrir imagen">
-            <img src="assets/optimizadas/Parrilla.webp" 
-            alt="Parrilla"
-            decoding="async"
-            class="h-80 w-full object-cover object-center">
+          <button type="button" class="gallery-item" data-src="assets/optimizadas/Parrilla.webp"
+            aria-label="Abrir imagen">
+            <img src="assets/optimizadas/Parrilla.webp" alt="Parrilla" decoding="async"
+              class="h-80 w-full object-cover object-center">
           </button>
-          <button type="button" class="gallery-item"
-                  data-src="assets/optimizadas/Rancho(2).webp"
-                  aria-label="Abrir imagen">
-            <img src="assets/optimizadas/Rancho(2).webp" 
-            alt="Rancho"
-            decoding="async"
-            class="h-80 w-full object-cover object-center">
+          <button type="button" class="gallery-item" data-src="assets/optimizadas/Rancho(2).webp"
+            aria-label="Abrir imagen">
+            <img src="assets/optimizadas/Rancho(2).webp" alt="Rancho" decoding="async"
+              class="h-80 w-full object-cover object-center">
           </button>
         </div>
         <div id="galeriaExtra" class="gallery-extra" hidden></div>
         <div class="gallery-control">
-          <button 
-            type="button" 
-            id="verMasGaleria"
-            class="gallery-more"
-            aria-haspopup="dialog"
+          <button type="button" id="verMasGaleria" class="gallery-more" aria-haspopup="dialog"
             aria-controls="carouselGaleria">
             Ver más
           </button>
@@ -400,44 +349,38 @@
       </div>
     </section>
 
-          <!-- TESTIMONIOS / RESEÑAS -->
-<section id="testimonios" class="py-16">
-  <div class="mx-auto max-w-6xl px-5">
+    <!-- TESTIMONIOS / RESEÑAS -->
+    <section id="testimonios" class="py-16">
+      <div class="mx-auto max-w-6xl px-5">
 
-    <div class="reveal">
-      <p class="text-vp-gold font-bold text-2xl">
-        Familias que ya celebraron en Villa Peñas
-      </p>
+        <div class="reveal">
+          <p class="text-vp-gold font-bold text-2xl">
+            Familias que ya celebraron en Villa Peñas
+          </p>
 
-      <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">
-        Experiencias que generan confianza.
-      </h2>
+          <h2 class="mt-2 text-vp-brown font-display text-[2.5rem] leading-[1.15]">
+            Experiencias que generan confianza.
+          </h2>
 
-      <p class="mt-4 text-sm leading-6">
-        Conocé las experiencias de quienes han disfrutado de Villa Peñas.
-      </p>
-    </div>
+          <p class="mt-4 text-sm leading-6">
+            Conocé las experiencias de quienes han disfrutado de Villa Peñas.
+          </p>
+        </div>
 
-    <!-- Aquí se cargarán las reseñas aprobadas desde el backend -->
-    <div
-      id="resenasContainer"
-      class="mt-8 grid gap-4 md:grid-cols-3"
-      aria-live="polite"
-    >
-      <p class="text-sm">Cargando reseñas...</p>
-    </div>
+        <!-- Aquí se cargarán las reseñas aprobadas desde el backend -->
+        <div id="resenasContainer" class="mt-8 grid gap-4 md:grid-cols-3" aria-live="polite">
+          <p class="text-sm">Cargando reseñas...</p>
+        </div>
 
-    <div class="mt-8 text-center">
-      <a
-        href="resena.html"
-        class="inline-block rounded-full bg-vp-brown px-7 py-3 font-bold text-white transition hover:bg-vp-gold"
-      >
-        + Agregar reseña
-      </a>
-    </div>
+        <div class="mt-8 text-center">
+          <a href="resena.html"
+            class="inline-block rounded-full bg-vp-brown px-7 py-3 font-bold text-white transition hover:bg-vp-gold">
+            + Agregar reseña
+          </a>
+        </div>
 
-  </div>
-</section>
+      </div>
+    </section>
 
     <!--CONTACTO / SOLICITUD-->
     <section id="contacto" class="bg-vp-coffee py-16 text-white sm:py-20">
@@ -453,7 +396,7 @@
             <p class="mt-5 text-sm leading-6 text-white/80">
               Completá el formulario con los datos de tu evento.
               Villa Peñas recibirá tu solicitud y se comunicará
-              con usted para confirmar la disponibilidad y los detalles, 
+              con usted para confirmar la disponibilidad y los detalles,
               además, para reservas se necesita un depósito.
             </p>
 
@@ -463,85 +406,67 @@
 
             <div id="formMessage" class="mb-4 hidden rounded-xl p-3 text-sm" role="alert" aria-atomic="true"></div>
 
-            
+
 
             <div class="grid gap-4 sm:grid-cols-2">
 
               <div>
                 <label for="nombre" class="form-label">Nombre<span class="text-rose-500">*</span></label>
-                <input id="nombre" 
-                name="nombre" 
-                type="text" 
-                autocomplete="name" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
-                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
+                <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej. María Fernanda López"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]"
+                  required>
               </div>
 
               <div>
                 <label for="telefono" class="form-label">Teléfono<span class="text-rose-500">*</span></label>
-                <input id="telefono" 
-                name="telefono" 
-                type="tel" 
-                autocomplete="tel" 
-                inputmode="tel" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
-                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
+                <input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel"
+                  placeholder="Ej. 8888-8888"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige
+              bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
                 <label for="correo" class="form-label">Correo<span class="text-rose-500">*</span></label>
-                <input id="correo" 
-                name="correo" 
-                type="email" 
-                autocomplete="email" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
-                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
+                <input id="correo" name="correo" type="email" autocomplete="email" placeholder="Ej. correo@gmail.com"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]"
+                  required>
               </div>
 
               <div>
                 <label for="fecha" class="form-label">Fecha del evento<span class="text-rose-500">*</span></label>
-                <input id="fecha" 
-                name="fecha" 
-                type="date" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                <input id="fecha" name="fecha" type="date"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
                 bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
                 <label for="horaInicio" class="form-label">Hora de Entrada<span class="text-rose-500">*</span></label>
-                <input id="horaInicio" 
-                name="horaInicio" 
-                type="time" 
-                max="18:00" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                <input id="horaInicio" name="horaInicio" type="time" max="18:00"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
                 bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
                 <label for="horaFinal" class="form-label">Hora de Salida</label>
-                <input id="horaFinal" 
-                name="horaFinal" 
-                type="time" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                <input id="horaFinal" name="horaFinal" type="time"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
                 bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" readonly>
               </div>
 
               <div>
-                <label for="personas" class="form-label">Cantidad de personas<span class="text-rose-500">*</span></label>
-                <input id="personas" 
-                name="personas" 
-                type="number" 
-                min="1" 
-                step="1" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                <label for="personas" class="form-label">Cantidad de personas<span
+                    class="text-rose-500">*</span></label>
+                <input id="personas" name="personas" type="number" min="1" step="1"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
                 bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
               </div>
 
               <div>
                 <label for="paquete" class="form-label">Paquete<span class="text-rose-500">*</span></label>
-                <select id="paquete" 
-                name="paquete" 
-                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                <select id="paquete" name="paquete"
+                  class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
                 bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" required>
                   <option value="">Seleccionar...</option>
                 </select>
@@ -553,95 +478,84 @@
               <legend class="form-label">Adicionales que te interesan</legend>
               <div id="checksAdicionales" class="grid gap-2 sm:grid-cols-2"></div>
             </fieldset>
-            
-<!-- Resumen de la cotización -->
-<div id="resumenCotizacion"
-     class="mt-6 rounded-2xl border border-vp-beige bg-vp-white p-5">
 
-    <h3 class="text-lg font-bold text-vp-text mb-4">
-        Resumen de tu cotización
-    </h3>
+            <!-- Resumen de la cotización -->
+            <div id="resumenCotizacion" class="mt-6 rounded-2xl border border-vp-beige bg-vp-white p-5">
 
-    <div class="flex justify-between gap-4 mb-3">
-        <span id="nombrePaqueteResumen">
-            Seleccioná un paquete
-        </span>
-        <strong id="precioPaqueteResumen">₡0</strong>
-    </div>
+              <h3 class="text-lg font-bold text-vp-text mb-4">
+                Resumen de tu cotización
+              </h3>
 
-    <div id="adicionalesResumen"
-         class="space-y-2 text-sm">
-        <p>No has seleccionado adicionales.</p>
-    </div>
+              <div class="flex justify-between gap-4 mb-3">
+                <span id="nombrePaqueteResumen">
+                  Seleccioná un paquete
+                </span>
+                <strong id="precioPaqueteResumen">₡0</strong>
+              </div>
 
-    <div class="flex justify-between gap-4 border-t border-vp-beige pt-4 mt-4">
-        <strong>Total estimado</strong>
-        <strong id="totalCotizacionResumen"
-                class="text-xl text-vp-brown">
-            ₡0
-        </strong>
-    </div>
+              <div id="adicionalesResumen" class="space-y-2 text-sm">
+                <p>No has seleccionado adicionales.</p>
+              </div>
 
-    <p class="text-xs mt-3 text-vp-text/70">
-        El monto final se confirma directamente con Villa Peñas.
-    </p>
-</div>
+              <div class="flex justify-between gap-4 border-t border-vp-beige pt-4 mt-4">
+                <strong>Total estimado</strong>
+                <strong id="totalCotizacionResumen" class="text-xl text-vp-brown">
+                  ₡0
+                </strong>
+              </div>
+
+              <p class="text-xs mt-3 text-vp-text/70">
+                El monto final se confirma directamente con Villa Peñas.
+              </p>
+            </div>
 
             <div class="mt-5">
               <label for="mensaje" class="form-label">Contanos sobre tu evento</label>
-              <textarea id="mensaje" name="mensaje" rows="4" class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
-                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]" placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
+              <textarea id="mensaje" name="mensaje" rows="4"
+                class="block w-full min-w-0 rounded-xl border border-solid border-vp-beige 
+                bg-vp-white px-4 py-3 text-vp-text text-sm leading-[inherit] transition-[border-color,box-shadow] duration-200 ease-[ease]"
+                placeholder="Tipo de evento, consultas, necesidades especiales..."></textarea>
             </div>
 
             <div class="mt-5 rounded-2xl border border-vp-gold bg-white p-5">
-  <p class="font-bold text-vp-brown">Importante</p>
+              <p class="font-bold text-vp-brown">Importante</p>
 
-  <p class="mt-1 text-sm leading-6 text-vp-text/80">
-    Una vez recibidos y revisados los datos proporcionados, nos pondremos en contacto para confirmar la disponibilidad y 
-    los detalles de la reserva. El adelanto se solicitará únicamente después de confirmar la disponibilidad, 
-    acordar los detalles del evento y aprobar la cotización, con el fin de formalizar la reserva.
-    Para eventos con más de 60 personas, el precio y las condiciones quedarán sujetos a negociación y acuerdo con los encargados.
-  </p>
-</div>
+              <p class="mt-1 text-sm leading-6 text-vp-text/80">
+                Una vez recibidos y revisados los datos proporcionados, nos pondremos en contacto para confirmar la
+                disponibilidad y
+                los detalles de la reserva. El adelanto se solicitará únicamente después de confirmar la disponibilidad,
+                acordar los detalles del evento y aprobar la cotización, con el fin de formalizar la reserva.
+                Para eventos con más de 60 personas, el precio y las condiciones quedarán sujetos a negociación y
+                acuerdo con los encargados.
+              </p>
+            </div>
 
-<div class="mt-5">
-  <label
-    for="acepta"
-    class="flex cursor-pointer items-start gap-3 rounded-2xl border border-vp-beige bg-white p-5 transition hover:border-vp-gold"
-  >
-    <input
-      id="acepta"
-      name="acepta"
-      type="checkbox"
-      required
-      class="mt-1 h-5 w-5 accent-vp-gold"
-    >
+            <div class="mt-5">
+              <label for="acepta"
+                class="flex cursor-pointer items-start gap-3 rounded-2xl border border-vp-beige bg-white p-5 transition hover:border-vp-gold">
+                <input id="acepta" name="acepta" type="checkbox" required class="mt-1 h-5 w-5 accent-vp-gold">
 
-    <span class="block font-bold text-vp-brown">
-      He leído las indicaciones sobre la reserva.
-    </span>
-  </label>
-</div>
+                <span class="block font-bold text-vp-brown">
+                  He leído las indicaciones sobre la reserva.
+                </span>
+              </label>
+            </div>
 
-<button
-  type="submit"
-  class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold"
->
-  Cotizar
-</button>
+            <button type="submit"
+              class="mt-5 w-full rounded-xl bg-vp-brown px-6 py-3.5 font-bold text-white hover:bg-vp-gold">
+              Cotizar
+            </button>
 
-<div class="mt-3">
-  <button
-    type="reset"
-    class="w-full rounded-xl border border-vp-gold bg-white px-4 py-3 font-bold text-vp-brown hover:bg-vp-gold hover:text-white"
-  >
-    Limpiar formulario
-  </button>
-</div>
+            <div class="mt-3">
+              <button type="reset"
+                class="w-full rounded-xl border border-vp-gold bg-white px-4 py-3 font-bold text-vp-brown hover:bg-vp-gold hover:text-white">
+                Limpiar formulario
+              </button>
+            </div>
 
-<p class="mt-3 text-center text-xs text-vp-text/60">
-  * Campos obligatorios. El envío no confirma una reserva.
-</p>
+            <p class="mt-3 text-center text-xs text-vp-text/60">
+              * Campos obligatorios. El envío no confirma una reserva.
+            </p>
           </form>
 
         </div>
@@ -650,28 +564,20 @@
           <h3 class="font-display text-3xl">Contactanos</h3>
 
           <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a
-              href="tel:+50688507712"
-              class="inline-flex items-center rounded-full border border-vp-gold 
+            <a href="tel:+50688507712" class="inline-flex items-center rounded-full border border-vp-gold 
               bg-vp-gold px-4 py-2 text-sm font-bold text-white hover:bg-vp-brown">
               8850-7712
-              </a>
+            </a>
 
-              <a
-              href="mailto:info@villapenas.com"
-              class="inline-flex items-center rounded-full border border-vp-gold bg-vp-gold 
+            <a href="mailto:info@villapenas.com" class="inline-flex items-center rounded-full border border-vp-gold bg-vp-gold 
               px-4 py-2 text-sm font-bold text-white hover:bg-vp-brown">
               Correo
-              </a>
+            </a>
 
-              <a
-              href="https://www.instagram.com/eventos_villapena/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center rounded-full border border-vp-gold bg-vp-gold 
+            <a href="https://www.instagram.com/eventos_villapena/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-full border border-vp-gold bg-vp-gold 
               px-4 py-2 text-sm font-bold text-white hover:bg-vp-brown">
               ◎ Instagram
-              </a>
+            </a>
           </div>
         </div>
 
@@ -684,11 +590,8 @@
   <footer class="bg-vp-brown text-white">
     <div class="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-9 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <img src="assets/optimizadas/villa-penas-logo_pages-to-jpg-0001.webp" 
-        alt="Villa Peñas — Alquiler para eventos" 
-        class="footer-logo" 
-        width="220" 
-        height="90">
+        <img src="assets/optimizadas/villa-penas-logo_pages-to-jpg-0001.webp" alt="Villa Peñas — Alquiler para eventos"
+          class="footer-logo" width="220" height="90">
         <p class="font-display text-2xl">Villa Peñas</p>
         <p class="mt-1 text-xs text-white/60">Santa Cruz, Guanacaste</p>
       </div>
@@ -701,7 +604,8 @@
   </footer>
 
   <!-- MODAL DE DETALLES -->
-  <div id="modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div id="modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 p-4" role="dialog"
+    aria-modal="true" aria-labelledby="modalTitle">
     <div class="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-vp-white p-6 shadow-2xl">
       <button type="button" id="closeModal" class="absolute right-4 top-3 text-2xl" aria-label="Cerrar">×</button>
       <p class="text-vp-gold font-bold text-2xl">Detalle del paquete</p>
@@ -709,7 +613,8 @@
       <p id="modalPrice" class="mt-3 text-xl font-bold text-vp-gold"></p>
       <p id="modalDescription" class="mt-4 text-sm leading-6"></p>
       <ul id="modalServices" class="mt-5 grid gap-2 sm:grid-cols-2"></ul>
-      <button type="button" id="choosePackage" class="mt-6 w-full rounded-xl bg-vp-brown px-5 py-3 font-bold text-white">
+      <button type="button" id="choosePackage"
+        class="mt-6 w-full rounded-xl bg-vp-brown px-5 py-3 font-bold text-white">
         Solicitar este paquete
       </button>
     </div>
@@ -717,65 +622,50 @@
 
   <!-- LIGHTBOX -->
   <div id="lightbox" class="fixed inset-0 z-[110] hidden items-center justify-center bg-black/90 p-4">
-    <button type="button" id="closeLightbox" class="absolute right-5 top-4 text-3xl text-white" aria-label="Cerrar">×</button>
+    <button type="button" id="closeLightbox" class="absolute right-5 top-4 text-3xl text-white"
+      aria-label="Cerrar">×</button>
     <img id="lightboxImg" src="" alt="" class="max-h-[90vh] max-w-[95vw] rounded-xl object-contain">
   </div>
 
-<!--carrusel-->
+  <!--carrusel-->
 
-<dialog
-    id="carouselGaleria"
-    class="carousel-modal"
-    aria-label="Galería de fotografías de Villa Peña">
+  <dialog id="carouselGaleria" class="carousel-modal" aria-label="Galería de fotografías de Villa Peña">
 
     <div class="carousel-contenido">
 
-        <!-- Cerrar -->
-        <button
-            type="button"
-            id="cerrarCarousel"
-            class="carousel-cerrar"
-            aria-label="Cerrar galería">
-            &times;
+      <!-- Cerrar -->
+      <button type="button" id="cerrarCarousel" class="carousel-cerrar" aria-label="Cerrar galería">
+        &times;
+      </button>
+
+      <!-- Imagen completa -->
+      <div class="carousel-visor">
+
+        <button type="button" id="carouselAnterior" class="carousel-flecha" aria-label="Fotografía anterior">
+          &#10094;
         </button>
 
-        <!-- Imagen completa -->
-        <div class="carousel-visor">
+        <img id="carouselImagen" alt="Fotografía de Villa Peña">
 
-            <button
-                type="button"
-                id="carouselAnterior"
-                class="carousel-flecha"
-                aria-label="Fotografía anterior">
-                &#10094;
-            </button>
+        <button type="button" id="carouselSiguiente" class="carousel-flecha" aria-label="Fotografía siguiente">
+          &#10095;
+        </button>
 
-            <img
-                id="carouselImagen"
-                alt="Fotografía de Villa Peña">
+      </div>
 
-            <button
-                type="button"
-                id="carouselSiguiente"
-                class="carousel-flecha"
-                aria-label="Fotografía siguiente">
-                &#10095;
-            </button>
+      <!-- Descripción invisible, para accesibilidad -->
+      <p id="carouselDescripcion" class="sr-only"></p>
 
-        </div>
-
-        <!-- Descripción invisible, para accesibilidad -->
-        <p id="carouselDescripcion" class="sr-only"></p>
-
-        <!-- Contador invisible -->
-        <span id="carouselContador" class="sr-only"></span>
+      <!-- Contador invisible -->
+      <span id="carouselContador" class="sr-only"></span>
 
     </div>
 
-</dialog>
+  </dialog>
 
   <script src="js/datos.js"></script>
   <script src="js/app.js"></script>
   <script src="js/resenas.js"></script>
 </body>
+
 </html>
