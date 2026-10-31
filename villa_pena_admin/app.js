@@ -107,7 +107,7 @@ function updateStats() {
     // cantidad de reservaciones del mes
     $("#statEvents").textContent = data.events.filter(
         e => e.date.startsWith(ym) &&
-             e.status !== "bloqueada"
+            e.status !== "bloqueada"
     ).length;
 
     // cantidad de fechas ocupadas
@@ -209,9 +209,9 @@ function setView(next) {
             "Administra los servicios adicionales que se mostrarán en la página pública."
         ],
         galeria: [
-             "Galería",
-             "Administración de galería",
-             "Administra las fotografías que se mostrarán en la página pública de Villa Peña."
+            "Galería",
+            "Administración de galería",
+            "Administra las fotografías que se mostrarán en la página pública de Villa Peña."
         ],
 
         resenas: [
@@ -322,7 +322,7 @@ function renderCalendar() {
 
     const month = currentDate.getMonth();
     // Recordar el mes que está viendo el administrador
-        sessionStorage.setItem(
+    sessionStorage.setItem(
         "calendarioMes",
         `${year}-${String(month + 1).padStart(2, "0")}`
     );
@@ -429,11 +429,10 @@ function renderCalendar() {
 
             boton.innerHTML = `
                 <span class="event-time">
-                    ${
-                        ev.status === "bloqueada"
-                            ? "Día bloqueado"
-                            : escapeHTML(formatTime(ev.time))
-                    }
+                    ${ev.status === "bloqueada"
+                    ? "Día bloqueado"
+                    : escapeHTML(formatTime(ev.time))
+                }
                 </span>
 
                 <span class="event-name">
@@ -441,11 +440,10 @@ function renderCalendar() {
                 </span>
 
                 <span class="event-meta">
-                    ${
-                        ev.status === "bloqueada"
-                            ? "No disponible"
-                            : `♙ ${ev.guests} personas`
-                    }
+                    ${ev.status === "bloqueada"
+                    ? "No disponible"
+                    : `♙ ${ev.guests} personas`
+                }
                 </span>
             `;
 
@@ -489,9 +487,8 @@ function formatTime(time) {
 
     const hour = h % 12 || 12;
 
-    return `${hour}:${String(m).padStart(2, "0")} ${
-        h >= 12 ? "p. m." : "a. m."
-    }`;
+    return `${hour}:${String(m).padStart(2, "0")} ${h >= 12 ? "p. m." : "a. m."
+        }`;
 }
 
 // navegación del calendario
@@ -769,8 +766,8 @@ function openEventDialog(id = null, date = null, blocked = false) {
     $("#eventForm").reset();
     $("#eventAdicionalesContainer").innerHTML = "";
     (ev?.adicionales || []).forEach(adicional => {
-    agregarAdicionalReserva(adicional);
-});
+        agregarAdicionalReserva(adicional);
+    });
 
     $("#eventId").value = ev?.id || "";
 
@@ -791,10 +788,10 @@ function openEventDialog(id = null, date = null, blocked = false) {
     actualizarHoraSalidaEvento();
     const mensaje = document.getElementById("mensajeEvento");
 
-if (mensaje) {
-    mensaje.hidden = true;
-    mensaje.textContent = "";
-}
+    if (mensaje) {
+        mensaje.hidden = true;
+        mensaje.textContent = "";
+    }
 
     $("#eventClient").value =
         ev?.client || (blocked ? "Villa Peñas" : "");
@@ -837,7 +834,7 @@ if (mensaje) {
     eventDialog.showModal();
 }
 // para que al cambiar el paquete se actualice el resumen de cotización
-$("#eventPackage").addEventListener("change", function() {
+$("#eventPackage").addEventListener("change", function () {
 
     const id = Number($("#eventId").value);
 
@@ -893,7 +890,7 @@ $("#eventForm").addEventListener("submit", async event => {
         'button[type="submit"]'
     );
 
-   
+
     // ID vacío significa crear una nueva reservación
     const id = $("#eventId").value;
 
@@ -916,8 +913,8 @@ $("#eventForm").addEventListener("submit", async event => {
 
     const precioPaquete = mismoPaquete &&
         reservaOriginal?.packagePrice != null
-            ? Number(reservaOriginal.packagePrice)
-            : Number(paqueteCatalogo?.price ?? 0);
+        ? Number(reservaOriginal.packagePrice)
+        : Number(paqueteCatalogo?.price ?? 0);
 
     const reserva = {
         name: $("#eventName").value.trim(),
@@ -975,18 +972,18 @@ $("#eventForm").addEventListener("submit", async event => {
         // Mostrar el mes correspondiente a la reservación
         const [anio, mes] = reserva.date.split("-").map(Number);
 
-            currentDate = new Date(anio, mes - 1, 1);
+        currentDate = new Date(anio, mes - 1, 1);
 
         // Actualizar el calendario desde NestJS
-            await cargarReservas();
+        await cargarReservas();
 
         eventDialog.close();
 
         mostrarResultado(
-         esEdicion
-            ? "La reservación se actualizó correctamente."
-            : "La reservación se registró correctamente."
-);
+            esEdicion
+                ? "La reservación se actualizó correctamente."
+                : "La reservación se registró correctamente."
+        );
 
     } catch (error) {
 
@@ -1290,100 +1287,100 @@ function mostrarMensajeEvento(mensaje, tipo = "error") {
 // administración de paquetes
 
 function agregarCampoServicio(valor = "") {
-  const contenedor = $("#packageServicesContainer");
-  const fila = document.createElement("div");
+    const contenedor = $("#packageServicesContainer");
+    const fila = document.createElement("div");
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = "servicio-input";
-  input.placeholder = "Ej. Uso del rancho";
-  input.maxLength = 100;
-  input.value = valor;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "servicio-input";
+    input.placeholder = "Ej. Uso del rancho";
+    input.maxLength = 100;
+    input.value = valor;
 
-  const boton = document.createElement("button");
-  boton.type = "button";
-  boton.className = "btn btn-outline";
-  boton.textContent = "Eliminar";
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "btn btn-outline";
+    boton.textContent = "Eliminar";
 
-  boton.addEventListener("click", () => {
-    fila.remove();
-  });
+    boton.addEventListener("click", () => {
+        fila.remove();
+    });
 
-  fila.appendChild(input);
-  fila.appendChild(boton);
-  contenedor.appendChild(fila);
+    fila.appendChild(input);
+    fila.appendChild(boton);
+    contenedor.appendChild(fila);
 }
 
 function obtenerServiciosFormulario() {
-  return Array.from(
-    document.querySelectorAll(
-      "#packageServicesContainer .servicio-input"
+    return Array.from(
+        document.querySelectorAll(
+            "#packageServicesContainer .servicio-input"
+        )
     )
-  )
-    .map(input => input.value.trim())
-    .filter(servicio => servicio !== "");
+        .map(input => input.value.trim())
+        .filter(servicio => servicio !== "");
 }
 
 function agregarCampoDetalle(detalle = {}) {
-  const contenedor = $("#packageDetailsContainer");
-  const fila = document.createElement("div");
-  fila.className = "detalle-form-row";
+    const contenedor = $("#packageDetailsContainer");
+    const fila = document.createElement("div");
+    fila.className = "detalle-form-row";
 
-  const etiquetaNombre = document.createElement("label");
-  etiquetaNombre.textContent = "Nombre del servicio";
+    const etiquetaNombre = document.createElement("label");
+    etiquetaNombre.textContent = "Nombre del servicio";
 
-  const inputNombre = document.createElement("input");
-  inputNombre.type = "text";
-  inputNombre.className = "detalle-nombre";
-  inputNombre.placeholder = "Ej. Piscina";
-  inputNombre.maxLength = 100;
-  inputNombre.value = detalle.nombre || "";
+    const inputNombre = document.createElement("input");
+    inputNombre.type = "text";
+    inputNombre.className = "detalle-nombre";
+    inputNombre.placeholder = "Ej. Piscina";
+    inputNombre.maxLength = 100;
+    inputNombre.value = detalle.nombre || "";
 
-  const etiquetaDescripcion = document.createElement("label");
-  etiquetaDescripcion.textContent = "Descripción del servicio";
+    const etiquetaDescripcion = document.createElement("label");
+    etiquetaDescripcion.textContent = "Descripción del servicio";
 
-  const inputDescripcion = document.createElement("textarea");
-  inputDescripcion.className = "detalle-descripcion";
-  inputDescripcion.rows = 2;
-  inputDescripcion.maxLength = 300;
-  inputDescripcion.placeholder = "Describe el servicio";
-  inputDescripcion.value = detalle.descripcion || "";
+    const inputDescripcion = document.createElement("textarea");
+    inputDescripcion.className = "detalle-descripcion";
+    inputDescripcion.rows = 2;
+    inputDescripcion.maxLength = 300;
+    inputDescripcion.placeholder = "Describe el servicio";
+    inputDescripcion.value = detalle.descripcion || "";
 
-  const boton = document.createElement("button");
-  boton.type = "button";
-  boton.className = "btn btn-outline";
-  boton.textContent = "Eliminar detalle";
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "btn btn-outline";
+    boton.textContent = "Eliminar detalle";
 
-  boton.addEventListener("click", () => {
-    fila.remove();
-  });
+    boton.addEventListener("click", () => {
+        fila.remove();
+    });
 
-  fila.appendChild(etiquetaNombre);
-  fila.appendChild(inputNombre);
-  fila.appendChild(etiquetaDescripcion);
-  fila.appendChild(inputDescripcion);
-  fila.appendChild(boton);
+    fila.appendChild(etiquetaNombre);
+    fila.appendChild(inputNombre);
+    fila.appendChild(etiquetaDescripcion);
+    fila.appendChild(inputDescripcion);
+    fila.appendChild(boton);
 
-  contenedor.appendChild(fila);
+    contenedor.appendChild(fila);
 }
 
 function obtenerDetallesFormulario() {
-  return Array.from(
-    document.querySelectorAll(
-      "#packageDetailsContainer .detalle-form-row"
-    )
-  ).map(fila => ({
-    nombre: fila.querySelector(".detalle-nombre").value.trim(),
-    descripcion: fila.querySelector(".detalle-descripcion").value.trim()
-  }));
+    return Array.from(
+        document.querySelectorAll(
+            "#packageDetailsContainer .detalle-form-row"
+        )
+    ).map(fila => ({
+        nombre: fila.querySelector(".detalle-nombre").value.trim(),
+        descripcion: fila.querySelector(".detalle-descripcion").value.trim()
+    }));
 }
 
 $("#btnAgregarServicio").addEventListener("click", () => {
-  agregarCampoServicio();
+    agregarCampoServicio();
 });
 
 $("#btnAgregarDetalle").addEventListener("click", () => {
-  agregarCampoDetalle();
+    agregarCampoDetalle();
 });
 
 async function obtenerPaquetes() {
@@ -1469,9 +1466,8 @@ function renderPackages() {
             </td>
 
             <td>
-                <span class="pill ${
-                    p.active ? "pill-active" : "pill-hidden"
-                }">
+                <span class="pill ${p.active ? "pill-active" : "pill-hidden"
+        }">
                     ${p.active ? "Activo" : "Oculto"}
                 </span>
             </td>
@@ -1531,43 +1527,43 @@ function renderPackages() {
 const packageDialog = $("#packageDialog");
 
 function openPackageDialog(id = null) {
-  const p = data.packages.find(x => x.id === id);
+    const p = data.packages.find(x => x.id === id);
 
-  $("#packageForm").reset();
+    $("#packageForm").reset();
 
-  $("#packageId").value = p?.id || "";
-  $("#packageDialogTitle").textContent = p
-    ? "Editar paquete"
-    : "Nuevo paquete";
+    $("#packageId").value = p?.id || "";
+    $("#packageDialogTitle").textContent = p
+        ? "Editar paquete"
+        : "Nuevo paquete";
 
-  $("#packageName").value = p?.name || "";
-  $("#packageDescription").value = p?.description || "";
-  $("#packagePrice").value = p?.price ?? "";
-  $("#packageActive").value = String(p?.active ?? true);
+    $("#packageName").value = p?.name || "";
+    $("#packageDescription").value = p?.description || "";
+    $("#packagePrice").value = p?.price ?? "";
+    $("#packageActive").value = String(p?.active ?? true);
 
-  $("#packageServicesContainer").innerHTML = "";
-  $("#packageDetailsContainer").innerHTML = "";
+    $("#packageServicesContainer").innerHTML = "";
+    $("#packageDetailsContainer").innerHTML = "";
 
-  const servicios = p?.servicios || [];
-  const detalles = p?.detalles || [];
+    const servicios = p?.servicios || [];
+    const detalles = p?.detalles || [];
 
-  servicios.forEach(servicio => {
-    agregarCampoServicio(servicio);
-  });
+    servicios.forEach(servicio => {
+        agregarCampoServicio(servicio);
+    });
 
-  detalles.forEach(detalle => {
-    agregarCampoDetalle(detalle);
-  });
+    detalles.forEach(detalle => {
+        agregarCampoDetalle(detalle);
+    });
 
-  if (servicios.length === 0) {
-    agregarCampoServicio();
-  }
+    if (servicios.length === 0) {
+        agregarCampoServicio();
+    }
 
-  if (detalles.length === 0) {
-    agregarCampoDetalle();
-  }
+    if (detalles.length === 0) {
+        agregarCampoDetalle();
+    }
 
-  packageDialog.showModal();
+    packageDialog.showModal();
 }
 
 // abrir formulario para un paquete nuevo
@@ -1579,77 +1575,77 @@ $("#addPackage").addEventListener("click", () => {
 // crear o actualizar un paquete en NestJS
 
 $("#packageForm").addEventListener("submit", async event => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const idActual = Number($("#packageId").value);
-  const esNuevo = !idActual;
+    const idActual = Number($("#packageId").value);
+    const esNuevo = !idActual;
 
-  const paquete = {
-  nombre: $("#packageName").value.trim(),
-  descripcion: $("#packageDescription").value.trim(),
-  precio: Number($("#packagePrice").value),
-  servicios: obtenerServiciosFormulario(),
-  detalles: obtenerDetallesFormulario(),
-  activo: $("#packageActive").value === "true"
-};
-  if (
-    !paquete.nombre ||
-    !paquete.descripcion ||
-    !Number.isFinite(paquete.precio) ||
-    paquete.precio < 0
-  ) {
-    showToast("Revisa el nombre, la descripción y el precio.");
-    return;
-  }
-
-  if (paquete.servicios.length === 0) {
-    showToast("Agrega al menos un servicio.");
-    return;
-  }
-
-  if (
-    paquete.detalles.length === 0 ||
-    paquete.detalles.some(
-      detalle => !detalle.nombre || !detalle.descripcion
-    )
-  ) {
-    showToast("Completa los detalles del paquete.");
-    return;
-  }
-
-  try {
-    const respuesta = await apiFetch(
-      esNuevo
-        ? `${API_BASE}/paquetes`
-        : `${API_BASE}/paquetes/${idActual}`,
-      {
-        method: esNuevo ? "POST" : "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(paquete)
-      }
-    );
-
-    if (!respuesta.ok) {
-      const mensaje = await respuesta.text();
-      throw new Error(mensaje || "No se pudo guardar el paquete.");
+    const paquete = {
+        nombre: $("#packageName").value.trim(),
+        descripcion: $("#packageDescription").value.trim(),
+        precio: Number($("#packagePrice").value),
+        servicios: obtenerServiciosFormulario(),
+        detalles: obtenerDetallesFormulario(),
+        activo: $("#packageActive").value === "true"
+    };
+    if (
+        !paquete.nombre ||
+        !paquete.descripcion ||
+        !Number.isFinite(paquete.precio) ||
+        paquete.precio < 0
+    ) {
+        showToast("Revisa el nombre, la descripción y el precio.");
+        return;
     }
 
-    packageDialog.close();
+    if (paquete.servicios.length === 0) {
+        showToast("Agrega al menos un servicio.");
+        return;
+    }
 
-    await obtenerPaquetes();
+    if (
+        paquete.detalles.length === 0 ||
+        paquete.detalles.some(
+            detalle => !detalle.nombre || !detalle.descripcion
+        )
+    ) {
+        showToast("Completa los detalles del paquete.");
+        return;
+    }
 
-    showToast(
-      esNuevo
-        ? "Paquete creado correctamente."
-        : "Paquete actualizado correctamente."
-    );
+    try {
+        const respuesta = await apiFetch(
+            esNuevo
+                ? `${API_BASE}/paquetes`
+                : `${API_BASE}/paquetes/${idActual}`,
+            {
+                method: esNuevo ? "POST" : "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(paquete)
+            }
+        );
 
-  } catch (error) {
-    console.error("Error al guardar el paquete:", error);
-    showToast("No se pudo guardar el paquete. Revisa el backend.");
-  }
+        if (!respuesta.ok) {
+            const mensaje = await respuesta.text();
+            throw new Error(mensaje || "No se pudo guardar el paquete.");
+        }
+
+        packageDialog.close();
+
+        await obtenerPaquetes();
+
+        showToast(
+            esNuevo
+                ? "Paquete creado correctamente."
+                : "Paquete actualizado correctamente."
+        );
+
+    } catch (error) {
+        console.error("Error al guardar el paquete:", error);
+        showToast("No se pudo guardar el paquete. Revisa el backend.");
+    }
 });
 
 
@@ -1703,7 +1699,7 @@ async function deletePackage(id) {
 
 }
 
- // administracion de adicionales
+// administracion de adicionales
 
 let additionalItems = [];
 
@@ -2068,16 +2064,16 @@ function agregarAdicionalReserva(adicionalSeleccionado = null) {
         });
 
     selector.addEventListener("change", () => {
-    mostrarResumenCotizacion();
-});
+        mostrarResumenCotizacion();
+    });
 
     fila.querySelector(".btn-quitar-adicional")
         .addEventListener("click", () => {
             fila.remove();
-        mostrarResumenCotizacion();
-    });
+            mostrarResumenCotizacion();
+        });
 
-contenedor.appendChild(fila);
+    contenedor.appendChild(fila);
 }
 
 $("#btnAgregarAdicionalReserva").addEventListener("click", () => {
@@ -2288,8 +2284,8 @@ async function renderReviews() {
 
     try {
         const respuesta = await apiFetch(endpoint, {
-    credentials: "include"
-});
+            credentials: "include"
+        });
 
         if (!respuesta.ok) {
             throw new Error("No se pudieron consultar las reseñas.");
@@ -2316,13 +2312,13 @@ async function renderReviews() {
             <article class="review-item">
                 <div class="avatar avatar-light">
                     ${escapeHTML(
-                        (r.name || "")
-                            .split(" ")
-                            .map(s => s[0])
-                            .slice(0, 2)
-                            .join("")
-                            .toUpperCase()
-                    )}
+            (r.name || "")
+                .split(" ")
+                .map(s => s[0])
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()
+        )}
                 </div>
 
                 <div class="review-main">
@@ -2414,53 +2410,53 @@ async function renderReviews() {
             });
 
         lista.querySelectorAll("[data-withdraw]")
-    .forEach(boton => {
-        boton.addEventListener("click", async () => {
+            .forEach(boton => {
+                boton.addEventListener("click", async () => {
 
-            const id = Number(boton.dataset.withdraw);
+                    const id = Number(boton.dataset.withdraw);
 
-            const confirmado = await confirmarEliminacion(
-                "¿Retirar reseña?",
-                "¿Deseas retirar esta reseña de la página principal?"
-            );
+                    const confirmado = await confirmarEliminacion(
+                        "¿Retirar reseña?",
+                        "¿Deseas retirar esta reseña de la página principal?"
+                    );
 
-            if (confirmado) {
-                setReviewStatus(id, "rechazada");
-            }
-        });
-    });
-            // Eliminar reseña definitivamente
-        
-lista.querySelectorAll("[data-delete-review]")
-    .forEach(boton => {
-        boton.addEventListener("click", async () => {
-            const id = Number(boton.dataset.deleteReview);
+                    if (confirmado) {
+                        setReviewStatus(id, "rechazada");
+                    }
+                });
+            });
+        // Eliminar reseña definitivamente
 
-            const confirmado = await confirmarEliminacion(
-                "¿Eliminar reseña definitivamente?",
-                "Esta acción eliminará la reseña de forma permanente y no se podrá recuperar."
-            );
+        lista.querySelectorAll("[data-delete-review]")
+            .forEach(boton => {
+                boton.addEventListener("click", async () => {
+                    const id = Number(boton.dataset.deleteReview);
 
-            if (!confirmado) return;
+                    const confirmado = await confirmarEliminacion(
+                        "¿Eliminar reseña definitivamente?",
+                        "Esta acción eliminará la reseña de forma permanente y no se podrá recuperar."
+                    );
 
-            try {
-                const respuesta = await apiFetch(
-                    `${API_BASE}/resenas/${id}`,
-                    { method: "DELETE" }
-                );
+                    if (!confirmado) return;
 
-                if (!respuesta.ok) {
-                    throw new Error("No se pudo eliminar la reseña.");
-                }
+                    try {
+                        const respuesta = await apiFetch(
+                            `${API_BASE}/resenas/${id}`,
+                            { method: "DELETE" }
+                        );
 
-                await renderReviews();
+                        if (!respuesta.ok) {
+                            throw new Error("No se pudo eliminar la reseña.");
+                        }
 
-            } catch (error) {
-                console.error("Error al eliminar reseña:", error);
-                alert("No se pudo eliminar la reseña.");
-            }
-        });
-    });
+                        await renderReviews();
+
+                    } catch (error) {
+                        console.error("Error al eliminar reseña:", error);
+                        alert("No se pudo eliminar la reseña.");
+                    }
+                });
+            });
 
     } catch (error) {
         console.error("Error al cargar las reseñas:", error);
@@ -2615,7 +2611,7 @@ async function renderGallery() {
 
         const fragmento = document.createDocumentFragment();
 
-        fotos.forEach(function(foto, indice) {
+        fotos.forEach(function (foto, indice) {
 
             const tarjeta = document.createElement("article");
             tarjeta.className = "gallery-admin-card";
@@ -2887,175 +2883,175 @@ const API_FOTOS_ADMIN = "http://localhost:3000";
 let fotoEnEdicion = null;
 
 const modalEditarFoto =
-  document.getElementById("modalEditarFoto");
+    document.getElementById("modalEditarFoto");
 
 const formEditarFoto =
-  document.getElementById("formEditarFoto");
+    document.getElementById("formEditarFoto");
 
 const previewEditarFoto =
-  document.getElementById("previewEditarFoto");
+    document.getElementById("previewEditarFoto");
 
 const descripcionEditarFoto =
-  document.getElementById("descripcionEditarFoto");
+    document.getElementById("descripcionEditarFoto");
 
 const archivoEditarFoto =
-  document.getElementById("archivoEditarFoto");
+    document.getElementById("archivoEditarFoto");
 
 const guardarEditarFoto =
-  document.getElementById("guardarEditarFoto");
+    document.getElementById("guardarEditarFoto");
 
 const cancelarEditarFoto =
-  document.getElementById("cancelarEditarFoto");
+    document.getElementById("cancelarEditarFoto");
 
 // Obtener una fotografía desde la API
 async function obtenerFotoAdmin(id) {
-  const respuesta = await apiFetch(
-    `${API_FOTOS_ADMIN}/galeria`
-  );
+    const respuesta = await apiFetch(
+        `${API_FOTOS_ADMIN}/galeria`
+    );
 
-  if (!respuesta.ok) {
-    throw new Error("No se pudieron cargar las fotografías");
-  }
+    if (!respuesta.ok) {
+        throw new Error("No se pudieron cargar las fotografías");
+    }
 
-  const fotos = await respuesta.json();
-  const foto = fotos.find((f) => f.id === id);
+    const fotos = await respuesta.json();
+    const foto = fotos.find((f) => f.id === id);
 
-  if (!foto) {
-    throw new Error("Fotografía no encontrada");
-  }
+    if (!foto) {
+        throw new Error("Fotografía no encontrada");
+    }
 
-  return foto;
+    return foto;
 }
 
 // Abrir formulario con los datos actuales
 async function abrirEditarFoto(id) {
-  try {
-    const foto = await obtenerFotoAdmin(id);
+    try {
+        const foto = await obtenerFotoAdmin(id);
 
-    fotoEnEdicion = foto;
+        fotoEnEdicion = foto;
 
-    descripcionEditarFoto.value =
-      foto.descripcion || "";
+        descripcionEditarFoto.value =
+            foto.descripcion || "";
 
-    archivoEditarFoto.value = "";
+        archivoEditarFoto.value = "";
 
-    previewEditarFoto.src =
-      `${API_FOTOS_ADMIN}${foto.src}`;
+        previewEditarFoto.src =
+            `${API_FOTOS_ADMIN}${foto.src}`;
 
-    modalEditarFoto.showModal();
+        modalEditarFoto.showModal();
 
-  } catch (error) {
-    alert(error.message);
-  }
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
 // Vista previa de una nueva fotografía
 archivoEditarFoto.addEventListener("change", () => {
-  const archivo = archivoEditarFoto.files[0];
+    const archivo = archivoEditarFoto.files[0];
 
-  if (!archivo) {
-    if (fotoEnEdicion) {
-      previewEditarFoto.src =
-        `${API_FOTOS_ADMIN}${fotoEnEdicion.src}`;
+    if (!archivo) {
+        if (fotoEnEdicion) {
+            previewEditarFoto.src =
+                `${API_FOTOS_ADMIN}${fotoEnEdicion.src}`;
+        }
+        return;
     }
-    return;
-  }
 
-  if (!["image/jpeg", "image/png", "image/webp"]
-      .includes(archivo.type)) {
-    alert("Seleccioná una imagen JPG, PNG o WebP.");
-    archivoEditarFoto.value = "";
-    return;
-  }
+    if (!["image/jpeg", "image/png", "image/webp"]
+        .includes(archivo.type)) {
+        alert("Seleccioná una imagen JPG, PNG o WebP.");
+        archivoEditarFoto.value = "";
+        return;
+    }
 
-  if (archivo.size > 5 * 1024 * 1024) {
-    alert("La imagen no puede superar los 5 MB.");
-    archivoEditarFoto.value = "";
-    return;
-  }
+    if (archivo.size > 5 * 1024 * 1024) {
+        alert("La imagen no puede superar los 5 MB.");
+        archivoEditarFoto.value = "";
+        return;
+    }
 
-  // Vista previa local sin subir el archivo
-  const lector = new FileReader();
+    // Vista previa local sin subir el archivo
+    const lector = new FileReader();
 
-  lector.onload = () => {
-    previewEditarFoto.src = lector.result;
-  };
+    lector.onload = () => {
+        previewEditarFoto.src = lector.result;
+    };
 
-  lector.readAsDataURL(archivo);
+    lector.readAsDataURL(archivo);
 });
 
 // Guardar cambios usando PATCH
 formEditarFoto.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!fotoEnEdicion) return;
+    if (!fotoEnEdicion) return;
 
-  const descripcion = descripcionEditarFoto.value.trim();
-  const archivo = archivoEditarFoto.files[0];
+    const descripcion = descripcionEditarFoto.value.trim();
+    const archivo = archivoEditarFoto.files[0];
 
-  if (!descripcion) {
-    alert("La descripción no puede estar vacía.");
-    return;
-  }
-
-  const datos = new FormData();
-
-  datos.append("descripcion", descripcion);
-
-  if (archivo) {
-    datos.append("imagen", archivo);
-  }
-
-  guardarEditarFoto.disabled = true;
-  guardarEditarFoto.textContent = "Guardando...";
-
-  try {
-    const respuesta = await apiFetch(
-      `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(fotoEnEdicion.id)}`,
-      {
-        method: "PATCH",
-        body: datos,
-      }
-    );
-
-    if (!respuesta.ok) {
-      const error = await respuesta.json().catch(() => ({}));
-
-      const mensaje = Array.isArray(error.message)
-        ? error.message.join(", ")
-        : error.message;
-
-      throw new Error(
-        mensaje || "No se pudo actualizar la fotografía"
-      );
+    if (!descripcion) {
+        alert("La descripción no puede estar vacía.");
+        return;
     }
 
-    modalEditarFoto.close();
-    fotoEnEdicion = null;
+    const datos = new FormData();
 
-    await renderGallery();
+    datos.append("descripcion", descripcion);
 
-    mostrarResultado(
-    "La fotografía se actualizó correctamente."
-);
+    if (archivo) {
+        datos.append("imagen", archivo);
+    }
 
-  } catch (error) {
-   mostrarResultado(error.message, "error");
+    guardarEditarFoto.disabled = true;
+    guardarEditarFoto.textContent = "Guardando...";
 
-  } finally {
-    guardarEditarFoto.disabled = false;
-    guardarEditarFoto.textContent = "Guardar cambios";
-  }
+    try {
+        const respuesta = await apiFetch(
+            `${API_FOTOS_ADMIN}/galeria/${encodeURIComponent(fotoEnEdicion.id)}`,
+            {
+                method: "PATCH",
+                body: datos,
+            }
+        );
+
+        if (!respuesta.ok) {
+            const error = await respuesta.json().catch(() => ({}));
+
+            const mensaje = Array.isArray(error.message)
+                ? error.message.join(", ")
+                : error.message;
+
+            throw new Error(
+                mensaje || "No se pudo actualizar la fotografía"
+            );
+        }
+
+        modalEditarFoto.close();
+        fotoEnEdicion = null;
+
+        await renderGallery();
+
+        mostrarResultado(
+            "La fotografía se actualizó correctamente."
+        );
+
+    } catch (error) {
+        mostrarResultado(error.message, "error");
+
+    } finally {
+        guardarEditarFoto.disabled = false;
+        guardarEditarFoto.textContent = "Guardar cambios";
+    }
 });
 
 // Cancelar edición
 cancelarEditarFoto.addEventListener("click", () => {
-  modalEditarFoto.close();
+    modalEditarFoto.close();
 });
 
 modalEditarFoto.addEventListener("close", () => {
-  fotoEnEdicion = null;
-  formEditarFoto.reset();
+    fotoEnEdicion = null;
+    formEditarFoto.reset();
 });
 
 // Eliminar fotografía
@@ -3161,17 +3157,41 @@ function confirmarEliminacion(
 // escuchar botones Editar y eliminar.
 // funciona también después de renderizar nuevamente.
 document.addEventListener("click", (e) => {
-  const editar = e.target.closest(".btn-editar-foto");
-  const eliminar = e.target.closest(".btn-eliminar-foto");
+    const editar = e.target.closest(".btn-editar-foto");
+    const eliminar = e.target.closest(".btn-eliminar-foto");
 
-  if (editar) {
-    abrirEditarFoto(editar.dataset.id);
-  }
+    if (editar) {
+        abrirEditarFoto(editar.dataset.id);
+    }
 
-  if (eliminar) {
-    eliminarFotoAdmin(eliminar.dataset.id);
-  }
+    if (eliminar) {
+        eliminarFotoAdmin(eliminar.dataset.id);
+    }
 });
+
+
+document.getElementById("btnCerrarSesion")
+    .addEventListener("click", async () => {
+        try {
+            const respuesta = await apiFetch(
+                `${API_BASE}/auth/logout`,
+                {
+                    method: "POST"
+                }
+            );
+
+            if (!respuesta.ok) {
+                throw new Error("No se pudo cerrar la sesión.");
+            }
+
+            window.location.replace("../login.html");
+
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            showToast("No se pudo cerrar la sesión. Intentá nuevamente.");
+        }
+    });
+
 
 // iniciar todas las secciones
 
